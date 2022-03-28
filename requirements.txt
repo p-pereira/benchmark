@@ -1,0 +1,8 @@
+pandas==1.4.1
+numpy==1.22.3
+scikit-learn==1.0.2
+matplotlib==3.5.1
+mlflow==1.24.0
+statsmodels==0.13.2
+PyYAML==6.0
+tqdm==4.63.1
