@@ -46,7 +46,9 @@ def main(time_series: str, config: dict = {}):
     # mlflow configs
     CUR_DIR = getcwd()
     DIR = path.join(CUR_DIR, config["DATA_PATH"], config["MLFLOW_PATH"])
-    mlflow.set_tracking_uri(f"file:///{DIR}")
+    # mlflow.set_tracking_uri(f"file:///{DIR}")
+    mlflow.set_tracking_uri(f"http://localhost:5000")
+    
     try:
         mlflow.create_experiment(name=config["EXPERIMENT"])
     except:
