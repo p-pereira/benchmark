@@ -23,10 +23,22 @@ def train(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: str="", par
     run_name : str, optional
         _description_, by default ""
     """
+    # mlflow configs
+    CUR_DIR = getcwd()
+    DIR = path.join(CUR_DIR[:-4], config["DATA_PATH"][3:], config["MLFLOW_PATH"])
+    print(DIR)
+    #mlflow.set_tracking_uri(f"file:///{DIR}")
+    mlflow.set_tracking_uri(f"http://localhost:5000")
+    try:
+        mlflow.create_experiment(name=config["EXPERIMENT"])
+    except:
+        pass
+    
     mlflow.sklearn.autolog()
     with mlflow.start_run(run_name=run_name) as run:
         mlflow.log_params(params)
         _ = LinearRegression().fit(X, y)
+    mlflow.end_run()
 
 def main(time_series: str, config: dict = {}):
     """_summary_
@@ -43,16 +55,8 @@ def main(time_series: str, config: dict = {}):
     if len(train_files) == 0:
         print("Error: no files found!")
         sys.exit()
-    # mlflow configs
-    CUR_DIR = getcwd()
-    DIR = path.join(CUR_DIR, config["DATA_PATH"], config["MLFLOW_PATH"])
-    # mlflow.set_tracking_uri(f"file:///{DIR}")
-    mlflow.set_tracking_uri(f"http://localhost:5000")
     
-    try:
-        mlflow.create_experiment(name=config["EXPERIMENT"])
-    except:
-        mlflow.get_experiment_by_name(name=config["EXPERIMENT"])
+    #mlflow.get_experiment_by_name(name=config["EXPERIMENT"])
     # Train LR models
     target = config["TS"][time_series]["target"]
     for n, file in enumerate(tqdm(train_files)):
