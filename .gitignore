@@ -129,4 +129,5 @@ dmypy.json
 .pyre/
 
 # Data
-data/
+data/**/*.csv
+data/6_mlflow/
