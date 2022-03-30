@@ -60,7 +60,7 @@ def main(time_series: str, config: dict = {}):
             'time_series': time_series,
             'target': target,
             'model': "LR",
-            'iter': n
+            'iter': n+1
         }
         run_name = f"{time_series}_{target}_LR_{n+1}"
         X, y = load_data(file,config["TS"][time_series]["target"])
