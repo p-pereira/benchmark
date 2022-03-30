@@ -9,3 +9,5 @@ RUN git clone https://github.com/p-pereira/benchmark_ts.git
 COPY data home/norte/benchmark_ts/
 
 RUN pip install -r home/benchmark_ts/requirements.txt
+
+CMD cd home/norte/benchmark/data/mlflow && mlflow ui --default-artifact-root mlflow ui --default-artifact-root file:///home/norte/benchmark/data/6_mlflow/mlruns/0/

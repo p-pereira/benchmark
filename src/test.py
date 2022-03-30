@@ -32,7 +32,7 @@ if __name__ == "__main__":
     # mlflow configs
     CUR_DIR = getcwd()
     DIR = path.join(CUR_DIR, config["DATA_PATH"], config["MLFLOW_PATH"])
-    mlflow.set_tracking_uri(f"file:///{DIR}")
+    mlflow.set_tracking_uri("http://localhost:5000")
     
     for n, file in enumerate(tqdm(test_files)):
         # Get mlflow run id to load the model.
