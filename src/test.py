@@ -30,8 +30,6 @@ if __name__ == "__main__":
     test_files = list_files(args.time_series, config, "ts*")
 
     # mlflow configs
-    CUR_DIR = getcwd()
-    DIR = path.join(CUR_DIR, config["DATA_PATH"], config["MLFLOW_PATH"])
     mlflow.set_tracking_uri("http://localhost:5000")
     
     for n, file in enumerate(tqdm(test_files)):

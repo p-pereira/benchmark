@@ -24,10 +24,6 @@ def train(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: str="", par
         _description_, by default ""
     """
     # mlflow configs
-    CUR_DIR = getcwd()
-    DIR = path.join(CUR_DIR[:-4], config["DATA_PATH"][3:], config["MLFLOW_PATH"])
-    print(DIR)
-    #mlflow.set_tracking_uri(f"file:///{DIR}")
     mlflow.set_tracking_uri("http://localhost:5000")
     try:
         mlflow.create_experiment(name=config["EXPERIMENT"])
