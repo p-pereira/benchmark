@@ -1,5 +1,6 @@
-from typing import Dict, List, Union
+from typing import Dict, List, Tuple, Union
 import pandas as pd
+import numpy as np
 import sys
 import argparse
 import os
@@ -61,33 +62,48 @@ def rw(y: Union[pd.Series, List], ratio: Union[float,int], W: int, S: int, itera
     
     return {'tr': tr, 'val': val, 'ts': ts}
 
-def create_lags(y: pd.Series, K: int=7, target: str="tempC") -> pd.DataFrame:
-    """Create time-lags dataframe from series.
+def cases_series(t: pd.Series, W: Tuple, target: str = "y", start: int=1, end: int=0) -> pd.DataFrame:
+    """Python adaptation of CasesSeries R function from rminer library. Creates lag dataframe from time-series data.
 
     Parameters
     ----------
-    y : pd.Series
-        _description_
-    H : int, optional
-        _description_, by default 7
+    t : pd.Series
+        Time-series.
+    W : Tuple
+        Window.
     target : str, optional
-        _description_, by default "tempC"
+        Target column, by default "y"
+    start : int, optional
+        Start of time-series (1 means 1st value), by default 1
+    end : int, optional
+        End of time-series, by default 0
 
     Returns
     -------
     pd.DataFrame
-        _description_
+        Lag dataframe.
     """
-    d2 = []
-    for i in range(K+1):
-        d2.append(y.shift(i*-1))
-    lags = pd.DataFrame(d2).T.dropna()
-    X_cols = [str(i) for i in range(7)]
-    X_cols.append(target)
-    lags.columns = X_cols
-    return lags
+    if end == 0:
+        end = len(t)
+    LW = len(W)
+    LL = W[LW-1]
+    JL = (end - start + 1) - LL
+    I = np.zeros((JL, LW+1))
+    S = start - 1
+    for j in range(0,JL):
+        for i in range(0,LW):
+            I[j,i]=t[(S+LL-W[LW-i-1]+j)]
+            I[j,(LW)]=t[(S+LL+j)]
+    D = pd.DataFrame(I)
+    N = list(D.columns)
+    LN = len(N)
+    for i in range(1, LN):
+        N[LN-i-1] = f"lag{W[i-1]}"
+    N[LN-1] = target
+    D.columns = N
+    return D
 
-def main(time_series: str, config_file: str = "config.yaml"):
+def main(time_series: str, config_file: str = "config.yaml", make_regression: bool = False):
     """Generate cross-validation data files for a time-series dataset.
 
     Parameters
@@ -123,20 +139,26 @@ def main(time_series: str, config_file: str = "config.yaml"):
     
     target = series_config["target"]
     U = series_config["U"]
-    K = series_config["K"]
+    WR = series_config["WR"]
+
+    if make_regression:
+        d = cases_series(d[target], WR, target)
+        fn = "_reg"
+    else:
+        fn = ""
+    
     H = series_config["H"]
     W = series_config["W"]
     L = d.shape[0]
     S = (L-(W+H-1)) // U
 
-    df = create_lags(d[target], K, target)
-    
     for it in tqdm(range(1, U+1)):
-        res = rw(df[target], ratio=H, W=W, S=S, iteration=it, mode="rolling")
-        dtr = df.iloc[res["tr"], ]
-        dts = df.iloc[res["ts"], ]
-        tr_fpath = os.path.join(lags_path, f"tr_{it}{format}")
-        ts_fpath = os.path.join(lags_path, f"ts_{it}{format}")
+        res = rw(d[target], ratio=H, W=W, S=S, iteration=it, mode="rolling")
+
+        dtr = d.iloc[res["tr"], ]
+        dts = d.iloc[res["ts"], ]
+        tr_fpath = os.path.join(lags_path, f"tr_{it}{fn}{format}")
+        ts_fpath = os.path.join(lags_path, f"ts_{it}{fn}{format}")
         dtr.to_csv(tr_fpath, index=None)
         dts.to_csv(ts_fpath, index=None)
 
@@ -150,6 +172,9 @@ if __name__ == "__main__":
     parser.add_argument('-c', '--config', dest='config', 
                         help='Config yaml file.')
     parser.set_defaults(config="config.yaml")
+    parser.add_argument('-r', '--reg', dest='make_regression', 
+                        help='Convert time-series data in regression task.')
+    parser.set_defaults(make_regression=False)
     args = parser.parse_args()
     # Generate dataset files
-    main(args.time_series, args.config)
+    main(args.time_series, args.config, args.make_regression)

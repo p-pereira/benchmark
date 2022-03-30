@@ -47,12 +47,10 @@ def main(time_series: str, config: dict = {}):
         _description_, by default {}
     """
     # Get train files
-    train_files = list_files(time_series, config)
+    train_files = list_files(time_series, config, pattern="tr*reg*")
     if len(train_files) == 0:
         print("Error: no files found!")
         sys.exit()
-    
-    #mlflow.get_experiment_by_name(name=config["EXPERIMENT"])
     # Train LR models
     target = config["TS"][time_series]["target"]
     for n, file in enumerate(tqdm(train_files)):

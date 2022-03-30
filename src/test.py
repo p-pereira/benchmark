@@ -17,6 +17,9 @@ if __name__ == "__main__":
     parser.set_defaults(model="LR")
     parser.add_argument('-c', '--config', dest='config', 
                         help='Config yaml file.')
+    parser.add_argument('-r', '--reg', dest='make_regression', 
+                        help='Convert time-series data in regression task.')
+    parser.set_defaults(make_regression=False)
     parser.set_defaults(config="config.yaml")
     args = parser.parse_args()
     # Load configs
@@ -26,8 +29,12 @@ if __name__ == "__main__":
         print("Error loading config file: ", e)
         sys.exit()
     
+    if args.make_regression:
+        pattern = "ts*reg*"
+    else:
+        pattern = "ts*"
     target = config["TS"][args.time_series]["target"]
-    test_files = list_files(args.time_series, config, "ts*")
+    test_files = list_files(args.time_series, config, pattern)
 
     # mlflow configs
     mlflow.set_tracking_uri("http://localhost:5000")
