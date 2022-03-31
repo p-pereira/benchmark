@@ -6,6 +6,7 @@ import yaml
 import mlflow
 from tqdm import tqdm
 from utilities import list_files, load_data, compute_metrics
+from time import time
 
 if __name__ == "__main__":
     # Read arguments
@@ -50,7 +51,10 @@ if __name__ == "__main__":
         logged_model = f"runs:/{run_id}/model"
         loaded_model = mlflow.pyfunc.load_model(logged_model)
         # Predic and compute metrics
+        start = time()
         pred = loaded_model.predict(X)
+        end = time()
+        inf_time = (end - start) / len(pred)
         metrics = compute_metrics(y, pred, "ALL", "test_")
         # Store predictions and target values
         info = pd.DataFrame([y, pred]).T
@@ -63,3 +67,4 @@ if __name__ == "__main__":
         with mlflow.start_run(run_id=run_id) as run:
             mlflow.log_artifact(FPATH)
             mlflow.log_metrics(metrics)
+            mlflow.log_metric("test_time", inf_time)
