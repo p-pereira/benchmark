@@ -8,6 +8,7 @@ from utilities import load_data, list_files
 import yaml
 from tqdm import tqdm
 import mlflow
+from time import time
 
 def train(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: str="", params: Dict = {}):
     """_summary_
@@ -33,7 +34,12 @@ def train(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: str="", par
     mlflow.sklearn.autolog()
     with mlflow.start_run(run_name=run_name) as run:
         mlflow.log_params(params)
+        start = time()
         _ = LinearRegression().fit(X, y)
+        end = time()
+
+        tr_time = end - start
+        mlflow.log_metric("training_time", tr_time)
     mlflow.end_run()
 
 def main(time_series: str, config: dict = {}):
