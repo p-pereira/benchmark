@@ -1,3 +1,4 @@
+# Imports
 import argparse
 from os import path, getcwd
 from typing import Dict
@@ -11,18 +12,18 @@ import mlflow
 from time import time
 
 def train(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: str="", params: Dict = {}):
-    """_summary_
+    """Train a Linear Regression model and storing metrics in MLflow.
 
     Parameters
     ----------
     X : pd.DataFrame
-        _description_
+        X data.
     y : pd.Series
-        _description_
+        Target values.
     config : Dict, optional
-        _description_, by default {}
+        Configuration dict from config.yaml file, by default {}
     run_name : str, optional
-        _description_, by default ""
+        Run name for MLflow, by default "" (empty)
     """
     # mlflow configs
     mlflow.set_tracking_uri("http://localhost:5000")
@@ -43,14 +44,14 @@ def train(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: str="", par
     mlflow.end_run()
 
 def main(time_series: str, config: dict = {}):
-    """_summary_
+    """Read all Rolling Window iterarion training files from a given time-series and train a Linear Regression model for each.
 
     Parameters
     ----------
     time_series : str
-        _description_
+        Time-series name.
     config : dict, optional
-        _description_, by default {}
+        Configuration dict from config.yaml file, by default {}
     """
     # Get train files
     train_files = list_files(time_series, config, pattern="tr*reg*")
