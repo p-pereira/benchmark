@@ -3,6 +3,7 @@ docker==5.0.3
 fedot==0.5.2
 Flask==2.1.1
 matplotlib==3.5.1
+mlflow==1.24.0
 numpy==1.19.5
 pandas==1.4.1
 pyaml==21.10.1
