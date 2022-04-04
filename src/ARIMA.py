@@ -68,8 +68,8 @@ def main(time_series: str, config: dict = {}):
             'iter': n+1
         }
         run_name = f"{time_series}_{target}_ARIMA_{n+1}"
-        X, y = load_data(file,config["TS"][time_series]["target"])
-        train(X, y, config, run_name, params)
+        _, y = load_data(file,config["TS"][time_series]["target"])
+        train(y, config, run_name, params)
 
 
 if __name__ == "__main__":
