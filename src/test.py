@@ -33,7 +33,7 @@ if __name__ == "__main__":
     if args.make_regression:
         pattern = "ts*reg*"
     else:
-        pattern = "ts*"
+        pattern = "ts_?.csv"
     target = config["TS"][args.time_series]["target"]
     test_files = list_files(args.time_series, config, pattern)
 
