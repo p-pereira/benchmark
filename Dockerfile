@@ -5,7 +5,7 @@ RUN apt-get install -y git
 
 RUN mkdir -p /home/norte/
 RUN cd /home/norte && git clone -b ncosta https://github.com/p-pereira/benchmark.git
-ADD data/ /home/norte/benchmark/
+ADD data/ /home/norte/benchmark/data/
 
 RUN cd /home/norte/benchmark/ && pip install -r requirements.txt
 

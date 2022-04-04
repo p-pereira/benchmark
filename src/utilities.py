@@ -39,7 +39,7 @@ def load_data(fpath: str, target="tempC", return_Xy: bool = True) -> Union[Tuple
     else:
         return df
 
-def list_files(time_series: str, config: Dict, pattern : str="tr*"):
+def list_files(time_series: str, config: Dict, pattern : str="tr_?.csv"):
     DIR = os.path.join(config["DATA_PATH"], config["PREP_PATH"], time_series)
     return glob(os.path.join(DIR,pattern))
 
