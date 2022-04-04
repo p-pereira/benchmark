@@ -28,4 +28,9 @@ TS:
     target: "tempC" # target column
     WR: [1, 365, 366] # lag window for regression dataset creation
 
+#MODELS: 
+  #pmdarima:
+    #start_p:
+    #start_q:
+
 

@@ -1,7 +1,7 @@
 import argparse
 from os import path, getcwd
 from typing import Dict
-from statsmodels.tsa.arima.model import ARIMA
+import pmdarima as pm
 import pandas as pd
 import sys
 from utilities import load_data, list_files
@@ -10,7 +10,7 @@ from tqdm import tqdm
 import mlflow
 from time import time
 
-def train(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: str="", params: Dict = {}):
+def train(y: pd.Series, config: Dict ={}, run_name: str="", params: Dict = {}):
     """_summary_
 
     Parameters
@@ -35,7 +35,8 @@ def train(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: str="", par
     with mlflow.start_run(run_name=run_name) as run:
         mlflow.log_params(params)
         start = time()
-        _ = ARIMA(X, order=(5,1,0)).fit()
+
+        _ = pm.auto_arima(y)
         end = time()
 
         tr_time = end - start
@@ -53,7 +54,7 @@ def main(time_series: str, config: dict = {}):
         _description_, by default {}
     """
     # Get train files
-    train_files = list_files(time_series, config, pattern="tr*reg*")
+    train_files = list_files(time_series, config, pattern="tr*")
     if len(train_files) == 0:
         print("Error: no files found!")
         sys.exit()
