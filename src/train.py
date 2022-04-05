@@ -2,8 +2,12 @@ import argparse
 import sys
 import yaml
 from LR import main as lr
+from FEDOT import main as fedot
 
-MODELS = {"LR": lr}
+MODELS = {
+    "LR": lr,
+    "FEDOT": fedot
+    }
 
 if __name__ == "__main__":
     # Read arguments
@@ -25,6 +29,11 @@ if __name__ == "__main__":
         sys.exit()
     
     if args.model not in MODELS.keys():
-        print(f"Error: unkown model {args.model}.")
+        print(f"Error: unknown model {args.model}. Options: {MODELS.keys()}")
         sys.exit()
-    MODELS[args.model](args.time_series, config)
+    
+    if args.model == "ALL":
+        for model in MODELS.keys():
+            MODELS[model](args.time_series, config, train=True, test=False)
+    else:
+        MODELS[args.model](args.time_series, config, train=True, test=False)

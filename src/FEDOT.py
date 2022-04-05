@@ -47,16 +47,17 @@ def train_iteration(data: InputData, task: Task, config: Dict ={}, run_name: str
     makedirs(FDIR, exist_ok=True)
     FPATH = path.join(FDIR, "MODEL.pkl")
     FPATH2 = path.join(FDIR, "CHAIN.pkl")
+    model_params = config["MODELS"]["fedot"]
 
     with mlflow.start_run(run_name=run_name) as run:
         mlflow.log_params(params)
+        mlflow.log_params(model_params)
         
         start = time()
         # Task selection, initialisation of the framework
         fedot_model = Fedot(problem='ts_forecasting',
                             task_params=task.task_params, 
-                            timeout=60,
-                            n_jobs=-1)
+                            **model_params)
         chain = fedot_model.fit(features=data)
         end = time()
         tr_time = end - start
@@ -92,15 +93,23 @@ def test_iteration(history: InputData, test_data: InputData, config: Dict = {}, 
     inf_time = (end - start) / len(pred)
     y = test_data.target
     metrics = compute_metrics(y, pred, "ALL", "test_")
+    # Store predictions and target values
+    info = pd.DataFrame([y, pred]).T
+    info.columns = ["y_true", "y_pred"]
+    FDIR2 = path.join(config["DATA_PATH"], config["PRED_PATH"], params['time_series'], "FEDOT")
+    makedirs(FDIR, exist_ok=True)
+    FPATH2 = path.join(FDIR2, f"pred_{str(params['iter'])}.csv")
+    info.to_csv(FPATH2, index=False)
     # Load new info to mlflow run
     with mlflow.start_run(run_id=run_id) as run:
         mlflow.log_artifact(FPATH)
+        mlflow.log_artifact(FPATH2)
         mlflow.log_metrics(metrics)
         mlflow.log_metric("test_time", inf_time)
     mlflow.end_run()
 
 
-def train(time_series: str, config: dict = {}):
+def main(time_series: str, config: dict = {}, train: bool = True, test: bool = True):
     """Read all Rolling Window iterarion training files from a given time-series and train a Linear Regression model for each.
 
     Parameters
@@ -130,11 +139,15 @@ def train(time_series: str, config: dict = {}):
             'iter': n+1
         }
         run_name = f"{time_series}_{target}_FEDOT_{n+1}"
-        #_, y = load_data(file, config["TS"][time_series]["target"])
+        
         tr_data = InputData.from_csv_time_series(task, file, target_column=target)
-        ts_data = InputData.from_csv_time_series(task, file2, target_column=target)
-        train_iteration(tr_data, task, config, run_name, params)
-        test_iteration(tr_data, ts_data, config, run_name, params)
+        if train:
+            train_iteration(tr_data, task, config, run_name, params)
+        if test:
+            ts_data = InputData.from_csv_time_series(task, file2, target_column=target)
+            test_iteration(tr_data, ts_data, config, run_name, params)
+        # TODO: remove this for all train/test datasets
+        break
 
 
 if __name__ == "__main__":
@@ -146,6 +159,12 @@ if __name__ == "__main__":
     parser.add_argument('-c', '--config', dest='config', 
                         help='Config yaml file.')
     parser.set_defaults(config="config.yaml")
+    parser.add_argument('-tr', '--train', dest="train",
+                        action=argparse.BooleanOptionalAction,
+                        help="Performs model training.")
+    parser.add_argument('-ts', '--test', dest="test",
+                        action=argparse.BooleanOptionalAction,
+                        help="Performs model testing (evaluation).")
     args = parser.parse_args()
     # Load configs
     try:
@@ -153,6 +172,6 @@ if __name__ == "__main__":
     except Exception as e:
         print("Error loading config file: ", e)
         sys.exit()
-    # Train FEDOT models
-    train(args.time_series, config)
+    # Train/Test FEDOT model
+    main(args.time_series, config, args.train, args.test)
     
