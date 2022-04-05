@@ -97,7 +97,7 @@ def test_iteration(history: InputData, test_data: InputData, config: Dict = {}, 
     info = pd.DataFrame([y, pred]).T
     info.columns = ["y_true", "y_pred"]
     FDIR2 = path.join(config["DATA_PATH"], config["PRED_PATH"], params['time_series'], "FEDOT")
-    makedirs(FDIR, exist_ok=True)
+    makedirs(FDIR2, exist_ok=True)
     FPATH2 = path.join(FDIR2, f"pred_{str(params['iter'])}.csv")
     info.to_csv(FPATH2, index=False)
     # Load new info to mlflow run

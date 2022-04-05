@@ -31,12 +31,11 @@ if __name__ == "__main__":
         print("Error loading config file: ", e)
         sys.exit()
     
-    if args.model not in MODELS.keys():
-        print(f"Error: unknown model {args.model}. Options: {MODELS.keys()}")
-        sys.exit()
-    
     if args.model == "ALL":
         for model in MODELS.keys():
             MODELS[model](args.time_series, config, train=False, test=True)
-    else:
+    elif args.model in MODELS.keys():
         MODELS[args.model](args.time_series, config, train=False, test=True)
+    else:
+        print(f"Error: unknown model {args.model}. Options: {MODELS.keys()}")
+        sys.exit()
