@@ -1,4 +1,6 @@
 # Imports
+import warnings
+warnings.filterwarnings("ignore", category=FutureWarning)
 import argparse
 from os import makedirs, path, getcwd
 from pickle import dump, load
@@ -11,16 +13,14 @@ import yaml
 from tqdm import tqdm
 import mlflow
 from time import time
-from fedot.core.repository.tasks import Task, TaskTypesEnum, TsForecastingParams
-from fedot.core.data.data import InputData
-from fedot.core.repository.dataset_types import DataTypesEnum
-from fedot.api.main import Fedot
+from ludwig.api import LudwigModel
+from ludwig.contribs.mlflow import MlflowCallback
 
 
-def train_iteration(data: InputData, task: Task, config: Dict ={}, run_name: str="", params: Dict = {}):
+def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: str="", params: Dict = {}):
     
-    """AutoML using FEDOT and storing metrics in MLflow.
-    Code based on: https://github.com/nccr-itmo/FEDOT/blob/master/examples/advanced/time_series_forecasting/multistep.py
+    """AutoML using LUDWIG and storing metrics in MLflow.
+    Code based on: https://ludwig-ai.github.io/ludwig-docs/0.4/examples/weather/
 
     Parameters
     ----------
@@ -36,78 +36,83 @@ def train_iteration(data: InputData, task: Task, config: Dict ={}, run_name: str
         Run/model parameters, by default {} (empty)
     """
     # mlflow configs
-    mlflow.set_tracking_uri("http://localhost:5000")
+    URI = "http://localhost:5000"
+    mlflow.set_tracking_uri(URI)
     try:
         mlflow.create_experiment(name=config["EXPERIMENT"])
     except:
         pass
-    
+    mlflow_cb = MlflowCallback(URI)
+    mlflow_cb.experiment_id = '0'
+
     FDIR = path.join(config["DATA_PATH"], config["MODELS_PATH"],
-                     params["time_series"], str(params["iter"]), "FEDOT")
+                     params["time_series"], str(params["iter"]), "LUDWIG")
     makedirs(FDIR, exist_ok=True)
-    FPATH = path.join(FDIR, "MODEL.pkl")
-    FPATH2 = path.join(FDIR, "CHAIN.pkl")
-    model_params = config["MODELS"]["fedot"]
+    #model_params = config["MODELS"]["ludwig"]
+    target = params['target']
 
     with mlflow.start_run(run_name=run_name) as run:
+        mlflow_cb.run = run
         mlflow.log_params(params)
-        mlflow.log_params(model_params)
+        #mlflow.log_params(model_params)
         
+        X['features']=[' '.join(map(str,vals)) for vals in X.values]
+        data = pd.concat([X['features'],y], axis=1)
+        model_definition = {
+            'input_features': [
+                {'name': 'features', 'type': 'timeseries'}
+                ], 
+            'output_features': [{'name': target, 'type': 'numerical'}]
+        }
+
         start = time()
-        # Task selection, initialisation of the framework
-        fedot_model = Fedot(problem='ts_forecasting',
-                            task_params=task.task_params, 
-                            **model_params)
-        chain = fedot_model.fit(features=data)
+        # Model training
+        model = LudwigModel(model_definition, callbacks=[mlflow_cb])
+        _ = model.train(data, output_directory=FDIR,
+                        experiment_name=config["EXPERIMENT"],
+                        skip_save_processed_input=True)
         end = time()
         tr_time = end - start
-
-        with open(FPATH, "wb") as f:
-            dump(fedot_model, f)
-        with open(FPATH2, "wb") as f:
-            dump(chain, f)
-        mlflow.log_metric("training_time", tr_time)
-
-        mlflow.log_artifact(FPATH)
-        mlflow.log_artifact(FPATH2)
     mlflow.end_run()
 
-def test_iteration(history: InputData, test_data: InputData, config: Dict = {}, run_name: str = "", params: Dict = {}):
+    with mlflow.start_run(run_id=mlflow_cb.run.info.run_id):
+        mlflow.log_metric("training_time", tr_time)
+        res, _ = model.predict(X)
+        pred = res[target+"_predictions"].values
+        metrics = compute_metrics(y, pred, "ALL", "training_")
+        mlflow.log_metrics(metrics)
+    mlflow.end_run()
+
+def test_iteration(X:pd.DataFrame, y: pd.Series, config: Dict = {}, run_name: str = "", params: Dict = {}):
+    FDIR = path.join(config["DATA_PATH"], config["PRED_PATH"], params['time_series'], "LUDWIG")
+    makedirs(FDIR, exist_ok=True)
+    FPATH = path.join(FDIR, f"pred_{str(params['iter'])}.csv")
     # mlflow configs
     mlflow.set_tracking_uri("http://localhost:5000")
-    # Get mlflow run id to load the model.
     experiment = dict(mlflow.get_experiment_by_name(config["EXPERIMENT"]))
     runs = mlflow.search_runs([experiment["experiment_id"]])
     run_id = runs[runs['tags.mlflow.runName']==run_name]["run_id"].values[0]
     # Load model
-    FDIR = path.join(config["DATA_PATH"], config["MODELS_PATH"],
-                     params["time_series"], str(params["iter"]), "FEDOT")
-    makedirs(FDIR, exist_ok=True)
-    FPATH = path.join(FDIR, "MODEL.pkl")
-    with open(FPATH, "rb") as f:
-        model = load(f)
+    logged_model = f"runs:/{run_id}/model"
+    loaded_model = mlflow.pyfunc.load_model(logged_model)
     # Predic and compute metrics
+    X['features']=[' '.join(map(str,vals)) for vals in X.values]
     start = time()
-    pred = model.predict(history)
+    res = loaded_model.predict(X)
     end = time()
+    pred = res[params['target']+"_predictions"].values
     inf_time = (end - start) / len(pred)
-    y = test_data.target
     metrics = compute_metrics(y, pred, "ALL", "test_")
     # Store predictions and target values
     info = pd.DataFrame([y, pred]).T
     info.columns = ["y_true", "y_pred"]
-    FDIR2 = path.join(config["DATA_PATH"], config["PRED_PATH"], params['time_series'], "FEDOT")
-    makedirs(FDIR2, exist_ok=True)
-    FPATH2 = path.join(FDIR2, f"pred_{str(params['iter'])}.csv")
-    info.to_csv(FPATH2, index=False)
+    info.to_csv(FPATH, index=False)
     # Load new info to mlflow run
     with mlflow.start_run(run_id=run_id) as run:
         mlflow.log_artifact(FPATH)
-        mlflow.log_artifact(FPATH2)
         mlflow.log_metrics(metrics)
         mlflow.log_metric("test_time", inf_time)
     mlflow.end_run()
-
 
 def main(time_series: str, config: dict = {}, train: bool = True, test: bool = True):
     """Read all Rolling Window iterarion training files from a given time-series and train a Linear Regression model for each.
@@ -120,32 +125,31 @@ def main(time_series: str, config: dict = {}, train: bool = True, test: bool = T
         Configuration dict from config.yaml file, by default {}
     """
     # Get train files
-    train_files = list_files(time_series, config, pattern="tr_?.csv")
-    test_files = list_files(time_series, config, pattern="ts_?.csv")
+    train_files = list_files(time_series, config, pattern="tr_?_reg.csv")
+    test_files = list_files(time_series, config, pattern="ts_?_reg.csv")
     if len(train_files) == 0:
         print("Error: no files found!")
         sys.exit()
     # Define a few parameters
-    H = config["TS"][time_series]["H"]
     target = config["TS"][time_series]["target"]
-    task = Task(TaskTypesEnum.ts_forecasting,
-                TsForecastingParams(forecast_length=H))
-    # Train FEDOT models
-    for n, (file, file2) in enumerate(zip(train_files, test_files)):
+    
+    # Train/Test LUDWIG models
+    for n, (file, file2) in enumerate(tqdm(zip(train_files, test_files))):
         params = {
             'time_series': time_series,
             'target': target,
-            'model': "FEDOT",
+            'model': "LUDWIG",
             'iter': n+1
         }
-        run_name = f"{time_series}_{target}_FEDOT_{n+1}"
+        run_name = f"{time_series}_{target}_LUDWIG_{n+1}"
         
-        tr_data = InputData.from_csv_time_series(task, file, target_column=target)
+        X, y = load_data(file, target)
+        
         if train:
-            train_iteration(tr_data, task, config, run_name, params)
+            train_iteration(X, y, config, run_name, params)
         if test:
-            ts_data = InputData.from_csv_time_series(task, file2, target_column=target)
-            test_iteration(tr_data, ts_data, config, run_name, params)
+            X, y_ts = load_data(file2, target)
+            test_iteration(X, y_ts, config, run_name, params)
         # TODO: remove this for all train/test datasets
         #break
 

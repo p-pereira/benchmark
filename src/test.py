@@ -1,12 +1,18 @@
+import warnings
+warnings.filterwarnings("ignore", category=FutureWarning)
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 import argparse
 import sys
 import yaml
 from LR import main as lr
 from FEDOT import main as fedot
+from LUDWIG import main as ludwig
 
 MODELS = {
     "LR": lr,
-    "FEDOT": fedot
+    "FEDOT": fedot,
+    "LUDWIG": ludwig
     }
 
 if __name__ == "__main__":

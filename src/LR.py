@@ -110,7 +110,7 @@ def main(time_series: str, config: dict = {}, train: bool = True, test: bool = T
             X, y = load_data(file2,config["TS"][time_series]["target"])
             test_iteration(X, y, config, run_name, params)
         # TODO: remove this for all train/test datasets
-        break
+        #break
 
 
 if __name__ == "__main__":
