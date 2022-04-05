@@ -1,9 +1,19 @@
+import warnings
+warnings.filterwarnings("ignore", category=FutureWarning)
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 import argparse
 import sys
 import yaml
 from LR import main as lr
+from FEDOT import main as fedot
+from LUDWIG import main as ludwig
 
-MODELS = {"LR": lr}
+MODELS = {
+    "LR": lr,
+    "FEDOT": fedot,
+    "LUDWIG": ludwig
+    }
 
 if __name__ == "__main__":
     # Read arguments
@@ -24,7 +34,11 @@ if __name__ == "__main__":
         print("Error loading config file: ", e)
         sys.exit()
     
-    if args.model not in MODELS.keys():
-        print(f"Error: unkown model {args.model}.")
+    if args.model == "ALL":
+        for model in MODELS.keys():
+            MODELS[model](args.time_series, config, train=True, test=False)
+    elif args.model in MODELS.keys():
+        MODELS[args.model](args.time_series, config, train=True, test=False)
+    else:
+        print(f"Error: unknown model {args.model}. Options: {MODELS.keys()}")
         sys.exit()
-    MODELS[args.model](args.time_series, config)
