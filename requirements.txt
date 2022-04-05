@@ -1,8 +1,8 @@
 catboost==1.0.4
 docker==5.0.3
-fedot==0.5.2
+fedot
 Flask==2.1.1
-ludwig==0.4.1
+ludwig
 matplotlib==3.5.1
 mlflow==1.24.0
 numpy==1.19.5
