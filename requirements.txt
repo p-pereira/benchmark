@@ -2,7 +2,7 @@ catboost
 docker
 fedot
 Flask
-ludwig
+ludwig==0.4.1
 matplotlib
 mlflow
 numpy

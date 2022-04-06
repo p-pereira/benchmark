@@ -143,7 +143,7 @@ def main(time_series: str, config_file: str = "config.yaml", make_regression: bo
 
     if make_regression:
         d = cases_series(d[target], WR, target)
-        fn = "_reg"
+        fn = "reg_"
     else:
         fn = ""
     
@@ -157,8 +157,8 @@ def main(time_series: str, config_file: str = "config.yaml", make_regression: bo
 
         dtr = d.iloc[res["tr"], ]
         dts = d.iloc[res["ts"], ]
-        tr_fpath = os.path.join(lags_path, f"tr_{it}{fn}{format}")
-        ts_fpath = os.path.join(lags_path, f"ts_{it}{fn}{format}")
+        tr_fpath = os.path.join(lags_path, f"tr_{fn}{it}{format}")
+        ts_fpath = os.path.join(lags_path, f"ts_{fn}{it}{format}")
         dtr.to_csv(tr_fpath, index=None)
         dts.to_csv(ts_fpath, index=None)
 
