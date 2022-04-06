@@ -11,4 +11,4 @@ COPY data/1_raw home/norte/benchmark/data/
 RUN cd home/norte/benchmark/ && pip install -r requirements.txt
 RUN pip install ludwig
 
-CMD cd home/norte/benchmark/data/6_mlflow && mlflow ui --default-artifact-root file:///home/norte/benchmark/data/6_mlflow/mlruns/ -p 5000
+CMD cd home/norte/benchmark/data/6_mlflow && mlflow server --default-artifact-root file:///home/norte/benchmark/data/6_mlflow/mlruns/ -p 5005 -h 0.0.0.0

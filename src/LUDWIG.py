@@ -36,7 +36,7 @@ def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: s
         Run/model parameters, by default {} (empty)
     """
     # mlflow configs
-    URI = "http://localhost:5000"
+    URI = config["MLFLOW_URI"]
     mlflow.set_tracking_uri(URI)
     try:
         mlflow.create_experiment(name=config["EXPERIMENT"])
@@ -88,7 +88,7 @@ def test_iteration(X:pd.DataFrame, y: pd.Series, config: Dict = {}, run_name: st
     makedirs(FDIR, exist_ok=True)
     FPATH = path.join(FDIR, f"pred_{str(params['iter'])}.csv")
     # mlflow configs
-    mlflow.set_tracking_uri("http://localhost:5000")
+    mlflow.set_tracking_uri(config["MLFLOW_URI"])
     experiment = dict(mlflow.get_experiment_by_name(config["EXPERIMENT"]))
     runs = mlflow.search_runs([experiment["experiment_id"]])
     run_id = runs[runs['tags.mlflow.runName']==run_name]["run_id"].values[0]

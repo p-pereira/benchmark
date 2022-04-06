@@ -7,6 +7,9 @@ PRED_PATH: "4_predictions"
 RES_PATH: "5_results"
 MLFLOW_PATH: "6_mlflow/mlruns"
 
+# Mlflow config
+MLFLOW_URI: "http://localhost:5005"
+
 # ML FLOW
 EXPERIMENT: "Benchmark TS"
 # Time-series parameters:

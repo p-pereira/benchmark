@@ -36,7 +36,7 @@ def train_iteration(data: InputData, task: Task, config: Dict ={}, run_name: str
         Run/model parameters, by default {} (empty)
     """
     # mlflow configs
-    mlflow.set_tracking_uri("http://localhost:5000")
+    mlflow.set_tracking_uri(config["MLFLOW_URI"])
     try:
         mlflow.create_experiment(name=config["EXPERIMENT"])
     except:
@@ -74,7 +74,7 @@ def train_iteration(data: InputData, task: Task, config: Dict ={}, run_name: str
 
 def test_iteration(history: InputData, test_data: InputData, config: Dict = {}, run_name: str = "", params: Dict = {}):
     # mlflow configs
-    mlflow.set_tracking_uri("http://localhost:5000")
+    mlflow.set_tracking_uri(config["MLFLOW_URI"])
     # Get mlflow run id to load the model.
     experiment = dict(mlflow.get_experiment_by_name(config["EXPERIMENT"]))
     runs = mlflow.search_runs([experiment["experiment_id"]])
