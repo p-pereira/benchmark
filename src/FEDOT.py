@@ -1,6 +1,6 @@
 # Imports
 import argparse
-from os import makedirs, path, getcwd
+from os import makedirs, path
 from pickle import dump, load
 from typing import Dict
 import numpy as np
@@ -120,8 +120,8 @@ def main(time_series: str, config: dict = {}, train: bool = True, test: bool = T
         Configuration dict from config.yaml file, by default {}
     """
     # Get train files
-    train_files = list_files(time_series, config, pattern="tr_*.csv")
-    test_files = list_files(time_series, config, pattern="ts_*.csv")
+    train_files = list_files(time_series, config, pattern="*_tr.csv")
+    test_files = list_files(time_series, config, pattern="*_ts.csv")
     if len(train_files) == 0:
         print("Error: no files found!")
         sys.exit()

@@ -88,8 +88,8 @@ def main(time_series: str, config: dict = {}, train: bool = True, test: bool = T
         Whether performs model testing/evaluation or not, by default True (it does)
     """
     # Get train files
-    train_files = list_files(time_series, config, pattern="tr_reg_*.csv")
-    test_files = list_files(time_series, config, pattern="ts_reg_*.csv")
+    train_files = list_files(time_series, config, pattern="*_tr_reg.csv")
+    test_files = list_files(time_series, config, pattern="*_ts_reg.csv")
     if len(train_files) == 0:
         print("Error: no files found!")
         sys.exit()

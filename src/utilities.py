@@ -1,3 +1,4 @@
+import re
 import sys
 import numpy as np
 import pandas as pd
@@ -39,9 +40,12 @@ def load_data(fpath: str, target="tempC", return_Xy: bool = True) -> Union[Tuple
     else:
         return df
 
-def list_files(time_series: str, config: Dict, pattern : str="tr*"):
+def list_files(time_series: str, config: Dict, pattern : str="*_tr.csv"):
     DIR = os.path.join(config["DATA_PATH"], config["PREP_PATH"], time_series)
-    return glob(os.path.join(DIR,pattern))
+    files = glob(os.path.join(DIR,pattern))
+    files.sort(key=lambda f: int(re.sub('\D', '', f)))
+    return files
+
 
 def compute_metrics(y_true: Union[pd.Series, np.array], y_pred: Union[pd.Series, np.array], metrics: Union[str, List[str]]="ALL", prefix: str="") -> Dict:
     if isinstance(metrics, list):
