@@ -1,10 +1,10 @@
 import argparse
-from os import path, getcwd
+from os import path, getcwd, makedirs
 from typing import Dict
 import pmdarima as pm
 import pandas as pd
 import sys
-from utilities import load_data, list_files
+from utilities import compute_metrics, load_data, list_files
 import yaml
 from tqdm import tqdm
 import mlflow
@@ -42,6 +42,37 @@ def train(y: pd.Series, config: Dict ={}, run_name: str="", params: Dict = {}):
         tr_time = end - start
         mlflow.log_metric("training_time", tr_time)
     mlflow.end_run()
+
+def test_iteration(y: pd.Series, config: Dict = {}, run_name: str = "", params: Dict = {}):
+    # mlflow configs
+    mlflow.set_tracking_uri(config["MLFLOW_URI"])
+
+    experiment = dict(mlflow.get_experiment_by_name(config["EXPERIMENT"]))
+    runs = mlflow.search_runs([experiment["experiment_id"]])
+    run_id = runs[runs['tags.mlflow.runName']==run_name]["run_id"].values[0]
+    # Load model
+    logged_model = f"runs:/{run_id}/model"
+    loaded_model = mlflow.pyfunc.load_model(logged_model)
+    # Predic and compute metrics
+    start = time()
+    pred = loaded_model.predict(y)
+    end = time()
+    inf_time = (end - start) / len(pred)
+    metrics = compute_metrics(y, pred, "ALL", "test_")
+    # Store predictions and target values
+    info = pd.DataFrame([y, pred]).T
+    info.columns = ["y_true", "y_pred"]
+    FDIR = path.join(config["DATA_PATH"], config["PRED_PATH"], params['time_series'], "ARIMA")
+    makedirs(FDIR, exist_ok=True)
+    FPATH = path.join(FDIR, f"pred_{str(params['iter'])}.csv")
+    info.to_csv(FPATH, index=False)
+    # Load new info to mlflow run
+    with mlflow.start_run(run_id=run_id) as run:
+        mlflow.log_artifact(FPATH)
+        mlflow.log_metrics(metrics)
+        mlflow.log_metric("test_time", inf_time)
+    mlflow.end_run()
+
 
 def main(time_series: str, config: dict = {}):
     """_summary_
