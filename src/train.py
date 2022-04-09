@@ -2,8 +2,9 @@ import argparse
 import sys
 import yaml
 from LR import main as lr
+from Gluon import main as Gluon
 
-MODELS = {"LR": lr}
+MODELS = {"Gluon": Gluon}
 
 if __name__ == "__main__":
     # Read arguments
@@ -12,7 +13,7 @@ if __name__ == "__main__":
     parser.add_argument(help='Time-series name.', dest="time_series")
     parser.set_defaults(time_series="porto")
     parser.add_argument(help='ML model.', dest="model")
-    parser.set_defaults(model="LR")
+    parser.set_defaults(model="Gluon")
     parser.add_argument('-c', '--config', dest='config', 
                         help='Config yaml file.')
     parser.set_defaults(config="config.yaml")

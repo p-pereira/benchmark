@@ -15,7 +15,7 @@ if __name__ == "__main__":
     parser.add_argument(help='Time-series name.', dest="time_series")
     parser.set_defaults(time_series="porto")
     parser.add_argument(help='ML model.', dest="model")
-    parser.set_defaults(model="LR")
+    parser.set_defaults(model="Gluon")
     parser.add_argument('-c', '--config', dest='config', 
                         help='Config yaml file.')
     parser.add_argument('-r', '--reg', dest='make_regression', 
