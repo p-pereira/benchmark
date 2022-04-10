@@ -10,7 +10,7 @@ from tqdm import tqdm
 import mlflow
 from time import time
 
-def train(y: pd.Series, config: Dict ={}, run_name: str="", params: Dict = {}):
+def train_iteration(y: pd.Series, config: Dict ={}, run_name: str="", params: Dict = {}):
     """_summary_
 
     Parameters
