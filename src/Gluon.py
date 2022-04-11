@@ -12,6 +12,7 @@ import mlflow
 from time import time
 from gluonts.model.deepar import DeepAREstimator
 from gluonts.dataset.common import ListDataset
+from gluonts.mx.trainer import Trainer
 
 
 def train(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: str="", params: Dict = {}):
@@ -35,12 +36,12 @@ def train(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: str="", par
     except:
         pass
     
-    mlflow.gluon.autolog()
+    mlflow.autolog()
     with mlflow.start_run(run_name=run_name) as run:
         mlflow.log_params(params)
         start = time()
-        training_data = ListDataset([{"start":y.index[0]}], freq= "1day")
-        _ = DeepAREstimator(freq="1day", prediction_length=30).train(X, y)
+        training_data = ListDataset([{"start":y.index[0], "target": y}], freq= "D")
+        model = DeepAREstimator(freq="D", prediction_length=30, trainer=Trainer(epochs=5)).train(training_data)
         end = time()
 
         tr_time = end - start
@@ -58,7 +59,7 @@ def main(time_series: str, config: dict = {}):
         _description_, by default {}
     """
     # Get train files
-    train_files = list_files(time_series, config, pattern="tr*reg*")
+    train_files = list_files(time_series, config, pattern="tr_?.csv")
     if len(train_files) == 0:
         print("Error: no files found!")
         sys.exit()
