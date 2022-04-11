@@ -1,8 +1,8 @@
+from pickle import dump
 import pandas as pd
 import argparse
-from os import path, getcwd
+from os import makedirs, path, getcwd
 from typing import Dict
-from sklearn.linear_model import LinearRegression
 import pandas as pd
 import sys
 from utilities import load_data, list_files
@@ -36,7 +36,7 @@ def train(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: str="", par
     except:
         pass
     
-    mlflow.autolog()
+    mlflow.gluon.autolog()
     with mlflow.start_run(run_name=run_name) as run:
         mlflow.log_params(params)
         start = time()
@@ -46,6 +46,13 @@ def train(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: str="", par
 
         tr_time = end - start
         mlflow.log_metric("training_time", tr_time)
+        FDIR = path.join(config["DATA_PATH"], config["MODELS_PATH"],params["time_series"], str(params["iter"]), "GLUON")
+        makedirs(FDIR, exist_ok=True)
+        FPATH = path.join(FDIR, "MODEL.pkl")
+        with open(FPATH, "wb") as f:
+            dump(model, f)
+        mlflow.log_artifact(FPATH)
+        
     mlflow.end_run()
 
 def main(time_series: str, config: dict = {}):
@@ -75,6 +82,8 @@ def main(time_series: str, config: dict = {}):
         run_name = f"{time_series}_{target}_Gluon_{n+1}"
         X, y = load_data(file,config["TS"][time_series]["target"])
         train(X, y, config, run_name, params)
+        # TODO: remove next line
+        break
 
 
 if __name__ == "__main__":
