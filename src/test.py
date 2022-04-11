@@ -7,6 +7,7 @@ import mlflow
 from tqdm import tqdm
 from utilities import list_files, load_data, compute_metrics
 from time import time
+from Gluon import main as Gluon
 
 if __name__ == "__main__":
     # Read arguments

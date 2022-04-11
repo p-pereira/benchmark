@@ -1,5 +1,4 @@
 import pandas as pd
-from autots import AutoTS
 import argparse
 from os import path, getcwd
 from typing import Dict
@@ -11,7 +10,8 @@ import yaml
 from tqdm import tqdm
 import mlflow
 from time import time
-import gluonts as gluon
+from gluonts.model.deepar import DeepAREstimator
+from gluonts.dataset.common import ListDataset
 
 
 def train(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: str="", params: Dict = {}):
@@ -39,7 +39,8 @@ def train(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: str="", par
     with mlflow.start_run(run_name=run_name) as run:
         mlflow.log_params(params)
         start = time()
-        _ = Gluon().fit(X, y)
+        training_data = ListDataset([{"start":y.index[0]}], freq= "1day")
+        _ = DeepAREstimator(freq="1day", prediction_length=30).train(X, y)
         end = time()
 
         tr_time = end - start
@@ -62,17 +63,16 @@ def main(time_series: str, config: dict = {}):
         print("Error: no files found!")
         sys.exit()
     # Train Gluon models
-    target = config["Gluon"][time_series]["target"]
+    target = config["TS"][time_series]["target"]
     for n, file in enumerate(tqdm(train_files)):
         params = {
             'time_series': time_series,
-            'start': start,
             'target': target,
             'model': "Gluon",
             'iter': n+1
         }
-        run_name = f"{time_series}_{start}_{target}_Gluon_{n+1}"
-        X, y = load_data(file,config["Gluon"][time_series]["target"])
+        run_name = f"{time_series}_{target}_Gluon_{n+1}"
+        X, y = load_data(file,config["TS"][time_series]["target"])
         train(X, y, config, run_name, params)
 
 

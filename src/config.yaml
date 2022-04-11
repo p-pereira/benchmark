@@ -28,9 +28,8 @@ TS:
     target: "tempC" # target column
     WR: [1, 365, 366] # lag window for regression dataset creation
 
-Gluon:
-    format: ".csv"
-    target: "tempC"
+MODELS:
+  Gluon:
     start: "2008-07-01"
 
 
