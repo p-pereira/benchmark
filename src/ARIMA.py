@@ -44,7 +44,9 @@ def train_iteration(y: pd.Series, config: Dict ={}, run_name: str="", params: Di
         end = time()
 
         tr_time = end - start
+
         mlflow.log_metric("training_time", tr_time)
+        
     mlflow.end_run()
 
 def test_iteration(y: pd.Series, config: Dict = {}, run_name: str = "", params: Dict = {}):
@@ -106,7 +108,11 @@ def main(time_series: str, config: dict = {}, train: bool = True, test: bool = T
         run_name = f"{time_series}_{target}_ARIMA_{n+1}"
         _, y = load_data(file,config["TS"][time_series]["target"])
         #ta martelado, voltar a ver
-        test_iteration(y, config, run_name, params)
+        if train:
+            train_iteration(y, config, run_name, params)
+        if test:
+            #X, y_ts = load_data(file, target)
+            test_iteration(y, config, run_name, params)
         break
 
 if __name__ == "__main__":
