@@ -36,7 +36,7 @@ def train_iteration(y: pd.Series, config: Dict ={}, run_name: str="", params: Di
     makedirs(FDIR, exist_ok=True)
     FPATH = path.join(FDIR, "MODEL.pkl")
 
-    #mlflow.sklearn.autolog()
+    mlflow.autolog()
     with mlflow.start_run(run_name=run_name) as run:
         mlflow.log_params(params)
         start = time()
@@ -44,12 +44,7 @@ def train_iteration(y: pd.Series, config: Dict ={}, run_name: str="", params: Di
         end = time()
 
         tr_time = end - start
-
-        #with open(FPATH, 'wb') as pkl:
-         #  pickle.dump(model, pkl)
-
         mlflow.log_metric("training_time", tr_time)
-        mlflow.pmdarima.save_model(pmdarima_model=model, path=FPATH)
     mlflow.end_run()
 
 def test_iteration(y: pd.Series, config: Dict = {}, run_name: str = "", params: Dict = {}):
