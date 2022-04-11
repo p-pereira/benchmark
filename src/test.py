@@ -19,7 +19,7 @@ MODELS = {
     "LR": lr
     }
 
-def main(time_series: str= "porto", model: str = "LR", config: str = "config.yaml"):
+def main(time_series: str= "porto", model: str = "ARIMA", config: str = "config.yaml"):
     # Load configs
     try:
         config =  yaml.safe_load(open(config))
@@ -52,4 +52,13 @@ if __name__ == "__main__":
     parser.set_defaults(config="config.yaml")
     args = parser.parse_args()
     
-    main(args.time_series, args.model, args.config)
+    try:
+        config =  yaml.safe_load(open(args.config))
+    except Exception as e:
+        print("Error loading config file: ", e)
+        sys.exit()
+    
+    if args.model not in MODELS.keys():
+        print(f"Error: unkown model {args.model}.")
+        sys.exit()
+    MODELS[args.model](args.time_series, config)

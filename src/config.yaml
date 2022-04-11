@@ -9,6 +9,7 @@ MLFLOW_PATH: "6_mlflow/mlruns"
 
 # ML FLOW
 EXPERIMENT: "Benchmark TS"
+MLFLOW_URI: "http://localhost:5000"
 # Time-series parameters:
 TS:
   porto:

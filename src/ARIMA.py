@@ -9,6 +9,7 @@ import yaml
 from tqdm import tqdm
 import mlflow
 from time import time
+import pickle
 
 def train_iteration(y: pd.Series, config: Dict ={}, run_name: str="", params: Dict = {}):
     """_summary_
@@ -31,16 +32,24 @@ def train_iteration(y: pd.Series, config: Dict ={}, run_name: str="", params: Di
     except:
         pass
     
-    mlflow.sklearn.autolog()
+    FDIR = path.join(config["DATA_PATH"], config["MODELS_PATH"], params["time_series"], str(params["iter"]), "PMDARIMA")
+    makedirs(FDIR, exist_ok=True)
+    FPATH = path.join(FDIR, "MODEL.pkl")
+
+    #mlflow.sklearn.autolog()
     with mlflow.start_run(run_name=run_name) as run:
         mlflow.log_params(params)
         start = time()
-
-        _ = pm.auto_arima(y)
+        model = pm.auto_arima(y)
         end = time()
 
         tr_time = end - start
+
+        #with open(FPATH, 'wb') as pkl:
+         #  pickle.dump(model, pkl)
+
         mlflow.log_metric("training_time", tr_time)
+        mlflow.pmdarima.save_model(pmdarima_model=model, path=FPATH)
     mlflow.end_run()
 
 def test_iteration(y: pd.Series, config: Dict = {}, run_name: str = "", params: Dict = {}):
@@ -50,6 +59,7 @@ def test_iteration(y: pd.Series, config: Dict = {}, run_name: str = "", params: 
     experiment = dict(mlflow.get_experiment_by_name(config["EXPERIMENT"]))
     runs = mlflow.search_runs([experiment["experiment_id"]])
     run_id = runs[runs['tags.mlflow.runName']==run_name]["run_id"].values[0]
+
     # Load model
     logged_model = f"runs:/{run_id}/model"
     loaded_model = mlflow.pyfunc.load_model(logged_model)
@@ -74,7 +84,7 @@ def test_iteration(y: pd.Series, config: Dict = {}, run_name: str = "", params: 
     mlflow.end_run()
 
 
-def main(time_series: str, config: dict = {}):
+def main(time_series: str, config: dict = {}, train: bool = True, test: bool = True):
     """_summary_
 
     Parameters
@@ -100,8 +110,9 @@ def main(time_series: str, config: dict = {}):
         }
         run_name = f"{time_series}_{target}_ARIMA_{n+1}"
         _, y = load_data(file,config["TS"][time_series]["target"])
-        train(y, config, run_name, params)
-
+        #ta martelado, voltar a ver
+        test_iteration(y, config, run_name, params)
+        break
 
 if __name__ == "__main__":
     # Read arguments
