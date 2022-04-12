@@ -76,11 +76,14 @@ def test_iteration(X: pd.DataFrame, y: pd.Series, config: Dict = {}, run_name: s
     loaded_model = mlflow.pyfunc.load_model(logged_model)'''
     
     # Predic and compute metrics
-    print(model)
     start = time()
     test_data = ListDataset([{"start": y.index[0], "target": y}], freq= "D")
     pred = model.predict(test_data)
-    print(pred)
+    #someGenerator = ( (x, chr(x)) for x in range(48,127) ) 
+    someDf = pd.DataFrame(pred)
+    print('--------------------------------------------------------------')
+    print(list(pred))
+    print('--------------------------------------------------------------')
     end = time()
     inf_time = (end - start) / len(pred)
     metrics = compute_metrics(y, pred, "ALL", "test_")
