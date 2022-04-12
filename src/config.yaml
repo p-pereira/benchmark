@@ -9,6 +9,7 @@ MLFLOW_PATH: "6_mlflow/mlruns"
 
 # ML FLOW
 EXPERIMENT: "Benchmark TS"
+MLFLOW_URI: "http://localhost:5005"
 # Time-series parameters:
 TS:
   porto:
@@ -31,6 +32,3 @@ TS:
 MODELS:
   Gluon:
     start: "2008-07-01"
-
-
-

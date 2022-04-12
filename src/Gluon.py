@@ -30,11 +30,15 @@ def train(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: str="", par
         _description_, by default ""
     """
     # mlflow configs
-    mlflow.set_tracking_uri("http://localhost:5000")
+    mlflow.set_tracking_uri("http://localhost:5005")
     try:
         mlflow.create_experiment(name=config["EXPERIMENT"])
     except:
         pass
+
+    FDIR = path.join(config["DATA_PATH"], config["MODELS_PATH"],params["time_series"], str(params["iter"]), "GLUON")
+    makedirs(FDIR, exist_ok=True)
+    FPATH = path.join(FDIR, "MODEL.pkl")
     
     mlflow.gluon.autolog()
     with mlflow.start_run(run_name=run_name) as run:
@@ -46,16 +50,13 @@ def train(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: str="", par
 
         tr_time = end - start
         mlflow.log_metric("training_time", tr_time)
-        FDIR = path.join(config["DATA_PATH"], config["MODELS_PATH"],params["time_series"], str(params["iter"]), "GLUON")
-        makedirs(FDIR, exist_ok=True)
-        FPATH = path.join(FDIR, "MODEL.pkl")
         with open(FPATH, "wb") as f:
             dump(model, f)
         mlflow.log_artifact(FPATH)
         
     mlflow.end_run()
 
-def test_iteration(y: pd.Series, config: Dict = {}, run_name: str = "", params: Dict = {}):
+def test_iteration(X: pd.DataFrame, y: pd.Series, config: Dict = {}, run_name: str = "", params: Dict = {}):
     # mlflow configs
     mlflow.set_tracking_uri(config["MLFLOW_URI"])
 
@@ -87,7 +88,7 @@ def test_iteration(y: pd.Series, config: Dict = {}, run_name: str = "", params: 
         mlflow.log_metric("test_time", inf_time)
     mlflow.end_run()
 
-def main(time_series: str, config: dict = {}, train: bool = True, test: bool = True):
+def main(time_series: str, config: dict = {}):
     """_summary_
 
     Parameters
@@ -113,13 +114,13 @@ def main(time_series: str, config: dict = {}, train: bool = True, test: bool = T
         }
         run_name = f"{time_series}_{target}_Gluon_{n+1}"
         X, y = load_data(file,config["TS"][time_series]["target"])
-        #train(X, y, config, run_name, params)
+        train(X, y, config, run_name, params)
         # TODO: remove next line
-        if train:
+        '''if train:
             train(X, y, config, run_name, params)
         if test:
             #X, y_ts = load_data(file, target)
-            test_iteration(X, y, config, run_name, params)
+            test_iteration(X, y, config, run_name, params)'''
         break
 
 
@@ -133,12 +134,12 @@ if __name__ == "__main__":
                         help='Config yaml file.')
     parser.set_defaults(config="config.yaml")
 
-    parser.add_argument('-tr', '--train', dest="train",
+    '''parser.add_argument('-tr', '--train', dest="train",
                         action=argparse.BooleanOptionalAction,
                         help="Performs model training.")
     parser.add_argument('-ts', '--test', dest="test",
                         action=argparse.BooleanOptionalAction,
-                        help="Performs model testing (evaluation).")
+                        help="Performs model testing (evaluation).")'''
     args = parser.parse_args()
     # Load configs
     try:
@@ -147,4 +148,4 @@ if __name__ == "__main__":
         print("Error loading config file: ", e)
         sys.exit()
     # Train LR
-    main(args.time_series, config, args.train, args.test)
+    main(args.time_series, config)
