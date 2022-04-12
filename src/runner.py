@@ -1,6 +1,6 @@
-from .generate_data import main as gen_data
-from .test import main as test
-from .train import main as train
+from generate_data import main as gen_data
+from test import main as test
+from train import main as train
 import yaml
 
 if __name__ == "__main__":

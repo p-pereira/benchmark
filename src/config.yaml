@@ -34,5 +34,4 @@ TS:
 MODELS:
   fedot:
     timeout: 15 # 15min.
-    n_jobs: -1 # all cores
 
