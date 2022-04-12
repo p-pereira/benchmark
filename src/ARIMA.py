@@ -124,6 +124,12 @@ if __name__ == "__main__":
     parser.add_argument('-c', '--config', dest='config', 
                         help='Config yaml file.')
     parser.set_defaults(config="config.yaml")
+    parser.add_argument('-tr', '--train', dest="train",
+                        action=argparse.BooleanOptionalAction,
+                        help="Performs model training.")
+    parser.add_argument('-ts', '--test', dest="test",
+                        action=argparse.BooleanOptionalAction,
+                        help="Performs model testing (evaluation).")
     args = parser.parse_args()
     # Load configs
     try:
@@ -131,5 +137,5 @@ if __name__ == "__main__":
     except Exception as e:
         print("Error loading config file: ", e)
         sys.exit()
-    # Train ARIMA
-    main(args.time_series, config)
+    # Train/Test ARIMA
+    main(args.time_series, config, args.train, args.test)

@@ -52,6 +52,8 @@ if __name__ == "__main__":
     parser.set_defaults(config="config.yaml")
     args = parser.parse_args()
     
+    main(args.time_series, args.model, args.config)
+    '''
     try:
         config =  yaml.safe_load(open(args.config))
     except Exception as e:
@@ -62,3 +64,4 @@ if __name__ == "__main__":
         print(f"Error: unkown model {args.model}.")
         sys.exit()
     MODELS[args.model](args.time_series, config)
+    '''

@@ -40,8 +40,10 @@ if __name__ == "__main__":
     args = parser.parse_args()
     
     #DESTA FORMA, CORRE O TRAIN, SE ELIMINAR E PUSER
-    #main(args.time_series, args.model, args.config), JÁ NÃO FUNCIONA
+    main(args.time_series, args.model, args.config)
+    #, JÁ NÃO FUNCIONA
     # Load configs
+    '''
     try:
         config =  yaml.safe_load(open(args.config))
     except Exception as e:
@@ -52,3 +54,4 @@ if __name__ == "__main__":
         print(f"Error: unkown model {args.model}.")
         sys.exit()
     MODELS[args.model](args.time_series, config)
+    '''
