@@ -1,11 +1,11 @@
-from pickle import dump
+from pickle import dump, load
 import pandas as pd
 import argparse
 from os import makedirs, path, getcwd
 from typing import Dict
 import pandas as pd
 import sys
-from utilities import load_data, list_files
+from utilities import load_data, list_files, compute_metrics
 import yaml
 from tqdm import tqdm
 import mlflow
@@ -65,22 +65,32 @@ def test_iteration(X: pd.DataFrame, y: pd.Series, config: Dict = {}, run_name: s
     run_id = runs[runs['tags.mlflow.runName']==run_name]["run_id"].values[0]
 
     # Load model
-    logged_model = f"runs:/{run_id}/model"
-    loaded_model = mlflow.pyfunc.load_model(logged_model)
+    FDIR = path.join(config["DATA_PATH"], config["MODELS_PATH"],
+                     params["time_series"], str(params["iter"]), "GLUON")
+    makedirs(FDIR, exist_ok=True)
+    FPATH = path.join(FDIR, "MODEL.pkl")
+    with open(FPATH, "rb") as f:
+        model = load(f)
+    
+    '''logged_model = f"runs:/{run_id}/model"
+    loaded_model = mlflow.pyfunc.load_model(logged_model)'''
+    
     # Predic and compute metrics
+    print(model)
     start = time()
     test_data = ListDataset([{"start": y.index[0], "target": y}], freq= "D")
-    pred = loaded_model.predict(test_data)
+    pred = model.predict(test_data)
+    print(pred)
     end = time()
     inf_time = (end - start) / len(pred)
     metrics = compute_metrics(y, pred, "ALL", "test_")
     # Store predictions and target values
     info = pd.DataFrame([y, pred]).T
     info.columns = ["y_true", "y_pred"]
-    FDIR = path.join(config["DATA_PATH"], config["PRED_PATH"], params['time_series'], "Gluon")
+    '''FDIR = path.join(config["DATA_PATH"], config["PRED_PATH"], params['time_series'], "Gluon")
     makedirs(FDIR, exist_ok=True)
     FPATH = path.join(FDIR, f"pred_{str(params['iter'])}.csv")
-    info.to_csv(FPATH, index=False)
+    info.to_csv(FPATH, index=False)'''
     # Load new info to mlflow run
     with mlflow.start_run(run_id=run_id) as run:
         mlflow.log_artifact(FPATH)
@@ -114,7 +124,7 @@ def main(time_series: str, config: dict = {}):
         }
         run_name = f"{time_series}_{target}_Gluon_{n+1}"
         X, y = load_data(file,config["TS"][time_series]["target"])
-        train(X, y, config, run_name, params)
+        test_iteration(X, y, config, run_name, params)
         # TODO: remove next line
         '''if train:
             train(X, y, config, run_name, params)

@@ -6,6 +6,23 @@ from Gluon import main as Gluon
 
 MODELS = {"Gluon": Gluon}
 
+def main(time_series: str= "porto", model: str = "Gluon", config: str = "config.yaml"):
+    # Load configs
+    try:
+        config =  yaml.safe_load(open(config))
+    except Exception as e:
+        print("Error loading config file: ", e)
+        sys.exit()
+    
+    if model == "ALL":
+        for model_ in MODELS.keys():
+            MODELS[model_](time_series, config, train=True, test=False)
+    elif model in MODELS.keys():
+        MODELS[model](time_series, config, train=True, test=False)
+    else:
+        print(f"Error: unknown model {model}. Options: {MODELS.keys()}")
+        sys.exit()
+
 if __name__ == "__main__":
     # Read arguments
     args = sys.argv[1:]
@@ -18,6 +35,8 @@ if __name__ == "__main__":
                         help='Config yaml file.')
     parser.set_defaults(config="config.yaml")
     args = parser.parse_args()
+    main(args.time_series, args.model, args.config)
+    '''
     # Load configs
     try:
         config =  yaml.safe_load(open(args.config))
@@ -28,4 +47,4 @@ if __name__ == "__main__":
     if args.model not in MODELS.keys():
         print(f"Error: unkown model {args.model}.")
         sys.exit()
-    MODELS[args.model](args.time_series, config)
+    MODELS[args.model](args.time_series, config)'''
