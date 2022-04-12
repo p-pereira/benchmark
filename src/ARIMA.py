@@ -36,7 +36,7 @@ def train_iteration(y: pd.Series, config: Dict ={}, run_name: str="", params: Di
     makedirs(FDIR, exist_ok=True)
     FPATH = path.join(FDIR, "MODEL.pkl")
 
-    mlflow.autolog()
+    mlflow.autolog(log_models=False, log_model_signatures=False, silent=True)
     with mlflow.start_run(run_name=run_name) as run:
         mlflow.log_params(params)
         start = time()
@@ -46,6 +46,7 @@ def train_iteration(y: pd.Series, config: Dict ={}, run_name: str="", params: Di
         tr_time = end - start
 
         mlflow.log_metric("training_time", tr_time)
+        mlflow.pmdarima.log_model(model, "model")
         
     mlflow.end_run()
 
@@ -57,12 +58,14 @@ def test_iteration(y: pd.Series, config: Dict = {}, run_name: str = "", params: 
     runs = mlflow.search_runs([experiment["experiment_id"]])
     run_id = runs[runs['tags.mlflow.runName']==run_name]["run_id"].values[0]
 
+    time_series = params["time_series"]
+    H = config["TS"][time_series]["H"]
     # Load model
     logged_model = f"runs:/{run_id}/model"
-    loaded_model = mlflow.pyfunc.load_model(logged_model)
+    loaded_model = mlflow.pmdarima.load_model(logged_model)
     # Predic and compute metrics
     start = time()
-    pred = loaded_model.predict(y)
+    pred = loaded_model.predict(H)
     end = time()
     inf_time = (end - start) / len(pred)
     metrics = compute_metrics(y, pred, "ALL", "test_")
@@ -92,7 +95,8 @@ def main(time_series: str, config: dict = {}, train: bool = True, test: bool = T
         _description_, by default {}
     """
     # Get train files
-    train_files = list_files(time_series, config, pattern="tr_?.csv")
+    train_files = list_files(time_series, config, pattern="?_tr.csv")
+    test_files = list_files(time_series, config, pattern="?_ts.csv")
     if len(train_files) == 0:
         print("Error: no files found!")
         sys.exit()
@@ -111,8 +115,8 @@ def main(time_series: str, config: dict = {}, train: bool = True, test: bool = T
         if train:
             train_iteration(y, config, run_name, params)
         if test:
-            #X, y_ts = load_data(file, target)
-            test_iteration(y, config, run_name, params)
+            _, y_ts = load_data(test_files[n], target)
+            test_iteration(y_ts, config, run_name, params)
         break
 
 if __name__ == "__main__":
