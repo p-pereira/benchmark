@@ -15,7 +15,8 @@ def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: s
     print(y)
     
     X = pd.concat([X.date_time, y],axis=1)
-    X.index = pd.to_datetime(X.index)
+    X['date_time'] = pd.to_datetime(X['date_time'])
+    X = X.set_index('date_time')
 
     """_summary_
 
@@ -31,7 +32,7 @@ def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: s
         _description_, by default ""
     """
     # mlflow configs
-    mlflow.set_tracking_uri("http://localhost:5000")
+    mlflow.set_tracking_uri(config["MLFLOW_URI"])
     try:
         mlflow.create_experiment(name=config["EXPERIMENT"])
     except:
@@ -87,13 +88,13 @@ def test_iteration(X: pd.DataFrame, y: pd.Series, config: Dict = {}, run_name: s
     print("------------------------------")
     # Predic and compute metrics
     start = time()
-    pred = model.predict()
+    pred = model.predict().forecast.values.T[0]
     print("------------------------------")
     print(pred)
     #prev = pd.to_datetime(pred.forecast.date_time)
     print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
-    pred = pred.forecast.set_index('date_time')
-    pred.index = pd.to_datetime(pred.index)
+    #pred = pred.forecast.set_index('date_time')
+    #pred.index = pd.to_datetime(pred.index)
     print(pred)
     print("??????????????????????")
     end = time()
