@@ -89,10 +89,15 @@ def test_iteration(X: pd.DataFrame, y: pd.Series, config: Dict = {}, run_name: s
     start = time()
     pred = model.predict()
     print("------------------------------")
-    print(pred.forecast)
-    print("------------------------------")
+    print(pred)
+    #prev = pd.to_datetime(pred.forecast.date_time)
+    print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+    pred = pred.forecast.set_index('date_time')
+    pred.index = pd.to_datetime(pred.index)
+    print(pred)
+    print("??????????????????????")
     end = time()
-    inf_time = (end - start) #/ len(pred)
+    inf_time = (end - start) / len(pred)
     metrics = compute_metrics(y, pred, "ALL", "test_")
     # Store predictions and target values
     info = pd.DataFrame([y, pred]).T
