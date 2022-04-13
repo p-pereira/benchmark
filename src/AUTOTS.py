@@ -9,9 +9,14 @@ import yaml
 import mlflow
 from tqdm import tqdm
 from time import time
-import pickle
+from pickle import dump, load
 
 def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: str="", params: Dict = {}):
+    print(y)
+    
+    X = pd.concat([X.date_time, y],axis=1)
+    X.index = pd.to_datetime(X.index)
+
     """_summary_
 
     Parameters
@@ -44,18 +49,60 @@ def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: s
             forecast_length=3,
             frequency='infer',
             ensemble='simple',
-            max_generations=5,
+            model_list="superfast", 
+            transformer_list="superfast",
+            max_generations=2,
             num_validations=2,
         )
-        model = model.fit(X, date_col='date_time', value_col=y.values)
+
+        model = model.fit(X)
         end = time()
 
         tr_time = end - start
-
+        with open(FPATH, "wb") as f:
+            dump(model, f)
         mlflow.log_metric("training_time", tr_time)
         mlflow.pmdarima.log_model(model, "model")
         
     mlflow.end_run()
+
+def test_iteration(y: pd.Series, config: Dict = {}, run_name: str = "", params: Dict = {}):
+    # mlflow configs
+    mlflow.set_tracking_uri(config["MLFLOW_URI"])
+
+    experiment = dict(mlflow.get_experiment_by_name(config["EXPERIMENT"]))
+    runs = mlflow.search_runs([experiment["experiment_id"]])
+    run_id = runs[runs['tags.mlflow.runName']==run_name]["run_id"].values[0]
+
+    time_series = params["time_series"]
+    H = config["TS"][time_series]["H"]
+    # Load model
+    
+    ########################################################
+    with open(FPATH, "rb") as f:
+        model = load(f)
+    ########################################################
+
+    # Predic and compute metrics
+    start = time()
+    pred = model.predict(H)
+    end = time()
+    inf_time = (end - start) / len(pred)
+    metrics = compute_metrics(y, pred, "ALL", "test_")
+    # Store predictions and target values
+    info = pd.DataFrame([y, pred]).T
+    info.columns = ["y_true", "y_pred"]
+    FDIR = path.join(config["DATA_PATH"], config["PRED_PATH"], params['time_series'], "AUTOTS")
+    makedirs(FDIR, exist_ok=True)
+    FPATH = path.join(FDIR, f"pred_{str(params['iter'])}.csv")
+    info.to_csv(FPATH, index=False)
+    # Load new info to mlflow run
+    with mlflow.start_run(run_id=run_id) as run:
+        mlflow.log_artifact(FPATH)
+        mlflow.log_metrics(metrics)
+        mlflow.log_metric("test_time", inf_time)
+    mlflow.end_run()
+
 
 def main(time_series: str, config: dict = {}, train: bool = True, test: bool = True):
     """_summary_
@@ -87,9 +134,9 @@ def main(time_series: str, config: dict = {}, train: bool = True, test: bool = T
         #ta martelado, voltar a ver
         if train:
             train_iteration(X, y, config, run_name, params)
-        #if test:
-         #   _, y_ts = load_data(test_files[n], target)
-          #  test_iteration(y_ts, config, run_name, params)
+        if test:
+           _, y_ts = load_data(test_files[n], target)
+           test_iteration(y_ts, config, run_name, params)
         break
 
 if __name__ == "__main__":
