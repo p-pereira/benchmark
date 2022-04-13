@@ -4,10 +4,12 @@ import yaml
 from LR import main as lr
 from ARIMA import main as arima
 from AUTOTS import main as autots
+from PYAF import main as pyaf
 
 MODELS = {
     "ARIMA": arima,
     "AUTOTS": autots,
+    "PYAF": pyaf,
     "LR": lr
     }
 
