@@ -12,12 +12,6 @@ from time import time
 from pickle import dump, load
 
 def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: str="", params: Dict = {}):
-    print(y)
-    
-    X = pd.concat([X.date_time, y],axis=1)
-    X['date_time'] = pd.to_datetime(X['date_time'])
-    X = X.set_index('date_time')
-
     """_summary_
 
     Parameters
@@ -31,6 +25,11 @@ def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: s
     run_name : str, optional
         _description_, by default ""
     """
+
+    X = pd.concat([X.date_time, y],axis=1)
+    X['date_time'] = pd.to_datetime(X['date_time'])
+    X = X.set_index('date_time')
+
     # mlflow configs
     mlflow.set_tracking_uri(config["MLFLOW_URI"])
     try:
@@ -82,21 +81,10 @@ def test_iteration(X: pd.DataFrame, y: pd.Series, config: Dict = {}, run_name: s
    
     with open(FPATH, "rb") as f:
         model = load(f)
-   
-    print("------------------------------")
-    print(model)
-    print("------------------------------")
+
     # Predic and compute metrics
     start = time()
     pred = model.predict().forecast.values.T[0]
-    print("------------------------------")
-    print(pred)
-    #prev = pd.to_datetime(pred.forecast.date_time)
-    print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
-    #pred = pred.forecast.set_index('date_time')
-    #pred.index = pd.to_datetime(pred.index)
-    print(pred)
-    print("??????????????????????")
     end = time()
     inf_time = (end - start) / len(pred)
     metrics = compute_metrics(y, pred, "ALL", "test_")
