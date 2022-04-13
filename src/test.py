@@ -13,9 +13,11 @@ from utilities import list_files, load_data, compute_metrics
 from time import time
 from LR import main as lr
 from ARIMA import main as arima
+from AUTOTS import main as autots
 
 MODELS = {
     "ARIMA": arima,
+    "AUTOTS": autots,
     "LR": lr
     }
 
