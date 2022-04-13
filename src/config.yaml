@@ -33,5 +33,7 @@ TS:
 # Models parameters:
 MODELS:
   fedot:
-    timeout: 15 # 15min.
+    timeout: 15 # 15min for automl
+  sktime:
+    sp: 7 # seasonal period
 
