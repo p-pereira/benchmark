@@ -41,32 +41,32 @@ def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: s
     makedirs(FDIR, exist_ok=True)
     FPATH = path.join(FDIR, "MODEL.pkl")
 
-    mlflow.autolog(log_models=False, log_model_signatures=False, silent=True)
     with mlflow.start_run(run_name=run_name) as run:
         mlflow.log_params(params)
         start = time()
         model = AutoTS(
-            forecast_length=3,
+            forecast_length=30,
             frequency='infer',
-            ensemble='simple',
+            ensemble=None,
             model_list="superfast", 
             transformer_list="superfast",
             max_generations=2,
-            num_validations=2,
+            num_validations=2
         )
 
         model = model.fit(X)
         end = time()
-
         tr_time = end - start
+
         with open(FPATH, "wb") as f:
             dump(model, f)
+
         mlflow.log_metric("training_time", tr_time)
         mlflow.pmdarima.log_model(model, "model")
         
     mlflow.end_run()
 
-def test_iteration(y: pd.Series, config: Dict = {}, run_name: str = "", params: Dict = {}):
+def test_iteration(X: pd.DataFrame, y: pd.Series, config: Dict = {}, run_name: str = "", params: Dict = {}):
     # mlflow configs
     mlflow.set_tracking_uri(config["MLFLOW_URI"])
 
@@ -74,20 +74,25 @@ def test_iteration(y: pd.Series, config: Dict = {}, run_name: str = "", params: 
     runs = mlflow.search_runs([experiment["experiment_id"]])
     run_id = runs[runs['tags.mlflow.runName']==run_name]["run_id"].values[0]
 
-    time_series = params["time_series"]
-    H = config["TS"][time_series]["H"]
     # Load model
-    
-    ########################################################
+    FDIR = path.join(config["DATA_PATH"], config["MODELS_PATH"], params["time_series"], str(params["iter"]), "AUTOTS")
+    makedirs(FDIR, exist_ok=True)
+    FPATH = path.join(FDIR, "MODEL.pkl")
+   
     with open(FPATH, "rb") as f:
         model = load(f)
-    ########################################################
-
+   
+    print("------------------------------")
+    print(model)
+    print("------------------------------")
     # Predic and compute metrics
     start = time()
-    pred = model.predict(H)
+    pred = model.predict()
+    print("------------------------------")
+    print(pred.forecast)
+    print("------------------------------")
     end = time()
-    inf_time = (end - start) / len(pred)
+    inf_time = (end - start) #/ len(pred)
     metrics = compute_metrics(y, pred, "ALL", "test_")
     # Store predictions and target values
     info = pd.DataFrame([y, pred]).T
@@ -135,8 +140,8 @@ def main(time_series: str, config: dict = {}, train: bool = True, test: bool = T
         if train:
             train_iteration(X, y, config, run_name, params)
         if test:
-           _, y_ts = load_data(test_files[n], target)
-           test_iteration(y_ts, config, run_name, params)
+           X_ts, y_ts = load_data(test_files[n], target)
+           test_iteration(X_ts, y_ts, config, run_name, params)
         break
 
 if __name__ == "__main__":
