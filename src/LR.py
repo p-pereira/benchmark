@@ -26,7 +26,7 @@ def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict = {}, run_name: 
         Run name for MLflow, by default "" (empty)
     """
     # mlflow configs
-    mlflow.set_tracking_uri("http://localhost:5000")
+    mlflow.set_tracking_uri(config["MLFLOW_URI"])
     try:
         mlflow.create_experiment(name=config["EXPERIMENT"])
     except:
@@ -45,7 +45,7 @@ def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict = {}, run_name: 
 
 def test_iteration(X: pd.DataFrame, y: pd.Series, config: Dict = {}, run_name: str = "", params: Dict = {}):
     # mlflow configs
-    mlflow.set_tracking_uri("http://localhost:5000")
+    mlflow.set_tracking_uri(config["MLFLOW_URI"])
 
     experiment = dict(mlflow.get_experiment_by_name(config["EXPERIMENT"]))
     runs = mlflow.search_runs([experiment["experiment_id"]])
@@ -88,8 +88,8 @@ def main(time_series: str, config: dict = {}, train: bool = True, test: bool = T
         Whether performs model testing/evaluation or not, by default True (it does)
     """
     # Get train files
-    train_files = list_files(time_series, config, pattern="tr_?_reg.csv")
-    test_files = list_files(time_series, config, pattern="ts_?_reg.csv")
+    train_files = list_files(time_series, config, pattern="*_tr_reg.csv")
+    test_files = list_files(time_series, config, pattern="*_ts_reg.csv")
     if len(train_files) == 0:
         print("Error: no files found!")
         sys.exit()
