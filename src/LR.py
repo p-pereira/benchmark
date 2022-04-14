@@ -1,31 +1,32 @@
+# Imports
 import argparse
-from os import path, getcwd
+from os import makedirs, path, getcwd
 from typing import Dict
 from sklearn.linear_model import LinearRegression
 import pandas as pd
 import sys
-from utilities import load_data, list_files
+from utilities import compute_metrics, load_data, list_files
 import yaml
 from tqdm import tqdm
 import mlflow
 from time import time
 
-def train(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: str="", params: Dict = {}):
-    """_summary_
+def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict = {}, run_name: str= "", params: Dict = {}):
+    """Train a Linear Regression model and storing metrics in MLflow.
 
     Parameters
     ----------
     X : pd.DataFrame
-        _description_
+        X data.
     y : pd.Series
-        _description_
+        Target values.
     config : Dict, optional
-        _description_, by default {}
+        Configuration dict from config.yaml file, by default {}
     run_name : str, optional
-        _description_, by default ""
+        Run name for MLflow, by default "" (empty)
     """
     # mlflow configs
-    mlflow.set_tracking_uri("http://localhost:5000")
+    mlflow.set_tracking_uri(config["MLFLOW_URI"])
     try:
         mlflow.create_experiment(name=config["EXPERIMENT"])
     except:
@@ -42,24 +43,59 @@ def train(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: str="", par
         mlflow.log_metric("training_time", tr_time)
     mlflow.end_run()
 
-def main(time_series: str, config: dict = {}):
-    """_summary_
+def test_iteration(X: pd.DataFrame, y: pd.Series, config: Dict = {}, run_name: str = "", params: Dict = {}):
+    # mlflow configs
+    mlflow.set_tracking_uri(config["MLFLOW_URI"])
+
+    experiment = dict(mlflow.get_experiment_by_name(config["EXPERIMENT"]))
+    runs = mlflow.search_runs([experiment["experiment_id"]])
+    run_id = runs[runs['tags.mlflow.runName']==run_name]["run_id"].values[0]
+    # Load model
+    logged_model = f"runs:/{run_id}/model"
+    loaded_model = mlflow.pyfunc.load_model(logged_model)
+    # Predic and compute metrics
+    start = time()
+    pred = loaded_model.predict(X)
+    end = time()
+    inf_time = (end - start) / len(pred)
+    metrics = compute_metrics(y, pred, "ALL", "test_")
+    # Store predictions and target values
+    info = pd.DataFrame([y, pred]).T
+    info.columns = ["y_true", "y_pred"]
+    FDIR = path.join(config["DATA_PATH"], config["PRED_PATH"], params['time_series'], "LR")
+    makedirs(FDIR, exist_ok=True)
+    FPATH = path.join(FDIR, f"pred_{str(params['iter'])}.csv")
+    info.to_csv(FPATH, index=False)
+    # Load new info to mlflow run
+    with mlflow.start_run(run_id=run_id) as run:
+        mlflow.log_artifact(FPATH)
+        mlflow.log_metrics(metrics)
+        mlflow.log_metric("test_time", inf_time)
+    mlflow.end_run()
+
+def main(time_series: str, config: dict = {}, train: bool = True, test: bool = True):
+    """Read all Rolling Window iterarion training files from a given time-series and train a Linear Regression model for each.
 
     Parameters
     ----------
     time_series : str
-        _description_
+        Time-series name.
     config : dict, optional
-        _description_, by default {}
+        Configuration dict from config.yaml file, by default {}
+    train: bool, optional
+        Whether performs model training or not, by default True (it does)
+    test: bool, optional
+        Whether performs model testing/evaluation or not, by default True (it does)
     """
     # Get train files
-    train_files = list_files(time_series, config, pattern="tr*reg*")
+    train_files = list_files(time_series, config, pattern="*_tr_reg.csv")
+    test_files = list_files(time_series, config, pattern="*_ts_reg.csv")
     if len(train_files) == 0:
         print("Error: no files found!")
         sys.exit()
     # Train LR models
     target = config["TS"][time_series]["target"]
-    for n, file in enumerate(tqdm(train_files)):
+    for n, (file, file2) in enumerate(tqdm(zip(train_files, test_files))):
         params = {
             'time_series': time_series,
             'target': target,
@@ -67,8 +103,14 @@ def main(time_series: str, config: dict = {}):
             'iter': n+1
         }
         run_name = f"{time_series}_{target}_LR_{n+1}"
-        X, y = load_data(file,config["TS"][time_series]["target"])
-        train(X, y, config, run_name, params)
+        if train:
+            X, y = load_data(file,config["TS"][time_series]["target"])
+            train_iteration(X, y, config, run_name, params)
+        if test:
+            X, y = load_data(file2,config["TS"][time_series]["target"])
+            test_iteration(X, y, config, run_name, params)
+        # TODO: remove this for all train/test datasets
+        #break
 
 
 if __name__ == "__main__":
@@ -80,6 +122,12 @@ if __name__ == "__main__":
     parser.add_argument('-c', '--config', dest='config', 
                         help='Config yaml file.')
     parser.set_defaults(config="config.yaml")
+    parser.add_argument('-tr', '--train', dest="train",
+                        action=argparse.BooleanOptionalAction,
+                        help="Performs model training.")
+    parser.add_argument('-ts', '--test', dest="test",
+                        action=argparse.BooleanOptionalAction,
+                        help="Performs model testing (evaluation).")
     args = parser.parse_args()
     # Load configs
     try:
@@ -87,6 +135,6 @@ if __name__ == "__main__":
     except Exception as e:
         print("Error loading config file: ", e)
         sys.exit()
-    # Train LR
-    main(args.time_series, config)
+    # Train/test LR
+    main(args.time_series, config, args.train, args.test)
     

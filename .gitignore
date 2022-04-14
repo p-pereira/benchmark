@@ -134,4 +134,7 @@ dmypy.json
 # Data
 data/**/*.csv
 data/6_mlflow/mlruns/
-data/3_models/*/*
+data/3_models/*
+
+# Notebooks
+notebooks/*

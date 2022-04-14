@@ -1,12 +1,27 @@
+import warnings
+warnings.filterwarnings("ignore", category=FutureWarning)
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 import argparse
 import sys
 import yaml
 from LR import main as lr
-from Gluon import main as Gluon
+from FEDOT import main as fedot
+from LUDWIG import main as ludwig
+from ARIMA import main as arima
+from AUTOTS import main as autots
+from PYAF import main as pyaf
 
-MODELS = {"Gluon": Gluon}
+MODELS = {
+    "ARIMA": arima,
+    "AUTOTS": autots,
+    "PYAF": pyaf,
+    "FEDOT": fedot,
+    "LUDWIG": ludwig,
+    "LR": lr
+    }
 
-def main(time_series: str= "porto", model: str = "Gluon", config: str = "config.yaml"):
+def main(time_series: str= "porto", model: str = "ARIMA", config: str = "config.yaml"):
     # Load configs
     try:
         config =  yaml.safe_load(open(config))
@@ -30,14 +45,17 @@ if __name__ == "__main__":
     parser.add_argument(help='Time-series name.', dest="time_series")
     parser.set_defaults(time_series="porto")
     parser.add_argument(help='ML model.', dest="model")
-    parser.set_defaults(model="Gluon")
+    parser.set_defaults(model="ARIMA")
     parser.add_argument('-c', '--config', dest='config', 
                         help='Config yaml file.')
     parser.set_defaults(config="config.yaml")
     args = parser.parse_args()
+    #DESTA FORMA, CORRE O TRAIN, SE ELIMINAR E PUSER
     main(args.time_series, args.model, args.config)
-    '''
+    #, JÁ NÃO FUNCIONA
+
     # Load configs
+    '''
     try:
         config =  yaml.safe_load(open(args.config))
     except Exception as e:
@@ -47,4 +65,6 @@ if __name__ == "__main__":
     if args.model not in MODELS.keys():
         print(f"Error: unkown model {args.model}.")
         sys.exit()
-    MODELS[args.model](args.time_series, config)'''
+
+    MODELS[args.model](args.time_series, config)
+    '''
