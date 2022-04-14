@@ -157,8 +157,8 @@ def main(time_series: str, config_file: str = "config.yaml", make_regression: bo
 
         dtr = d.iloc[res["tr"], ]
         dts = d.iloc[res["ts"], ]
-        tr_fpath = os.path.join(lags_path, f"tr_{it}{fn}{format}")
-        ts_fpath = os.path.join(lags_path, f"ts_{it}{fn}{format}")
+        tr_fpath = os.path.join(lags_path, f"{it}_tr{fn}{format}")
+        ts_fpath = os.path.join(lags_path, f"{it}_ts{fn}{format}")
         dtr.to_csv(tr_fpath, index=None)
         dts.to_csv(ts_fpath, index=None)
 
@@ -173,8 +173,8 @@ if __name__ == "__main__":
                         help='Config yaml file.')
     parser.set_defaults(config="config.yaml")
     parser.add_argument('-r', '--reg', dest='make_regression', 
+                        action=argparse.BooleanOptionalAction,
                         help='Convert time-series data in regression task.')
-    parser.set_defaults(make_regression=False)
     args = parser.parse_args()
     # Generate dataset files
     main(args.time_series, args.config, args.make_regression)

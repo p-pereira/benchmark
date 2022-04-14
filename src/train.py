@@ -1,7 +1,13 @@
+import warnings
+warnings.filterwarnings("ignore", category=FutureWarning)
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 import argparse
 import sys
 import yaml
 from LR import main as lr
+from FEDOT import main as fedot
+from LUDWIG import main as ludwig
 from ARIMA import main as arima
 from AUTOTS import main as autots
 from PYAF import main as pyaf
@@ -10,6 +16,8 @@ MODELS = {
     "ARIMA": arima,
     "AUTOTS": autots,
     "PYAF": pyaf,
+    "FEDOT": fedot,
+    "LUDWIG": ludwig,
     "LR": lr
     }
 

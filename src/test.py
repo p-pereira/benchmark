@@ -3,9 +3,7 @@ warnings.filterwarnings("ignore", category=FutureWarning)
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 import argparse
-from os import getcwd, makedirs, path
 import sys
-import pandas as pd
 import yaml
 import mlflow
 from tqdm import tqdm
@@ -15,11 +13,15 @@ from LR import main as lr
 from ARIMA import main as arima
 from AUTOTS import main as autots
 from PYAF import main as pyaf
+from FEDOT import main as fedot
+from LUDWIG import main as ludwig
 
 MODELS = {
     "ARIMA": arima,
     "AUTOTS": autots,
     "PYAF": pyaf,
+    "FEDOT": fedot,
+    "LUDWIG": ludwig,
     "LR": lr
     }
 
