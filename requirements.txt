@@ -7,11 +7,12 @@ matplotlib==3.5.1
 mlflow==1.24.0
 numpy==1.19.5
 pandas==1.4.2
+pmdarima==1.8.5
 pyaml==21.10.1
 PyYAML==6.0
 scikit-learn==0.24.2
 scipy==1.8.0
 tensorflow==2.5.1
 torch==1.11.0
-tqdm==4.64.0
+tqdm==4.63.1
 xgboost==1.2.1

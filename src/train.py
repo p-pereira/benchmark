@@ -8,14 +8,20 @@ import yaml
 from LR import main as lr
 from FEDOT import main as fedot
 from LUDWIG import main as ludwig
+from ARIMA import main as arima
+from AUTOTS import main as autots
+from PYAF import main as pyaf
 
 MODELS = {
-    "LR": lr,
+    "ARIMA": arima,
+    "AUTOTS": autots,
+    "PYAF": pyaf,
     "FEDOT": fedot,
-    "LUDWIG": ludwig
+    "LUDWIG": ludwig,
+    "LR": lr
     }
 
-def main(time_series: str= "porto", model: str = "LR", config: str = "config.yaml"):
+def main(time_series: str= "porto", model: str = "ARIMA", config: str = "config.yaml"):
     # Load configs
     try:
         config =  yaml.safe_load(open(config))
@@ -39,10 +45,25 @@ if __name__ == "__main__":
     parser.add_argument(help='Time-series name.', dest="time_series")
     parser.set_defaults(time_series="porto")
     parser.add_argument(help='ML model.', dest="model")
-    parser.set_defaults(model="LR")
+    parser.set_defaults(model="ARIMA")
     parser.add_argument('-c', '--config', dest='config', 
                         help='Config yaml file.')
     parser.set_defaults(config="config.yaml")
     args = parser.parse_args()
-
+    
+    #DESTA FORMA, CORRE O TRAIN, SE ELIMINAR E PUSER
     main(args.time_series, args.model, args.config)
+    #, JÁ NÃO FUNCIONA
+    # Load configs
+    '''
+    try:
+        config =  yaml.safe_load(open(args.config))
+    except Exception as e:
+        print("Error loading config file: ", e)
+        sys.exit()
+    
+    if args.model not in MODELS.keys():
+        print(f"Error: unkown model {args.model}.")
+        sys.exit()
+    MODELS[args.model](args.time_series, config)
+    '''

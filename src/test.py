@@ -5,17 +5,27 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 import argparse
 import sys
 import yaml
+import mlflow
+from tqdm import tqdm
+from utilities import list_files, load_data, compute_metrics
+from time import time
 from LR import main as lr
+from ARIMA import main as arima
+from AUTOTS import main as autots
+from PYAF import main as pyaf
 from FEDOT import main as fedot
 from LUDWIG import main as ludwig
 
 MODELS = {
-    "LR": lr,
+    "ARIMA": arima,
+    "AUTOTS": autots,
+    "PYAF": pyaf,
     "FEDOT": fedot,
-    "LUDWIG": ludwig
+    "LUDWIG": ludwig,
+    "LR": lr
     }
 
-def main(time_series: str= "porto", model: str = "LR", config: str = "config.yaml"):
+def main(time_series: str= "porto", model: str = "ARIMA", config: str = "config.yaml"):
     # Load configs
     try:
         config =  yaml.safe_load(open(config))
@@ -49,3 +59,15 @@ if __name__ == "__main__":
     args = parser.parse_args()
     
     main(args.time_series, args.model, args.config)
+    '''
+    try:
+        config =  yaml.safe_load(open(args.config))
+    except Exception as e:
+        print("Error loading config file: ", e)
+        sys.exit()
+    
+    if args.model not in MODELS.keys():
+        print(f"Error: unkown model {args.model}.")
+        sys.exit()
+    MODELS[args.model](args.time_series, config)
+    '''
