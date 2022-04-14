@@ -50,6 +50,8 @@ def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: s
         end = time()
         tr_time = end - start
 
+        print(model.getModelInfo())
+
         with open(FPATH, "wb") as f:
             dump(model, f)
 
@@ -58,9 +60,12 @@ def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: s
         
     mlflow.end_run()
 
-def test_iteration(X: pd.DataFrame, y: pd.Series, config: Dict = {}, run_name: str = "", params: Dict = {}):
-    X = pd.concat([X.date_time, y],axis=1)
-    X['date_time'] = pd.to_datetime(X['date_time'])
+def test_iteration(Xtrain:pd.DataFrame, ytrain: pd.Series, Xtest: pd.DataFrame, ytest: pd.Series, config: Dict = {}, run_name: str = "", params: Dict = {}):
+    Xtrain = pd.concat([Xtrain.date_time, ytrain],axis=1)
+    Xtrain['date_time'] = pd.to_datetime(Xtrain['date_time'])
+
+    Xtest = pd.concat([Xtest.date_time, ytest],axis=1)
+    Xtest['date_time'] = pd.to_datetime(Xtest['date_time'])
     # mlflow configs
     mlflow.set_tracking_uri(config["MLFLOW_URI"])
 
@@ -78,14 +83,20 @@ def test_iteration(X: pd.DataFrame, y: pd.Series, config: Dict = {}, run_name: s
 
     # Predic and compute metrics
     start = time()
-    pred = model.forecast(X, 30)
+    pred = model.forecast(Xtrain, 30)
     end = time()
-    pred = pred[['date_time', 'tempC', 'tempC_Forecast']]
+    pred = pred[['date_time', 'tempC_Forecast']].tail(30)
     print(pred)
+    print(ytest)
+    print("*********************************")
     inf_time = (end - start) / len(pred)
-    metrics = compute_metrics(y, pred, "ALL", "test_")
+    print(pred)
+    print(ytest)
+    metrics = compute_metrics(ytest, pred, "ALL", "test_")
     # Store predictions and target values
-    info = pd.DataFrame([y, pred]).T
+    info = pd.DataFrame([ytest, pred]).T
+    print(info)
+    print("---------------------------------")
     info.columns = ["y_true", "y_pred"]
     FDIR = path.join(config["DATA_PATH"], config["PRED_PATH"], params['time_series'], "PYAF")
     makedirs(FDIR, exist_ok=True)
@@ -132,7 +143,7 @@ def main(time_series: str, config: dict = {}, train: bool = True, test: bool = T
             train_iteration(X, y, config, run_name, params)
         if test:
            X_ts, y_ts = load_data(test_files[n], target)
-           test_iteration(X_ts, y_ts, config, run_name, params)
+           test_iteration(X, y, X_ts, y_ts, config, run_name, params)
         break
 
 if __name__ == "__main__":
