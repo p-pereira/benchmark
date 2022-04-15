@@ -17,6 +17,7 @@ METRICS = {
     "MAPE": metrics.mean_absolute_percentage_error,
     "R2": metrics.r2_score
 }
+
 def load_data(fpath: str, target="tempC", return_Xy: bool = True) -> Union[Tuple[pd.DataFrame, pd.Series], pd.DataFrame]:
     """Load data.
 

@@ -18,7 +18,7 @@ TS:
   porto:
     format: ".csv"
     K: 365 # seasonal period: 365 (1 year)
-    U: 20 # rolling window iterations: 20
+    U: 2 # rolling window iterations: 20
     W: 1825 # Window - data size per iterarion: 1825 (5 years)
     H: 30 # time-ahead predictions
     target: "tempC" # target column
@@ -26,7 +26,7 @@ TS:
   lisbon:
     format: ".csv"
     K: 365 # seasonal period: 365 (1 year)
-    U: 20 # rolling window iterations: 20
+    U: 2 # rolling window iterations: 20
     W: 1825 # Window - data size per iterarion: 10825 (5 years)
     H: 30 # time-ahead predictions
     target: "tempC" # target column

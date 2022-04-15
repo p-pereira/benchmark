@@ -26,9 +26,9 @@ def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: s
         _description_, by default ""
     """
 
-    X = pd.concat([X.date_time, y],axis=1)
-    X['date_time'] = pd.to_datetime(X['date_time'])
-    X = X.set_index('date_time')
+    data = pd.concat([X.date_time, y],axis=1)
+    data['date_time'] = pd.to_datetime(data['date_time'])
+    data = data.set_index('date_time')
 
     # mlflow configs
     mlflow.set_tracking_uri(config["MLFLOW_URI"])
@@ -54,7 +54,7 @@ def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: s
             num_validations=2
         )
 
-        model = model.fit(X)
+        model = model.fit(data)
         end = time()
         tr_time = end - start
 
@@ -66,7 +66,7 @@ def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: s
         
     mlflow.end_run()
 
-def test_iteration(X: pd.DataFrame, y: pd.Series, config: Dict = {}, run_name: str = "", params: Dict = {}):
+def test_iteration(y: pd.Series, config: Dict = {}, run_name: str = "", params: Dict = {}):
     # mlflow configs
     mlflow.set_tracking_uri(config["MLFLOW_URI"])
 
@@ -114,8 +114,8 @@ def main(time_series: str, config: dict = {}, train: bool = True, test: bool = T
         _description_, by default {}
     """
     # Get train files
-    train_files = list_files(time_series, config, pattern="?_tr.csv")
-    test_files = list_files(time_series, config, pattern="?_ts.csv")
+    train_files = list_files(time_series, config, pattern="*_tr.csv")
+    test_files = list_files(time_series, config, pattern="*_ts.csv")
     if len(train_files) == 0:
         print("Error: no files found!")
         sys.exit()
@@ -134,8 +134,8 @@ def main(time_series: str, config: dict = {}, train: bool = True, test: bool = T
         if train:
             train_iteration(X, y, config, run_name, params)
         if test:
-           X_ts, y_ts = load_data(test_files[n], target)
-           test_iteration(X_ts, y_ts, config, run_name, params)
+           _, y_ts = load_data(test_files[n], target)
+           test_iteration(y_ts, config, run_name, params)
         break
 
 if __name__ == "__main__":
@@ -150,6 +150,7 @@ if __name__ == "__main__":
     parser.add_argument('-tr', '--train', dest="train",
                         action=argparse.BooleanOptionalAction,
                         help="Performs model training.")
+    parser.set_defaults(train=True)
     parser.add_argument('-ts', '--test', dest="test",
                         action=argparse.BooleanOptionalAction,
                         help="Performs model testing (evaluation).")
@@ -161,4 +162,5 @@ if __name__ == "__main__":
         print("Error loading config file: ", e)
         sys.exit()
     # Train/Test AUTOTS
+    print(config)
     main(args.time_series, config, args.train, args.test)

@@ -49,6 +49,7 @@ def train_iteration(data: InputData, task: Task, config: Dict ={}, run_name: str
     FPATH2 = path.join(FDIR, "CHAIN.pkl")
     model_params = config["MODELS"]["fedot"]
 
+    mlflow.autolog()
     with mlflow.start_run(run_name=run_name) as run:
         mlflow.log_params(params)
         mlflow.log_params(model_params)
@@ -147,7 +148,7 @@ def main(time_series: str, config: dict = {}, train: bool = True, test: bool = T
             ts_data = InputData.from_csv_time_series(task, file2, target_column=target)
             test_iteration(tr_data, ts_data, config, run_name, params)
         # TODO: remove this for all train/test datasets
-        #break
+        break
 
 
 if __name__ == "__main__":

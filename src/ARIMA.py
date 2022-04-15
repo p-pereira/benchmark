@@ -1,5 +1,5 @@
 import argparse
-from os import path, getcwd, makedirs
+from os import path, makedirs
 from typing import Dict
 import pmdarima as pm
 import pandas as pd
@@ -9,7 +9,6 @@ import yaml
 from tqdm import tqdm
 import mlflow
 from time import time
-import pickle
 
 def train_iteration(y: pd.Series, config: Dict ={}, run_name: str="", params: Dict = {}):
     """_summary_
@@ -26,16 +25,12 @@ def train_iteration(y: pd.Series, config: Dict ={}, run_name: str="", params: Di
         _description_, by default ""
     """
     # mlflow configs
-    mlflow.set_tracking_uri("http://localhost:5000")
+    mlflow.set_tracking_uri(config["MLFLOW_URI"])
     try:
         mlflow.create_experiment(name=config["EXPERIMENT"])
     except:
         pass
     
-    FDIR = path.join(config["DATA_PATH"], config["MODELS_PATH"], params["time_series"], str(params["iter"]), "PMDARIMA")
-    makedirs(FDIR, exist_ok=True)
-    FPATH = path.join(FDIR, "MODEL.pkl")
-
     mlflow.autolog(log_models=False, log_model_signatures=False, silent=True)
     with mlflow.start_run(run_name=run_name) as run:
         mlflow.log_params(params)
@@ -95,8 +90,8 @@ def main(time_series: str, config: dict = {}, train: bool = True, test: bool = T
         _description_, by default {}
     """
     # Get train files
-    train_files = list_files(time_series, config, pattern="?_tr.csv")
-    test_files = list_files(time_series, config, pattern="?_ts.csv")
+    train_files = list_files(time_series, config, pattern="*_tr.csv")
+    test_files = list_files(time_series, config, pattern="*_ts.csv")
     if len(train_files) == 0:
         print("Error: no files found!")
         sys.exit()

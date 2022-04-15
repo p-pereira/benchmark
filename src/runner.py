@@ -10,5 +10,6 @@ if __name__ == "__main__":
     for ts in time_series:
         gen_data(ts)
         gen_data(ts, make_regression=True)
-        train(ts, model="ALL")
-        test(ts, model="ALL")
+        train(ts, model="ALL", config=config)
+        test(ts, model="ALL", config=config)
+        break
