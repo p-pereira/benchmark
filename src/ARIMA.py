@@ -112,7 +112,7 @@ def main(time_series: str, config: dict = {}, train: bool = True, test: bool = T
         if test:
             _, y_ts = load_data(test_files[n], target)
             test_iteration(y_ts, config, run_name, params)
-        break
+        
 
 if __name__ == "__main__":
     # Read arguments

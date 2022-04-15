@@ -10,7 +10,7 @@ from FEDOT import main as fedot
 from LUDWIG import main as ludwig
 from ARIMA import main as arima
 from AUTOTS import main as autots
-from SKTIME import main as sktime
+#from SKTIME import main as sktime
 #from PYAF import main as pyaf
 
 MODELS = {
@@ -19,7 +19,7 @@ MODELS = {
     #"PYAF": pyaf,
     "FEDOT": fedot,
     "LUDWIG": ludwig,
-    "SKTIME": sktime,
+    #"SKTIME": sktime,
     "LR": lr
     }
 

@@ -148,7 +148,7 @@ def main(time_series: str, config: dict = {}, train: bool = True, test: bool = T
             ts_data = InputData.from_csv_time_series(task, file2, target_column=target)
             test_iteration(tr_data, ts_data, config, run_name, params)
         # TODO: remove this for all train/test datasets
-        break
+        #break
 
 
 if __name__ == "__main__":

@@ -12,4 +12,4 @@ if __name__ == "__main__":
         gen_data(ts, make_regression=True)
         train(ts, model="ALL", config=config)
         test(ts, model="ALL", config=config)
-        break
+        

@@ -13,7 +13,7 @@ from FEDOT import main as fedot
 from LUDWIG import main as ludwig
 
 MODELS = {
-    #"ARIMA": arima,
+    "ARIMA": arima,
     "AUTOTS": autots,
     #"PYAF": pyaf,
     "FEDOT": fedot,
