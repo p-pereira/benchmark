@@ -49,7 +49,7 @@ def train_iteration(data: InputData, task: Task, config: Dict ={}, run_name: str
     FPATH2 = path.join(FDIR, "CHAIN.pkl")
     model_params = config["MODELS"]["fedot"]
 
-    mlflow.autolog()
+    #mlflow.autolog()
     with mlflow.start_run(run_name=run_name) as run:
         mlflow.log_params(params)
         mlflow.log_params(model_params)

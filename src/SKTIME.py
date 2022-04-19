@@ -52,7 +52,6 @@ def train_iteration(y: pd.Series, config: Dict ={}, run_name: str="", params: Di
 
     H = config["TS"][time_series]["H"]
 
-    mlflow.autolog()
     with mlflow.start_run(run_name=run_name) as run:
         mlflow.log_params(params)
         mlflow.log_params(model_params)
@@ -96,7 +95,6 @@ def test_iteration(y: pd.Series, config: Dict = {}, run_name: str = "", params: 
     # Load model
     FDIR = path.join(config["DATA_PATH"], config["MODELS_PATH"],
                      time_series, str(params["iter"]), "SKTIME")
-    makedirs(FDIR, exist_ok=True)
     FPATH = path.join(FDIR, "MODEL.pkl")
     with open(FPATH, "rb") as f:
         model = load(f)
@@ -115,7 +113,6 @@ def test_iteration(y: pd.Series, config: Dict = {}, run_name: str = "", params: 
     info.to_csv(FPATH2, index=False)
     # Load new info to mlflow run
     with mlflow.start_run(run_id=run_id) as run:
-        mlflow.log_artifact(FPATH)
         mlflow.log_artifact(FPATH2)
         mlflow.log_metrics(metrics)
         mlflow.log_metric("test_time", inf_time)
@@ -157,7 +154,7 @@ def main(time_series: str, config: dict = {}, train: bool = True, test: bool = T
             _, y_ts = load_data(file2, target)
             test_iteration(y_ts, config, run_name, params)
         # TODO: remove this for all train/test datasets
-        break
+        #break
 
 
 if __name__ == "__main__":
@@ -183,5 +180,9 @@ if __name__ == "__main__":
         print("Error loading config file: ", e)
         sys.exit()
     # Train/Test FEDOT model
-    main(args.time_series, config, args.train, args.test)
+    if args.time_series == "ALL":
+        for time_series in config["TS"].keys():
+            main(time_series, config, args.train, args.test)
+    else:
+        main(args.time_series, config, args.train, args.test)
     

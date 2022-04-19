@@ -8,7 +8,7 @@ RES_PATH: "5_results"
 MLFLOW_PATH: "6_mlflow/mlruns"
 
 # Mlflow config
-MLFLOW_URI: "http://localhost:5005"
+MLFLOW_URI: "http://localhost:5001"
 
 # ML FLOW
 EXPERIMENT: "Benchmark TS"
@@ -18,23 +18,44 @@ TS:
   porto:
     format: ".csv"
     K: 365 # seasonal period: 365 (1 year)
-    U: 2 # rolling window iterations: 20
+    U: 5 # rolling window iterations: 20
     W: 1825 # Window - data size per iterarion: 1825 (5 years)
     H: 30 # time-ahead predictions
     target: "tempC" # target column
     WR: [1, 365, 366] # lag window for regression dataset creation
+    date: date_time
   lisbon:
     format: ".csv"
     K: 365 # seasonal period: 365 (1 year)
-    U: 2 # rolling window iterations: 20
+    U: 5 # rolling window iterations: 20
     W: 1825 # Window - data size per iterarion: 10825 (5 years)
     H: 30 # time-ahead predictions
     target: "tempC" # target column
     WR: [1, 365, 366] # lag window for regression dataset creation
+    date: date_time
+  AEP_daily:
+    format: ".csv"
+    K: 365 # seasonal period: 365 (1 year)
+    U: 5 # rolling window iterations: 20
+    W: 1825 # Window - data size per iterarion: 1825 (5 years)
+    H: 30 # time-ahead predictions
+    target: "AEP_MW" # target column
+    WR: [1, 365, 366] # lag window for regression dataset creation
+    date: Datetime
+  DOM_daily:
+    format: ".csv"
+    K: 365 # seasonal period: 365 (1 year)
+    U: 5 # rolling window iterations: 20
+    W: 1825 # Window - data size per iterarion: 1825 (5 years)
+    H: 30 # time-ahead predictions
+    target: "DOM_MW" # target column
+    WR: [1, 365, 366] # lag window for regression dataset creation
+    date: Datetime
+  
 
 # Models parameters:
 MODELS:
   fedot:
-    timeout: 15 # 15min for automl
+    timeout: 5 # 15min for automl
   sktime:
     sp: 7 # seasonal period

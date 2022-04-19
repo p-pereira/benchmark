@@ -123,7 +123,6 @@ def main(time_series: str, config_file: str = "config.yaml", make_regression: bo
     fpath = os.path.join(DATA_PATH, RAW_PATH, time_series + format)
 
     try:
-        print(os.getcwd())
         d = pd.read_csv(fpath)
     except Exception as e:
         print("Error loading data: ", e)

@@ -5,12 +5,14 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 import argparse
 import sys
 import yaml
-from LR import main as lr
+#from LR import main as lr
 from ARIMA import main as arima
 from AUTOTS import main as autots
 #from PYAF import main as pyaf
 from FEDOT import main as fedot
 from LUDWIG import main as ludwig
+from PROPHET import main as prophet
+#from SKTIME import main as sktime
 
 MODELS = {
     "ARIMA": arima,
@@ -18,7 +20,9 @@ MODELS = {
     #"PYAF": pyaf,
     "FEDOT": fedot,
     "LUDWIG": ludwig,
-    "LR": lr
+    "PROPHET": prophet,
+    #"SKTIME": sktime,
+    #"LR": lr
     }
 
 def main(time_series: str= "porto", model: str = "ARIMA", config: str = "config.yaml"):

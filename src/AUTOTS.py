@@ -25,10 +25,10 @@ def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: s
     run_name : str, optional
         _description_, by default ""
     """
-
-    data = pd.concat([X.date_time, y],axis=1)
-    data['date_time'] = pd.to_datetime(data['date_time'])
-    data = data.set_index('date_time')
+    date_col = config["TS"][params["time_series"]]["date"]
+    data = pd.concat([X[date_col], y],axis=1)
+    data[date_col] = pd.to_datetime(data[date_col])
+    data = data.set_index(date_col)
 
     # mlflow configs
     mlflow.set_tracking_uri(config["MLFLOW_URI"])
@@ -67,6 +67,7 @@ def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: s
     mlflow.end_run()
 
 def test_iteration(y: pd.Series, config: Dict = {}, run_name: str = "", params: Dict = {}):
+    date_col = config["TS"][params["time_series"]]["date"]
     # mlflow configs
     mlflow.set_tracking_uri(config["MLFLOW_URI"])
 

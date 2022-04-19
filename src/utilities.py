@@ -11,11 +11,11 @@ def rmse(y_true: Union[pd.Series, np.array], y_pred: Union[pd.Series, np.array])
     return np.sqrt(((y_pred - y_true) ** 2).mean())
 
 METRICS = {
-    "MAE": metrics.mean_absolute_error,
-    "MSE": metrics.mean_squared_error,
-    "RMSE": rmse,
-    "MAPE": metrics.mean_absolute_percentage_error,
-    "R2": metrics.r2_score
+    "mae": metrics.mean_absolute_error,
+    "mse": metrics.mean_squared_error,
+    "rmse": rmse,
+    "mape": metrics.mean_absolute_percentage_error,
+    "r2": metrics.r2_score
 }
 
 def load_data(fpath: str, target="tempC", return_Xy: bool = True) -> Union[Tuple[pd.DataFrame, pd.Series], pd.DataFrame]:
