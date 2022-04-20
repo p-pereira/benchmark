@@ -95,7 +95,7 @@ def cases_series(t: pd.Series, W: Tuple, target: str = "y", start: int=1, end: i
     D.columns = N
     return D
 
-def main(time_series: str, config_file: str = "config.yaml", make_regression: bool = False):
+def main(time_series: str, config: Dict = {}, make_regression: bool = False):
     """Generate cross-validation data files for a time-series dataset.
 
     Parameters
@@ -105,12 +105,6 @@ def main(time_series: str, config_file: str = "config.yaml", make_regression: bo
     config_file : str, optional
         configuration file path, by default "config.yaml"
     """
-    try:
-        config =  yaml.safe_load(open(config_file))
-    except Exception as e:
-        print("Error loading config file: ", e)
-        sys.exit()
-    
     DATA_PATH = config["DATA_PATH"]
     RAW_PATH = config["RAW_PATH"]
     PREP_PATH = config["PREP_PATH"]
@@ -167,5 +161,16 @@ if __name__ == "__main__":
                         action=argparse.BooleanOptionalAction,
                         help='Convert time-series data in regression task.')
     args = parser.parse_args()
+
+    try:
+        config =  yaml.safe_load(open(args.config))
+    except Exception as e:
+        print("Error loading config file: ", e)
+        sys.exit()
     # Generate dataset files
-    main(args.time_series, args.config, args.make_regression)
+    if args.time_series == "ALL":
+        for time_series in config["TS"].keys():
+            main(time_series, config, args.make_regression)
+    else:
+        main(args.time_series, config, args.make_regression)
+    

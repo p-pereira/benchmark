@@ -1,19 +1,18 @@
 # Imports
+import warnings
+warnings.filterwarnings("ignore")
 import argparse
 from os import makedirs, path
 from pickle import dump, load
 from typing import Dict
-import numpy as np
 import pandas as pd
 import sys
-from utilities import compute_metrics, load_data, list_files
+from utilities import compute_metrics, list_files, nmae
 import yaml
-from tqdm import tqdm
 import mlflow
 from time import time
 from fedot.core.repository.tasks import Task, TaskTypesEnum, TsForecastingParams
 from fedot.core.data.data import InputData
-from fedot.core.repository.dataset_types import DataTypesEnum
 from fedot.api.main import Fedot
 
 
@@ -44,12 +43,13 @@ def train_iteration(data: InputData, task: Task, config: Dict ={}, run_name: str
     
     FDIR = path.join(config["DATA_PATH"], config["MODELS_PATH"],
                      params["time_series"], str(params["iter"]), "FEDOT")
+    FDIR2 = path.join(config["DATA_PATH"], config["MODELS_PATH"],
+                     params["time_series"], "1", "FEDOT")
     makedirs(FDIR, exist_ok=True)
     FPATH = path.join(FDIR, "MODEL.pkl")
-    FPATH2 = path.join(FDIR, "CHAIN.pkl")
+    FPATH2 = path.join(FDIR2, "PIPELINE.pkl")
     model_params = config["MODELS"]["fedot"]
 
-    #mlflow.autolog()
     with mlflow.start_run(run_name=run_name) as run:
         mlflow.log_params(params)
         mlflow.log_params(model_params)
@@ -59,14 +59,22 @@ def train_iteration(data: InputData, task: Task, config: Dict ={}, run_name: str
         fedot_model = Fedot(problem='ts_forecasting',
                             task_params=task.task_params, 
                             **model_params)
-        chain = fedot_model.fit(features=data)
+        if params["iter"] > 1:
+            with open(FPATH2, "rb") as f:
+                pipeline = load(f)
+            _ = fedot_model.fit(features=data, predefined_model=pipeline)
+        else:
+            _ = fedot_model.fit(features=data)
         end = time()
         tr_time = end - start
 
+        if params["iter"] == 1:
+            pipeline = fedot_model.current_pipeline
+            with open(FPATH2, "wb") as f:
+                dump(pipeline, f)
+        
         with open(FPATH, "wb") as f:
             dump(fedot_model, f)
-        with open(FPATH2, "wb") as f:
-            dump(chain, f)
         mlflow.log_metric("training_time", tr_time)
 
         mlflow.log_artifact(FPATH)
@@ -94,6 +102,9 @@ def test_iteration(history: InputData, test_data: InputData, config: Dict = {}, 
     inf_time = (end - start) / len(pred)
     y = test_data.target
     metrics = compute_metrics(y, pred, "ALL", "test_")
+    min_v = config["TS"][params["time_series"]]["min"]
+    max_v = config["TS"][params["time_series"]]["max"]
+    nmae_ = nmae(y, pred, min_v, max_v)
     # Store predictions and target values
     info = pd.DataFrame([y, pred]).T
     info.columns = ["y_true", "y_pred"]
@@ -107,6 +118,7 @@ def test_iteration(history: InputData, test_data: InputData, config: Dict = {}, 
         mlflow.log_artifact(FPATH2)
         mlflow.log_metrics(metrics)
         mlflow.log_metric("test_time", inf_time)
+        mlflow.log_metric("test_nmae", nmae_)
     mlflow.end_run()
 
 

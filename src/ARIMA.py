@@ -4,7 +4,7 @@ from typing import Dict
 import pmdarima as pm
 import pandas as pd
 import sys
-from utilities import compute_metrics, load_data, list_files
+from utilities import compute_metrics, load_data, list_files, nmae
 import yaml
 from tqdm import tqdm
 import mlflow
@@ -31,15 +31,17 @@ def train_iteration(y: pd.Series, config: Dict ={}, run_name: str="", params: Di
     except:
         pass
     
+    model_params = config["MODELS"]["autoarima"]
     mlflow.autolog(log_models=False, log_model_signatures=False, silent=True)
     with mlflow.start_run(run_name=run_name) as run:
         mlflow.log_params(params)
+        mlflow.log_params(model_params)
         start = time()
-        model = pm.auto_arima(y)
+        model = pm.auto_arima(y, **model_params)
         end = time()
 
         tr_time = end - start
-
+        
         mlflow.log_metric("training_time", tr_time)
         mlflow.pmdarima.log_model(model, "model")
         
@@ -64,6 +66,9 @@ def test_iteration(y: pd.Series, config: Dict = {}, run_name: str = "", params: 
     end = time()
     inf_time = (end - start) / len(pred)
     metrics = compute_metrics(y, pred, "ALL", "test_")
+    min_v = config["TS"][time_series]["min"]
+    max_v = config["TS"][time_series]["max"]
+    nmae_ = nmae(y, pred, min_v, max_v)
     # Store predictions and target values
     info = pd.DataFrame([y, pred]).T
     info.columns = ["y_true", "y_pred"]
@@ -76,6 +81,7 @@ def test_iteration(y: pd.Series, config: Dict = {}, run_name: str = "", params: 
         mlflow.log_artifact(FPATH)
         mlflow.log_metrics(metrics)
         mlflow.log_metric("test_time", inf_time)
+        mlflow.log_metric("test_nmae", nmae_)
     mlflow.end_run()
 
 

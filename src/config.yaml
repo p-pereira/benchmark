@@ -18,44 +18,121 @@ TS:
   porto:
     format: ".csv"
     K: 365 # seasonal period: 365 (1 year)
-    U: 5 # rolling window iterations: 20
+    U: 20 # rolling window iterations: 20
     W: 1825 # Window - data size per iterarion: 1825 (5 years)
-    H: 30 # time-ahead predictions
+    H: 7 # time-ahead predictions
     target: "tempC" # target column
-    WR: [1, 365, 366] # lag window for regression dataset creation
-    date: date_time
+    WR: [1, 2, 3, 4, 5, 6, 365, 366] # lag window for regression dataset creation
+    date: date_time # column with timestamp
+    freq: "D" # daily data
+    max: 40 # max ts value
+    min: 5 # min ts value
   lisbon:
     format: ".csv"
     K: 365 # seasonal period: 365 (1 year)
-    U: 5 # rolling window iterations: 20
+    U: 20 # rolling window iterations: 20
     W: 1825 # Window - data size per iterarion: 10825 (5 years)
-    H: 30 # time-ahead predictions
+    H: 7 # time-ahead predictions
     target: "tempC" # target column
-    WR: [1, 365, 366] # lag window for regression dataset creation
-    date: date_time
-  AEP_daily:
+    WR: [1, 2, 3, 4, 5, 6, 365, 366] # lag window for regression dataset creation
+    date: date_time # column with timestamp
+    freq: "D" # daily data
+    max: 40 # max ts value
+    min: 8 # min ts value
+  madrid:
     format: ".csv"
     K: 365 # seasonal period: 365 (1 year)
-    U: 5 # rolling window iterations: 20
+    U: 20 # rolling window iterations: 20
+    W: 1825 # Window - data size per iterarion: 10825 (5 years)
+    H: 7 # time-ahead predictions
+    target: "tempC" # target column
+    WR: [1, 2, 3, 4, 5, 6, 365, 366] # lag window for regression dataset creation
+    date: date_time # column with timestamp
+    freq: "D" # daily data
+    max: 40 # max ts value
+    min: 0 # min ts value
+  AEP:
+    format: ".csv"
+    K: 7 # seasonal period: 7 (1 week)
+    U: 20 # rolling window iterations: 20
     W: 1825 # Window - data size per iterarion: 1825 (5 years)
-    H: 30 # time-ahead predictions
+    H: 7 # time-ahead predictions
     target: "AEP_MW" # target column
-    WR: [1, 365, 366] # lag window for regression dataset creation
-    date: Datetime
-  DOM_daily:
+    WR: [1, 2, 3, 4, 5, 6, 7, 8] # lag window for regression dataset creation
+    date: Datetime # column with timestamp
+    freq: "D" # daily data
+    max: 548349 # max ts value
+    min: 14809 # min ts value
+  COMED:
     format: ".csv"
-    K: 365 # seasonal period: 365 (1 year)
-    U: 5 # rolling window iterations: 20
+    K: 7 # seasonal period: 7 (1 week)
+    U: 20 # rolling window iterations: 20
     W: 1825 # Window - data size per iterarion: 1825 (5 years)
-    H: 30 # time-ahead predictions
-    target: "DOM_MW" # target column
-    WR: [1, 365, 366] # lag window for regression dataset creation
-    date: Datetime
-  
+    H: 7 # time-ahead predictions
+    target: "COMED_MW" # target column
+    WR: [1, 2, 3, 4, 5, 6, 7, 8] # lag window for regression dataset creation
+    date: Datetime # column with timestamp
+    freq: "D" # daily data
+    max: 478087 # max ts value
+    min: 13335 # min ts value
+  PJME:
+    format: ".csv"
+    K: 7 # seasonal period: 7 (1 week)
+    U: 20 # rolling window iterations: 20
+    W: 1825 # Window - data size per iterarion: 1825 (5 years)
+    H: 7 # time-ahead predictions
+    target: "PJME_MW" # target column
+    WR: [1, 2, 3, 4, 5, 6, 7, 8] # lag window for regression dataset creation
+    date: Datetime # column with timestamp
+    freq: "D" # daily data
+    max: 1253516 # max ts value
+    min: 35486 # min ts value
+  junction1:
+    format: ".csv"
+    K: 24 # seasonal period: 24 (1 day)
+    U: 20 # rolling window iterations: 20
+    W: 2160 # Window - data size per iterarion: 2160 (3 months)
+    H: 24 # time-ahead predictions
+    target: "Vehicles" # target column
+    WR: [1, 2, 3, 4, 5, 6, 24, 25] # lag window for regression dataset creation
+    date: DateTime # column with timestamp
+    freq: "H" # hourly data
+    max: 14 # max ts value
+    min: 156 # min ts value
+  junction2:
+    format: ".csv"
+    K: 24 # seasonal period: 24 (1 day)
+    U: 20 # rolling window iterations: 20
+    W: 2160 # Window - data size per iterarion: 2160 (3 months)
+    H: 24 # time-ahead predictions
+    target: "Vehicles" # target column
+    WR: [1, 2, 3, 4, 5, 6, 24, 25] # lag window for regression dataset creation
+    date: DateTime # column with timestamp
+    freq: "H" # hourly data
+    max: 2 # max ts value
+    min: 48 # min ts value
+  junction3:
+    format: ".csv"
+    K: 24 # seasonal period: 24 (1 day)
+    U: 20 # rolling window iterations: 20
+    W: 2160 # Window - data size per iterarion: 2160 (3 months)
+    H: 24 # time-ahead predictions
+    target: "Vehicles" # target column
+    WR: [1, 2, 3, 4, 5, 6, 24, 25] # lag window for regression dataset creation
+    date: DateTime # column with timestamp
+    freq: "H" # hourly data
+    max: 2 # max ts value
+    min: 180 # min ts value
 
 # Models parameters:
 MODELS:
   fedot:
-    timeout: 5 # 15min for automl
-  sktime:
-    sp: 7 # seasonal period
+    timeout: 15 # 15min for automl
+    verbose_level: 0 # just print errors
+    preset: 'ts' # preset config for time series
+  autots:
+    model_list: "fast"
+    verbose: -1
+    n_jobs: -1
+  autoarima:
+    n_jobs: -1

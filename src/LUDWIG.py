@@ -1,14 +1,12 @@
 # Imports
 import warnings
-warnings.filterwarnings("ignore", category=FutureWarning)
+warnings.filterwarnings("ignore")
 import argparse
-from os import makedirs, path, getcwd
-from pickle import dump, load
+from os import makedirs, path
 from typing import Dict
-import numpy as np
 import pandas as pd
 import sys
-from utilities import compute_metrics, load_data, list_files
+from utilities import compute_metrics, load_data, list_files, nmae
 import yaml
 from tqdm import tqdm
 import mlflow
@@ -47,6 +45,8 @@ def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: s
 
     FDIR = path.join(config["DATA_PATH"], config["MODELS_PATH"],
                      params["time_series"], str(params["iter"]), "LUDWIG")
+    FDIR2 = path.join(config["DATA_PATH"], config["MODELS_PATH"],
+                      params["time_series"], "1", "LUDWIG")
     makedirs(FDIR, exist_ok=True)
     #model_params = config["MODELS"]["ludwig"]
     target = params['target']
@@ -71,6 +71,7 @@ def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: s
         _ = model.train(data, output_directory=FDIR,
                         experiment_name=config["EXPERIMENT"],
                         skip_save_processed_input=True)
+            
         end = time()
         tr_time = end - start
     mlflow.end_run()
@@ -80,7 +81,11 @@ def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: s
         res, _ = model.predict(X)
         pred = res[target+"_predictions"].values
         metrics = compute_metrics(y, pred, "ALL", "training_")
+        min_v = config["TS"][params["time_series"]]["min"]
+        max_v = config["TS"][params["time_series"]]["max"]
+        nmae_ = nmae(y, pred, min_v, max_v)
         mlflow.log_metrics(metrics)
+        mlflow.log_metric("training_nmae", nmae_)
     mlflow.end_run()
 
 def test_iteration(X:pd.DataFrame, y: pd.Series, config: Dict = {}, run_name: str = "", params: Dict = {}):
@@ -103,6 +108,9 @@ def test_iteration(X:pd.DataFrame, y: pd.Series, config: Dict = {}, run_name: st
     pred = res[params['target']+"_predictions"].values
     inf_time = (end - start) / len(pred)
     metrics = compute_metrics(y, pred, "ALL", "test_")
+    min_v = config["TS"][params["time_series"]]["min"]
+    max_v = config["TS"][params["time_series"]]["max"]
+    nmae_ = nmae(y, pred, min_v, max_v)
     # Store predictions and target values
     info = pd.DataFrame([y, pred]).T
     info.columns = ["y_true", "y_pred"]
@@ -112,6 +120,7 @@ def test_iteration(X:pd.DataFrame, y: pd.Series, config: Dict = {}, run_name: st
         mlflow.log_artifact(FPATH)
         mlflow.log_metrics(metrics)
         mlflow.log_metric("test_time", inf_time)
+        mlflow.log_metric("test_nmae", nmae_)
     mlflow.end_run()
 
 def main(time_series: str, config: dict = {}, train: bool = True, test: bool = True):
@@ -176,6 +185,6 @@ if __name__ == "__main__":
     except Exception as e:
         print("Error loading config file: ", e)
         sys.exit()
-    # Train/Test FEDOT model
+    # Train/Test LUDWIG model
     main(args.time_series, config, args.train, args.test)
     

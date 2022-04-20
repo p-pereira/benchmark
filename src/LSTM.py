@@ -1,15 +1,20 @@
+import warnings
+warnings.filterwarnings("ignore")
+from pickle import dump, load
+import pandas as pd
 import argparse
-from os import path, makedirs
+from os import makedirs, path
 from typing import Dict
-from autots import AutoTS
 import pandas as pd
 import sys
-from utilities import compute_metrics, load_data, list_files, nmae
+from utilities import load_data, list_files, compute_metrics
 import yaml
-import mlflow
 from tqdm import tqdm
+import mlflow
 from time import time
-from pickle import dump, load
+from gluonts.model.tft import TemporalFusionTransformerEstimator as LSTM
+from gluonts.dataset.common import ListDataset
+
 
 def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: str="", params: Dict = {}):
     """_summary_
@@ -25,46 +30,39 @@ def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: s
     run_name : str, optional
         _description_, by default ""
     """
-    date_col = config["TS"][params["time_series"]]["date"]
-    data = pd.concat([X[date_col], y],axis=1)
-    data[date_col] = pd.to_datetime(data[date_col])
-    data = data.set_index(date_col)
-
-    K = config["TS"][params["time_series"]]["K"]
     # mlflow configs
     mlflow.set_tracking_uri(config["MLFLOW_URI"])
     try:
         mlflow.create_experiment(name=config["EXPERIMENT"])
     except:
         pass
-    
-    FDIR = path.join(config["DATA_PATH"], config["MODELS_PATH"], params["time_series"], str(params["iter"]), "AUTOTS")
+
+    FDIR = path.join(config["DATA_PATH"], config["MODELS_PATH"],params["time_series"], str(params["iter"]), "LSTM")
     makedirs(FDIR, exist_ok=True)
     FPATH = path.join(FDIR, "MODEL.pkl")
-    model_params = config["MODELS"]["autots"]
+    
+    date_col = config["TS"][params["time_series"]]["date"]
+    freq = config["TS"][params["time_series"]]["freq"]
+    H = config["TS"][params["time_series"]]["H"]
+    X[date_col] = pd.to_datetime(X[date_col])
 
+    mlflow.gluon.autolog()
     with mlflow.start_run(run_name=run_name) as run:
         mlflow.log_params(params)
-        mlflow.log_params(model_params)
         start = time()
-        model = AutoTS(
-            forecast_length=K,
-            **model_params
-        )
-
-        model = model.fit(data)
+        training_data = ListDataset([{"start":X[date_col][0], "target": y}], freq=freq)
+        model = LSTM(freq=freq, prediction_length=H).train(training_data)
         end = time()
-        tr_time = end - start
 
+        tr_time = end - start
+        mlflow.log_metric("training_time", tr_time)
         with open(FPATH, "wb") as f:
             dump(model, f)
-
-        mlflow.log_metric("training_time", tr_time)
-        mlflow.pmdarima.log_model(model, "model")
+        mlflow.log_artifact(FPATH)
         
     mlflow.end_run()
 
-def test_iteration(y: pd.Series, config: Dict = {}, run_name: str = "", params: Dict = {}):
+def test_iteration(X: pd.DataFrame, y: pd.Series, config: Dict = {}, run_name: str = "", params: Dict = {}):
     # mlflow configs
     mlflow.set_tracking_uri(config["MLFLOW_URI"])
 
@@ -73,26 +71,28 @@ def test_iteration(y: pd.Series, config: Dict = {}, run_name: str = "", params: 
     run_id = runs[runs['tags.mlflow.runName']==run_name]["run_id"].values[0]
 
     # Load model
-    FDIR = path.join(config["DATA_PATH"], config["MODELS_PATH"], params["time_series"], str(params["iter"]), "AUTOTS")
+    FDIR = path.join(config["DATA_PATH"], config["MODELS_PATH"],
+                     params["time_series"], str(params["iter"]), "GLUON")
     makedirs(FDIR, exist_ok=True)
     FPATH = path.join(FDIR, "MODEL.pkl")
-   
     with open(FPATH, "rb") as f:
         model = load(f)
-
+    
+    date_col = config["TS"][params["time_series"]]["date"]
+    freq = config["TS"][params["time_series"]]["freq"]
+    X[date_col] = pd.to_datetime(X[date_col])
     # Predic and compute metrics
     start = time()
-    pred = model.predict().forecast.values.T[0]
+    test_data = ListDataset([{"start": X[date_col][0], "target": y}], freq= freq)
+    res = model.predict(test_data)
+    pred = [x.mean for x in res][0]
     end = time()
     inf_time = (end - start) / len(pred)
     metrics = compute_metrics(y, pred, "ALL", "test_")
-    min_v = config["TS"][params["time_series"]]["min"]
-    max_v = config["TS"][params["time_series"]]["max"]
-    nmae_ = nmae(y, pred, min_v, max_v)
     # Store predictions and target values
     info = pd.DataFrame([y, pred]).T
     info.columns = ["y_true", "y_pred"]
-    FDIR = path.join(config["DATA_PATH"], config["PRED_PATH"], params['time_series'], "AUTOTS")
+    FDIR = path.join(config["DATA_PATH"], config["PRED_PATH"], params['time_series'], "LSTM")
     makedirs(FDIR, exist_ok=True)
     FPATH = path.join(FDIR, f"pred_{str(params['iter'])}.csv")
     info.to_csv(FPATH, index=False)
@@ -101,9 +101,7 @@ def test_iteration(y: pd.Series, config: Dict = {}, run_name: str = "", params: 
         mlflow.log_artifact(FPATH)
         mlflow.log_metrics(metrics)
         mlflow.log_metric("test_time", inf_time)
-        mlflow.log_metric("test_nmae", nmae_)
     mlflow.end_run()
-
 
 def main(time_series: str, config: dict = {}, train: bool = True, test: bool = True):
     """_summary_
@@ -121,24 +119,26 @@ def main(time_series: str, config: dict = {}, train: bool = True, test: bool = T
     if len(train_files) == 0:
         print("Error: no files found!")
         sys.exit()
-    # Train AUTOTS models
+    # Train Gluon models
     target = config["TS"][time_series]["target"]
     for n, file in enumerate(tqdm(train_files)):
         params = {
             'time_series': time_series,
             'target': target,
-            'model': "AUTOTS",
+            'model': "LSTM",
             'iter': n+1
         }
-        run_name = f"{time_series}_{target}_AUTOTS_{n+1}"
-        X, y = load_data(file,config["TS"][time_series]["target"])
-        #ta martelado, voltar a ver
+        run_name = f"{time_series}_{target}_LSTM_{n+1}"
+        X, y = load_data(file,target)
+        #test_iteration(X, y, config, run_name, params)
+        # TODO: remove next line
         if train:
             train_iteration(X, y, config, run_name, params)
         if test:
-           _, y_ts = load_data(test_files[n], target)
-           test_iteration(y_ts, config, run_name, params)
+            X_ts, y_ts = load_data(test_files[n], target)
+            test_iteration(X_ts, y_ts, config, run_name, params)
         
+
 
 if __name__ == "__main__":
     # Read arguments
@@ -152,10 +152,11 @@ if __name__ == "__main__":
     parser.add_argument('-tr', '--train', dest="train",
                         action=argparse.BooleanOptionalAction,
                         help="Performs model training.")
-    parser.set_defaults(train=True)
+    parser.set_defaults(train=False)
     parser.add_argument('-ts', '--test', dest="test",
                         action=argparse.BooleanOptionalAction,
                         help="Performs model testing (evaluation).")
+    parser.set_defaults(train=True)
     args = parser.parse_args()
     # Load configs
     try:
@@ -163,5 +164,5 @@ if __name__ == "__main__":
     except Exception as e:
         print("Error loading config file: ", e)
         sys.exit()
-    # Train/Test AUTOTS
+    # Train/Test LSTM
     main(args.time_series, config, args.train, args.test)

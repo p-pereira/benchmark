@@ -10,6 +10,11 @@ from sklearn import metrics
 def rmse(y_true: Union[pd.Series, np.array], y_pred: Union[pd.Series, np.array]) -> float:
     return np.sqrt(((y_pred - y_true) ** 2).mean())
 
+def nmae(y_true: Union[pd.Series, np.array], y_pred: Union[pd.Series, np.array], min_val: float, max_val: float) -> float:
+    mae = METRICS["mae"](y_true, y_pred)
+    range_vals = max_val - min_val
+    return mae / range_vals
+
 METRICS = {
     "mae": metrics.mean_absolute_error,
     "mse": metrics.mean_squared_error,

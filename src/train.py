@@ -11,7 +11,7 @@ from LUDWIG import main as ludwig
 from ARIMA import main as arima
 from AUTOTS import main as autots
 from PROPHET import main as prophet
-#from SKTIME import main as sktime
+from SKTIME import main as sktime
 #from PYAF import main as pyaf
 
 MODELS = {
@@ -21,7 +21,7 @@ MODELS = {
     "FEDOT": fedot,
     "LUDWIG": ludwig,
     "PROPHET": prophet,
-    #"SKTIME": sktime,
+    "SKTIME": sktime,
     #"LR": lr
     }
 

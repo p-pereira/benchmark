@@ -6,7 +6,7 @@ from typing import Dict
 import numpy as np
 import pandas as pd
 import sys
-from utilities import compute_metrics, load_data, list_files
+from utilities import compute_metrics, load_data, list_files, nmae
 import yaml
 from tqdm import tqdm
 import mlflow
@@ -14,8 +14,9 @@ from time import time
 from sktime.forecasting.model_selection import SlidingWindowSplitter, ForecastingGridSearchCV
 from sktime.forecasting.compose import MultiplexForecaster
 from sktime.forecasting.theta import ThetaForecaster
-from sktime.forecasting.arima import AutoARIMA
 from sktime.forecasting.ets import AutoETS
+from sktime.forecasting.arima import AutoARIMA
+from sktime.forecasting.naive import NaiveForecaster
 import warnings
 warnings.filterwarnings("ignore")
 
@@ -46,33 +47,42 @@ def train_iteration(y: pd.Series, config: Dict ={}, run_name: str="", params: Di
     time_series = params["time_series"]
     FDIR = path.join(config["DATA_PATH"], config["MODELS_PATH"],
                      time_series, str(params["iter"]), "SKTIME")
+    FDIR2 = path.join(config["DATA_PATH"], config["MODELS_PATH"],
+                      time_series, "1", "SKTIME")
     makedirs(FDIR, exist_ok=True)
     FPATH = path.join(FDIR, "MODEL.pkl")
-    model_params = config["MODELS"]["sktime"]
-
+    FPATH2 = path.join(FDIR2, "MODEL.pkl")
+    
     H = config["TS"][time_series]["H"]
+    K = config["TS"][time_series]["K"]
 
     with mlflow.start_run(run_name=run_name) as run:
         mlflow.log_params(params)
-        mlflow.log_params(model_params)
         
         start = time()
-        # Task selection, initialisation of the framework
-        forecaster = MultiplexForecaster(
-            forecasters=[
-                ("theta", ThetaForecaster(sp=model_params["sp"])),
-                ("autoets", AutoETS(sp=model_params["sp"])),
-                ("autoarima", AutoARIMA(sp=model_params["sp"])),
-            ],
-        )
-        cv = SlidingWindowSplitter(fh=H, window_length=y.shape[0]-H)
-        forecaster_param_grid = {"selected_forecaster": ["theta", 
-                                                         "autoets", 
-                                                         "autoarima"]}
+        if params["iter"]:
+            forecaster = MultiplexForecaster(
+                forecasters=[
+                    ("theta", ThetaForecaster(sp=K)),
+                    ("autoets", AutoETS(sp=K)),
+                    ("arima", AutoARIMA(suppress_warnings=True, sp=K, n_jobs=-1)),
+                    ("naive", NaiveForecaster(sp=K))
+                ],
+            )
+            cv = SlidingWindowSplitter(fh=H, window_length=y.shape[0]-H)
+            forecaster_param_grid = {"selected_forecaster": ["theta", 
+                                                            "autoets",
+                                                            "arima",
+                                                            "naive"]}
 
-        gscv = ForecastingGridSearchCV(forecaster, cv=cv,
-                                       param_grid=forecaster_param_grid)
-        gscv.fit(y)
+            gscv = ForecastingGridSearchCV(forecaster, cv=cv,
+                                        param_grid=forecaster_param_grid)
+            _ = gscv.fit(y)
+        else:
+            with open(FPATH2, "rb") as f:
+                gsvc = load(f)
+            _ = gsvc.update(y, update_params=False)
+        
         end = time()
         tr_time = end - start
 
@@ -104,6 +114,9 @@ def test_iteration(y: pd.Series, config: Dict = {}, run_name: str = "", params: 
     end = time()
     inf_time = (end - start) / len(pred)
     metrics = compute_metrics(y, pred, "ALL", "test_")
+    min_v = config["TS"][params["time_series"]]["min"]
+    max_v = config["TS"][params["time_series"]]["max"]
+    nmae_ = nmae(y, pred, min_v, max_v)
     # Store predictions and target values
     info = pd.DataFrame([y, pd.Series(pred)]).T
     info.columns = ["y_true", "y_pred"]
@@ -116,6 +129,7 @@ def test_iteration(y: pd.Series, config: Dict = {}, run_name: str = "", params: 
         mlflow.log_artifact(FPATH2)
         mlflow.log_metrics(metrics)
         mlflow.log_metric("test_time", inf_time)
+        mlflow.log_metric("test_nmae", nmae_)
     mlflow.end_run()
 
 

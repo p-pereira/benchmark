@@ -3,7 +3,7 @@ from os import path, makedirs
 from typing import Dict
 import pandas as pd
 import sys
-from utilities import compute_metrics, load_data, list_files
+from utilities import compute_metrics, load_data, list_files, nmae
 import yaml
 from tqdm import tqdm
 import mlflow
@@ -51,9 +51,12 @@ def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: s
         forecast = m.predict(pd.DataFrame(data['ds']))
         pred = forecast['yhat'].values
         metrics = compute_metrics(y, pred, "ALL", "training_")
-
+        min_v = config["TS"][params["time_series"]]["min"]
+        max_v = config["TS"][params["time_series"]]["max"]
+        nmae_ = nmae(y, pred, min_v, max_v)
         mlflow.log_metric("training_time", tr_time)
         mlflow.log_metrics(metrics)
+        mlflow.log_metric("training_nmae", nmae_)
         mlflow.prophet.log_model(m, "model")
         
     mlflow.end_run()
@@ -80,6 +83,9 @@ def test_iteration(X: pd.DataFrame, y: pd.Series, config: Dict = {}, run_name: s
     pred = forecast['yhat'].values
     inf_time = (end - start) / len(pred)
     metrics = compute_metrics(y, pred, "ALL", "test_")
+    min_v = config["TS"][params["time_series"]]["min"]
+    max_v = config["TS"][params["time_series"]]["max"]
+    nmae_ = nmae(y, pred, min_v, max_v)
     # Store predictions and target values
     info = pd.DataFrame([y, pred]).T
     info.columns = ["y_true", "y_pred"]
@@ -92,6 +98,7 @@ def test_iteration(X: pd.DataFrame, y: pd.Series, config: Dict = {}, run_name: s
         mlflow.log_artifact(FPATH)
         mlflow.log_metrics(metrics)
         mlflow.log_metric("test_time", inf_time)
+        mlflow.log_metric("test_nmae", nmae_)
     mlflow.end_run()
 
 
