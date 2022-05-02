@@ -72,7 +72,7 @@ def test_iteration(X: pd.DataFrame, y: pd.Series, config: Dict = {}, run_name: s
 
     # Load model
     FDIR = path.join(config["DATA_PATH"], config["MODELS_PATH"],
-                     params["time_series"], str(params["iter"]), "GLUON")
+                     params["time_series"], str(params["iter"]), "LSTM")
     makedirs(FDIR, exist_ok=True)
     FPATH = path.join(FDIR, "MODEL.pkl")
     with open(FPATH, "rb") as f:
@@ -128,6 +128,11 @@ def main(time_series: str, config: dict = {}, train: bool = True, test: bool = T
             'model': "LSTM",
             'iter': n+1
         }
+        FDIR = path.join(config["DATA_PATH"], config["PRED_PATH"], time_series, params["model"])
+        FPATH = path.join(FDIR, f"pred_{str(n+1)}.csv")
+
+        if path.exists(FPATH):
+            continue
         run_name = f"{time_series}_{target}_LSTM_{n+1}"
         X, y = load_data(file,target)
         #test_iteration(X, y, config, run_name, params)

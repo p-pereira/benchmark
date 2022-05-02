@@ -30,6 +30,10 @@ if __name__ == "__main__":
     
     for model_ in MODELS.keys():
         for ts in time_series:
-            MODELS[model_](ts, config, train=True, test=True)
+            
+            try:
+                MODELS[model_](ts, config, train=True, test=True)
+            except Exception as e:
+                print(f"Error on model {model_} and dataset {ts}: {e}")
     
     

@@ -8,7 +8,7 @@ RES_PATH: "5_results"
 MLFLOW_PATH: "6_mlflow/mlruns"
 
 # Mlflow config
-MLFLOW_URI: "http://localhost:5001"
+MLFLOW_URI: "http://localhost:5005"
 
 # ML FLOW
 EXPERIMENT: "Benchmark TS"
@@ -97,8 +97,8 @@ TS:
     WR: [1, 2, 3, 4, 5, 6, 24, 25] # lag window for regression dataset creation
     date: DateTime # column with timestamp
     freq: "H" # hourly data
-    max: 14 # max ts value
-    min: 156 # min ts value
+    max: 156 # max ts value
+    min: 14 # min ts value
   junction2:
     format: ".csv"
     K: 24 # seasonal period: 24 (1 day)
@@ -109,8 +109,8 @@ TS:
     WR: [1, 2, 3, 4, 5, 6, 24, 25] # lag window for regression dataset creation
     date: DateTime # column with timestamp
     freq: "H" # hourly data
-    max: 2 # max ts value
-    min: 48 # min ts value
+    max: 48 # max ts value
+    min: 2 # min ts value
   junction3:
     format: ".csv"
     K: 24 # seasonal period: 24 (1 day)
@@ -121,8 +121,8 @@ TS:
     WR: [1, 2, 3, 4, 5, 6, 24, 25] # lag window for regression dataset creation
     date: DateTime # column with timestamp
     freq: "H" # hourly data
-    max: 2 # max ts value
-    min: 180 # min ts value
+    max: 180 # max ts value
+    min: 2 # min ts value
 
 # Models parameters:
 MODELS:
@@ -131,7 +131,7 @@ MODELS:
     verbose_level: 0 # just print errors
     preset: 'ts' # preset config for time series
   autots:
-    model_list: "fast"
+    model_list: "superfast"
     verbose: -1
     n_jobs: -1
   autoarima:

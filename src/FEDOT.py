@@ -14,7 +14,7 @@ from time import time
 from fedot.core.repository.tasks import Task, TaskTypesEnum, TsForecastingParams
 from fedot.core.data.data import InputData
 from fedot.api.main import Fedot
-
+from tqdm import tqdm
 
 def train_iteration(data: InputData, task: Task, config: Dict ={}, run_name: str="", params: Dict = {}):
     
@@ -113,6 +113,7 @@ def test_iteration(history: InputData, test_data: InputData, config: Dict = {}, 
     FPATH2 = path.join(FDIR2, f"pred_{str(params['iter'])}.csv")
     info.to_csv(FPATH2, index=False)
     # Load new info to mlflow run
+    
     with mlflow.start_run(run_id=run_id) as run:
         mlflow.log_artifact(FPATH)
         mlflow.log_artifact(FPATH2)
@@ -144,13 +145,18 @@ def main(time_series: str, config: dict = {}, train: bool = True, test: bool = T
     task = Task(TaskTypesEnum.ts_forecasting,
                 TsForecastingParams(forecast_length=H))
     # Train FEDOT models
-    for n, (file, file2) in enumerate(zip(train_files, test_files)):
+    for n, (file, file2) in tqdm(enumerate(zip(train_files, test_files))):
         params = {
             'time_series': time_series,
             'target': target,
             'model': "FEDOT",
             'iter': n+1
         }
+        FDIR = path.join(config["DATA_PATH"], config["PRED_PATH"], time_series, params["model"])
+        FPATH = path.join(FDIR, f"pred_{str(n+1)}.csv")
+
+        if path.exists(FPATH):
+            continue
         run_name = f"{time_series}_{target}_FEDOT_{n+1}"
         
         tr_data = InputData.from_csv_time_series(task, file, target_column=target)
@@ -186,5 +192,9 @@ if __name__ == "__main__":
         print("Error loading config file: ", e)
         sys.exit()
     # Train/Test FEDOT model
-    main(args.time_series, config, args.train, args.test)
+    if args.time_series == "ALL":
+        for time_series in config["TS"].keys():
+            main(time_series, config, args.train, args.test)
+    else:
+        main(args.time_series, config, args.train, args.test)
     

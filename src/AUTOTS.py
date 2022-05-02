@@ -30,7 +30,7 @@ def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: s
     data[date_col] = pd.to_datetime(data[date_col])
     data = data.set_index(date_col)
 
-    K = config["TS"][params["time_series"]]["K"]
+    H = config["TS"][params["time_series"]]["H"]
     # mlflow configs
     mlflow.set_tracking_uri(config["MLFLOW_URI"])
     try:
@@ -48,7 +48,7 @@ def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: s
         mlflow.log_params(model_params)
         start = time()
         model = AutoTS(
-            forecast_length=K,
+            forecast_length=H,
             **model_params
         )
 
@@ -130,6 +130,11 @@ def main(time_series: str, config: dict = {}, train: bool = True, test: bool = T
             'model': "AUTOTS",
             'iter': n+1
         }
+        FDIR = path.join(config["DATA_PATH"], config["PRED_PATH"], time_series, params["model"])
+        FPATH = path.join(FDIR, f"pred_{str(n+1)}.csv")
+
+        if path.exists(FPATH):
+            continue
         run_name = f"{time_series}_{target}_AUTOTS_{n+1}"
         X, y = load_data(file,config["TS"][time_series]["target"])
         #ta martelado, voltar a ver
@@ -164,4 +169,8 @@ if __name__ == "__main__":
         print("Error loading config file: ", e)
         sys.exit()
     # Train/Test AUTOTS
-    main(args.time_series, config, args.train, args.test)
+    if args.time_series == "ALL":
+        for time_series in config["TS"].keys():
+            main(time_series, config, args.train, args.test)
+    else:
+        main(args.time_series, config, args.train, args.test)

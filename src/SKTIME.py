@@ -54,19 +54,22 @@ def train_iteration(y: pd.Series, config: Dict ={}, run_name: str="", params: Di
     FPATH2 = path.join(FDIR2, "MODEL.pkl")
     
     H = config["TS"][time_series]["H"]
-    K = config["TS"][time_series]["K"]
+    if time_series=="madrid":
+        des = False
+    else:
+        des=True
 
     with mlflow.start_run(run_name=run_name) as run:
         mlflow.log_params(params)
         
         start = time()
-        if params["iter"]:
+        if params["iter"] == 1:
             forecaster = MultiplexForecaster(
                 forecasters=[
-                    ("theta", ThetaForecaster(sp=K)),
-                    ("autoets", AutoETS(sp=K)),
-                    ("arima", AutoARIMA(suppress_warnings=True, sp=K, n_jobs=-1)),
-                    ("naive", NaiveForecaster(sp=K))
+                    ("theta", ThetaForecaster(deseasonalize=des)),
+                    ("autoets", AutoETS()),
+                    ("arima", AutoARIMA(suppress_warnings=True, n_jobs=-1)),
+                    ("naive", NaiveForecaster())
                 ],
             )
             cv = SlidingWindowSplitter(fh=H, window_length=y.shape[0]-H)
@@ -81,7 +84,7 @@ def train_iteration(y: pd.Series, config: Dict ={}, run_name: str="", params: Di
         else:
             with open(FPATH2, "rb") as f:
                 gsvc = load(f)
-            _ = gsvc.update(y, update_params=False)
+            gscv = gsvc.update(y, update_params=False)
         
         end = time()
         tr_time = end - start
@@ -120,7 +123,7 @@ def test_iteration(y: pd.Series, config: Dict = {}, run_name: str = "", params: 
     # Store predictions and target values
     info = pd.DataFrame([y, pd.Series(pred)]).T
     info.columns = ["y_true", "y_pred"]
-    FDIR2 = path.join(config["DATA_PATH"], config["PRED_PATH"], params['time_series'], "FEDOT")
+    FDIR2 = path.join(config["DATA_PATH"], config["PRED_PATH"], params['time_series'], "SKTIME")
     makedirs(FDIR2, exist_ok=True)
     FPATH2 = path.join(FDIR2, f"pred_{str(params['iter'])}.csv")
     info.to_csv(FPATH2, index=False)
@@ -159,6 +162,11 @@ def main(time_series: str, config: dict = {}, train: bool = True, test: bool = T
             'model': "SKTIME",
             'iter': n+1
         }
+        FDIR = path.join(config["DATA_PATH"], config["PRED_PATH"], time_series, params["model"])
+        FPATH = path.join(FDIR, f"pred_{str(n+1)}.csv")
+
+        if path.exists(FPATH):
+            continue
         run_name = f"{time_series}_{target}_SKTIME_{n+1}"
         
         if train:
@@ -193,7 +201,7 @@ if __name__ == "__main__":
     except Exception as e:
         print("Error loading config file: ", e)
         sys.exit()
-    # Train/Test FEDOT model
+    # Train/Test sktime model
     if args.time_series == "ALL":
         for time_series in config["TS"].keys():
             main(time_series, config, args.train, args.test)

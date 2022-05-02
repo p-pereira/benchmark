@@ -15,6 +15,23 @@ from ludwig.api import LudwigModel
 from ludwig.contribs.mlflow import MlflowCallback
 
 
+def lforecast(X, model, target):
+    PREDS=[]
+    H = X.shape[0]
+    for H2 in range(H):
+        cols=X.columns
+        lags = [int(col.replace("lag","")) for col in cols]
+        use_lags = [f"lag{x}" for x in range(len(PREDS), -1, -1) 
+                    if (x < H) & (x in lags)]
+        X2 = pd.DataFrame(X.iloc[H2,].copy()).T
+        if len(use_lags) > 0:
+            X2[use_lags] = PREDS[-len(use_lags):]
+        X2['features']=[' '.join(map(str,vals)) for vals in X2.values]
+        res = model.predict(X2)
+        pred = res[target+"_predictions"].values[0]
+        PREDS.append(pred)
+    return pd.Series(PREDS)
+
 def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: str="", params: Dict = {}):
     
     """AutoML using LUDWIG and storing metrics in MLflow.
@@ -45,8 +62,6 @@ def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: s
 
     FDIR = path.join(config["DATA_PATH"], config["MODELS_PATH"],
                      params["time_series"], str(params["iter"]), "LUDWIG")
-    FDIR2 = path.join(config["DATA_PATH"], config["MODELS_PATH"],
-                      params["time_series"], "1", "LUDWIG")
     makedirs(FDIR, exist_ok=True)
     #model_params = config["MODELS"]["ludwig"]
     target = params['target']
@@ -101,11 +116,9 @@ def test_iteration(X:pd.DataFrame, y: pd.Series, config: Dict = {}, run_name: st
     logged_model = f"runs:/{run_id}/model"
     loaded_model = mlflow.pyfunc.load_model(logged_model)
     # Predic and compute metrics
-    X['features']=[' '.join(map(str,vals)) for vals in X.values]
     start = time()
-    res = loaded_model.predict(X)
+    pred = lforecast(X, loaded_model, params["target"])
     end = time()
-    pred = res[params['target']+"_predictions"].values
     inf_time = (end - start) / len(pred)
     metrics = compute_metrics(y, pred, "ALL", "test_")
     min_v = config["TS"][params["time_series"]]["min"]
@@ -150,6 +163,11 @@ def main(time_series: str, config: dict = {}, train: bool = True, test: bool = T
             'model': "LUDWIG",
             'iter': n+1
         }
+        FDIR = path.join(config["DATA_PATH"], config["PRED_PATH"], time_series, params["model"])
+        FPATH = path.join(FDIR, f"pred_{str(n+1)}.csv")
+
+        if path.exists(FPATH):
+            continue
         run_name = f"{time_series}_{target}_LUDWIG_{n+1}"
         
         X, y = load_data(file, target)
