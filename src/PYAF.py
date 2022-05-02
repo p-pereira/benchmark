@@ -48,7 +48,7 @@ def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: s
         mlflow.log_params(params)
         start = time()
         model = autof.cForecastEngine()
-        model.mOptions.set_active_autoregressions(['SVR'])
+        model.mOptions.enable_slow_mode()
         model.train(X, 'date_time', 'tempC', 15)
         end = time()
         tr_time = end - start
