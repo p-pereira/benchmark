@@ -1,12 +1,40 @@
+import warnings
+warnings.filterwarnings("ignore", category=FutureWarning)
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 import argparse
-from os import getcwd, makedirs, path
 import sys
-import pandas as pd
 import yaml
-import mlflow
-from tqdm import tqdm
-from utilities import list_files, load_data, compute_metrics
-from time import time
+#from LR import main as lr
+from ARIMA import main as arima
+from AUTOTS import main as autots
+#from PYAF import main as pyaf
+from FEDOT import main as fedot
+from LUDWIG import main as ludwig
+from PROPHET import main as prophet
+#from SKTIME import main as sktime
+
+MODELS = {
+    "ARIMA": arima,
+    "AUTOTS": autots,
+    #"PYAF": pyaf,
+    "FEDOT": fedot,
+    "LUDWIG": ludwig,
+    "PROPHET": prophet,
+    #"SKTIME": sktime,
+    #"LR": lr
+    }
+
+def main(time_series: str= "porto", model: str = "ARIMA", config: str = "config.yaml"):
+    
+    if model == "ALL":
+        for model_ in MODELS.keys():
+            MODELS[model_](time_series, config, train=False, test=True)
+    elif model in MODELS.keys():
+        MODELS[model](time_series, config, train=False, test=True)
+    else:
+        print(f"Error: unknown model {model}. Options: {MODELS.keys()}")
+        sys.exit()
 
 if __name__ == "__main__":
     # Read arguments
@@ -15,7 +43,7 @@ if __name__ == "__main__":
     parser.add_argument(help='Time-series name.', dest="time_series")
     parser.set_defaults(time_series="porto")
     parser.add_argument(help='ML model.', dest="model")
-    parser.set_defaults(model="LR")
+    parser.set_defaults(model="ALL")
     parser.add_argument('-c', '--config', dest='config', 
                         help='Config yaml file.')
     parser.add_argument('-r', '--reg', dest='make_regression', 
@@ -23,48 +51,15 @@ if __name__ == "__main__":
     parser.set_defaults(make_regression=False)
     parser.set_defaults(config="config.yaml")
     args = parser.parse_args()
-    # Load configs
+    
     try:
         config =  yaml.safe_load(open(args.config))
     except Exception as e:
         print("Error loading config file: ", e)
         sys.exit()
     
-    if args.make_regression:
-        pattern = "ts*reg*"
-    else:
-        pattern = "ts*"
-    target = config["TS"][args.time_series]["target"]
-    test_files = list_files(args.time_series, config, pattern)
-
-    # mlflow configs
-    mlflow.set_tracking_uri("http://localhost:5000")
+    if args.model not in MODELS.keys():
+        print(f"Error: unkown model {args.model}.")
+        sys.exit()
     
-    for n, file in enumerate(tqdm(test_files)):
-        # Get mlflow run id to load the model.
-        run_name = f"{args.time_series}_{target}_{args.model}_{n+1}"
-        X, y = load_data(file,config["TS"][args.time_series]["target"])
-        experiment = dict(mlflow.get_experiment_by_name(config["EXPERIMENT"]))
-        runs = mlflow.search_runs([experiment["experiment_id"]])
-        run_id = runs[runs['tags.mlflow.runName']==run_name]["run_id"].values[0]
-        # Load model
-        logged_model = f"runs:/{run_id}/model"
-        loaded_model = mlflow.pyfunc.load_model(logged_model)
-        # Predic and compute metrics
-        start = time()
-        pred = loaded_model.predict(X)
-        end = time()
-        inf_time = (end - start) / len(pred)
-        metrics = compute_metrics(y, pred, "ALL", "test_")
-        # Store predictions and target values
-        info = pd.DataFrame([y, pred]).T
-        info.columns = ["y_true", "y_pred"]
-        FDIR = path.join(config["DATA_PATH"], config["PRED_PATH"], args.time_series, args.model)
-        makedirs(FDIR, exist_ok=True)
-        FPATH = path.join(FDIR, f"pred_{n+1}.csv")
-        info.to_csv(FPATH, index=False)
-        # Load new info to mlflow run
-        with mlflow.start_run(run_id=run_id) as run:
-            mlflow.log_artifact(FPATH)
-            mlflow.log_metrics(metrics)
-            mlflow.log_metric("test_time", inf_time)
+    main(args.time_series, args.model, config)

@@ -7,6 +7,7 @@ import os
 import yaml
 from tqdm import tqdm
 
+
 def rw(y: Union[pd.Series, List], ratio: Union[float,int], W: int, S: int, iteration: int=1, mode: str="rolling", val_ratio: Union[float, str]=0) -> Dict:
     """Generate train, validation and test indexes for Rolling Window procedure.
 
@@ -32,35 +33,26 @@ def rw(y: Union[pd.Series, List], ratio: Union[float,int], W: int, S: int, itera
     Dict
         Training, validation and testing indexes.
     """
-    L = len(y)
-    idx = (iteration-1) * S
-
-    if ratio < 0:
-        H = ratio * L
+    ALLITR=None
+    VAL=None
+    NSIZE=len(y)
+ 
+    aux=W+S*(iteration-1)
+    aux=min(aux,NSIZE)
+    if mode=="rolling":
+        iaux=max((aux-W+1),1) 
     else:
-        H = ratio
-
-    if val_ratio < 0:
-        H2 = val_ratio * L
+        iaux=1
+    ALLTR=list(range(iaux,aux))
+    end=aux+ratio
+    end=min(end,NSIZE)
+    iend=aux
+    if iend < end:
+        TS = list(range(iend,end))
     else:
-        H2 = val_ratio
-
-    if H2 == 0:
-        if mode == "rolling":
-            tr = range(idx, idx+W)
-        elif mode == "incremental":
-            tr = range(0, idx+W)
-        val = []
-    else:
-        if mode == "rolling":
-            tr = range(idx, idx+W-H2)
-        elif mode == "incremental":
-            tr = range(0, idx+W-H2)
-        val = range(0+W-H2, idx+W-H2)
+        TS=None
     
-    ts = range(idx+W+1, idx+W+1+H)
-    
-    return {'tr': tr, 'val': val, 'ts': ts}
+    return {'tr': ALLTR, 'itr': ALLITR, 'val': VAL, 'ts': TS}
 
 def cases_series(t: pd.Series, W: Tuple, target: str = "y", start: int=1, end: int=0) -> pd.DataFrame:
     """Python adaptation of CasesSeries R function from rminer library. Creates lag dataframe from time-series data.
@@ -103,7 +95,7 @@ def cases_series(t: pd.Series, W: Tuple, target: str = "y", start: int=1, end: i
     D.columns = N
     return D
 
-def main(time_series: str, config_file: str = "config.yaml", make_regression: bool = False):
+def main(time_series: str, config: Dict = {}, make_regression: bool = False):
     """Generate cross-validation data files for a time-series dataset.
 
     Parameters
@@ -113,12 +105,6 @@ def main(time_series: str, config_file: str = "config.yaml", make_regression: bo
     config_file : str, optional
         configuration file path, by default "config.yaml"
     """
-    try:
-        config =  yaml.safe_load(open(config_file))
-    except Exception as e:
-        print("Error loading config file: ", e)
-        sys.exit()
-    
     DATA_PATH = config["DATA_PATH"]
     RAW_PATH = config["RAW_PATH"]
     PREP_PATH = config["PREP_PATH"]
@@ -131,7 +117,6 @@ def main(time_series: str, config_file: str = "config.yaml", make_regression: bo
     fpath = os.path.join(DATA_PATH, RAW_PATH, time_series + format)
 
     try:
-        print(os.getcwd())
         d = pd.read_csv(fpath)
     except Exception as e:
         print("Error loading data: ", e)
@@ -157,8 +142,8 @@ def main(time_series: str, config_file: str = "config.yaml", make_regression: bo
 
         dtr = d.iloc[res["tr"], ]
         dts = d.iloc[res["ts"], ]
-        tr_fpath = os.path.join(lags_path, f"tr_{it}{fn}{format}")
-        ts_fpath = os.path.join(lags_path, f"ts_{it}{fn}{format}")
+        tr_fpath = os.path.join(lags_path, f"{it}_tr{fn}{format}")
+        ts_fpath = os.path.join(lags_path, f"{it}_ts{fn}{format}")
         dtr.to_csv(tr_fpath, index=None)
         dts.to_csv(ts_fpath, index=None)
 
@@ -173,8 +158,19 @@ if __name__ == "__main__":
                         help='Config yaml file.')
     parser.set_defaults(config="config.yaml")
     parser.add_argument('-r', '--reg', dest='make_regression', 
+                        action=argparse.BooleanOptionalAction,
                         help='Convert time-series data in regression task.')
-    parser.set_defaults(make_regression=False)
     args = parser.parse_args()
+
+    try:
+        config =  yaml.safe_load(open(args.config))
+    except Exception as e:
+        print("Error loading config file: ", e)
+        sys.exit()
     # Generate dataset files
-    main(args.time_series, args.config, args.make_regression)
+    if args.time_series == "ALL":
+        for time_series in config["TS"].keys():
+            main(time_series, config, args.make_regression)
+    else:
+        main(args.time_series, config, args.make_regression)
+    

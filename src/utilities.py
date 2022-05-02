@@ -1,3 +1,4 @@
+import re
 import sys
 import numpy as np
 import pandas as pd
@@ -9,13 +10,19 @@ from sklearn import metrics
 def rmse(y_true: Union[pd.Series, np.array], y_pred: Union[pd.Series, np.array]) -> float:
     return np.sqrt(((y_pred - y_true) ** 2).mean())
 
+def nmae(y_true: Union[pd.Series, np.array], y_pred: Union[pd.Series, np.array], min_val: float, max_val: float) -> float:
+    mae = METRICS["mae"](y_true, y_pred)
+    range_vals = max_val - min_val
+    return mae / range_vals
+
 METRICS = {
-    "MAE": metrics.mean_absolute_error,
-    "MSE": metrics.mean_squared_error,
-    "RMSE": rmse,
-    "MAPE": metrics.mean_absolute_percentage_error,
-    "R2": metrics.r2_score
+    "mae": metrics.mean_absolute_error,
+    "mse": metrics.mean_squared_error,
+    "rmse": rmse,
+    "mape": metrics.mean_absolute_percentage_error,
+    "r2": metrics.r2_score
 }
+
 def load_data(fpath: str, target="tempC", return_Xy: bool = True) -> Union[Tuple[pd.DataFrame, pd.Series], pd.DataFrame]:
     """Load data.
 
@@ -39,9 +46,12 @@ def load_data(fpath: str, target="tempC", return_Xy: bool = True) -> Union[Tuple
     else:
         return df
 
-def list_files(time_series: str, config: Dict, pattern : str="tr*"):
+def list_files(time_series: str, config: Dict, pattern : str="*_tr.csv"):
     DIR = os.path.join(config["DATA_PATH"], config["PREP_PATH"], time_series)
-    return glob(os.path.join(DIR,pattern))
+    files = glob(os.path.join(DIR,pattern))
+    files.sort(key=lambda f: int(re.sub('\D', '', f)))
+    return files
+
 
 def compute_metrics(y_true: Union[pd.Series, np.array], y_pred: Union[pd.Series, np.array], metrics: Union[str, List[str]]="ALL", prefix: str="") -> Dict:
     if isinstance(metrics, list):
