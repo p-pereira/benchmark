@@ -1,39 +1,36 @@
-# Imports
-import warnings
-warnings.filterwarnings("ignore")
 import argparse
-from os import makedirs, path
-from pickle import dump, load
+from os import path, makedirs
 from typing import Dict
+from autots import AutoTS
 import pandas as pd
 import sys
-from utilities import compute_metrics, list_files, nmae
+from utilities import compute_metrics, load_data, list_files, nmae
 import yaml
 import mlflow
-from time import time
-from fedot.core.repository.tasks import Task, TaskTypesEnum, TsForecastingParams
-from fedot.core.data.data import InputData
-from fedot.api.main import Fedot
 from tqdm import tqdm
+from time import time
+from pickle import dump, load
 
-def train_iteration(data: InputData, task: Task, config: Dict ={}, run_name: str="", params: Dict = {}):
-    
-    """AutoML using FEDOT and storing metrics in MLflow.
-    Code based on: https://github.com/nccr-itmo/FEDOT/blob/master/examples/advanced/time_series_forecasting/multistep.py
+def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: str="", params: Dict = {}):
+    """_summary_
 
     Parameters
     ----------
-    data : InputData
-        Time-series fedot InputData object.
-    task : Task
-        Fedot task object.
+    X : pd.DataFrame
+        _description_
+    y : pd.Series
+        _description_
     config : Dict, optional
-        Configuration dict from config.yaml file, by default {}
+        _description_, by default {}
     run_name : str, optional
-        Run name for MLflow, by default ""
-    params : Dict, optional
-        Run/model parameters, by default {} (empty)
+        _description_, by default ""
     """
+    date_col = config["TS"][params["time_series"]]["date"]
+    data = pd.concat([X[date_col], y],axis=1)
+    data[date_col] = pd.to_datetime(data[date_col])
+    data = data.set_index(date_col)
+
+    H = config["TS"][params["time_series"]]["H"]
     # mlflow configs
     mlflow.set_tracking_uri(config["MLFLOW_URI"])
     try:
@@ -41,66 +38,53 @@ def train_iteration(data: InputData, task: Task, config: Dict ={}, run_name: str
     except:
         pass
     
-    FDIR = path.join(config["DATA_PATH"], config["MODELS_PATH"],
-                     params["time_series"], str(params["iter"]), "FEDOT")
-    FDIR2 = path.join(config["DATA_PATH"], config["MODELS_PATH"],
-                     params["time_series"], "1", "FEDOT")
+    FDIR = path.join(config["DATA_PATH"], config["MODELS_PATH"], params["time_series"], str(params["iter"]), "AUTOTS")
     makedirs(FDIR, exist_ok=True)
     FPATH = path.join(FDIR, "MODEL.pkl")
-    FPATH2 = path.join(FDIR2, "PIPELINE.pkl")
-    model_params = config["MODELS"]["fedot"]
+    model_params = config["MODELS"]["autots"]
 
     with mlflow.start_run(run_name=run_name) as run:
         mlflow.log_params(params)
         mlflow.log_params(model_params)
-        
         start = time()
-        # Task selection, initialisation of the framework
-        fedot_model = Fedot(problem='ts_forecasting',
-                            task_params=task.task_params, 
-                            **model_params)
-        if params["iter"] > 1:
-            with open(FPATH2, "rb") as f:
-                pipeline = load(f)
-            _ = fedot_model.fit(features=data, predefined_model=pipeline)
-        else:
-            _ = fedot_model.fit(features=data)
+        model = AutoTS(
+            forecast_length=H,
+            **model_params
+        )
+
+        model = model.fit(data)
         end = time()
         tr_time = end - start
 
-        if params["iter"] == 1:
-            pipeline = fedot_model.current_pipeline
-            with open(FPATH2, "wb") as f:
-                dump(pipeline, f)
-        
         with open(FPATH, "wb") as f:
-            dump(fedot_model, f)
-        mlflow.log_metric("training_time", tr_time)
+            dump(model, f)
 
-        mlflow.log_artifact(FPATH)
-        mlflow.log_artifact(FPATH2)
+        mlflow.log_metric("training_time", tr_time)
+        mlflow.pmdarima.log_model(model, "model")
+        
     mlflow.end_run()
 
-def test_iteration(history: InputData, test_data: InputData, config: Dict = {}, run_name: str = "", params: Dict = {}):
+def test_iteration(y: pd.Series, config: Dict = {}, run_name: str = "", params: Dict = {}):
     # mlflow configs
     mlflow.set_tracking_uri(config["MLFLOW_URI"])
-    # Get mlflow run id to load the model.
+
     experiment = dict(mlflow.get_experiment_by_name(config["EXPERIMENT"]))
     runs = mlflow.search_runs([experiment["experiment_id"]])
     run_id = runs[runs['tags.mlflow.runName']==run_name]["run_id"].values[0]
+
     # Load model
-    FDIR = path.join(config["DATA_PATH"], config["MODELS_PATH"],
-                     params["time_series"], str(params["iter"]), "FEDOT")
+    FDIR = path.join(config["DATA_PATH"], config["MODELS_PATH"], params["time_series"], str(params["iter"]), "AUTOTS")
     makedirs(FDIR, exist_ok=True)
     FPATH = path.join(FDIR, "MODEL.pkl")
+   
     with open(FPATH, "rb") as f:
         model = load(f)
+
     # Predic and compute metrics
     start = time()
-    pred = model.predict(history)
+    pred = model.predict().forecast.values.T[0]
     end = time()
     inf_time = (end - start) / len(pred)
-    y = test_data.target
     metrics = compute_metrics(y, pred, "ALL", "test_")
     min_v = config["TS"][params["time_series"]]["min"]
     max_v = config["TS"][params["time_series"]]["max"]
@@ -108,15 +92,13 @@ def test_iteration(history: InputData, test_data: InputData, config: Dict = {}, 
     # Store predictions and target values
     info = pd.DataFrame([y, pred]).T
     info.columns = ["y_true", "y_pred"]
-    FDIR2 = path.join(config["DATA_PATH"], config["PRED_PATH"], params['time_series'], "FEDOT")
-    makedirs(FDIR2, exist_ok=True)
-    FPATH2 = path.join(FDIR2, f"pred_{str(params['iter'])}.csv")
-    info.to_csv(FPATH2, index=False)
+    FDIR = path.join(config["DATA_PATH"], config["PRED_PATH"], params['time_series'], "AUTOTS")
+    makedirs(FDIR, exist_ok=True)
+    FPATH = path.join(FDIR, f"pred_{str(params['iter'])}.csv")
+    info.to_csv(FPATH, index=False)
     # Load new info to mlflow run
-    
     with mlflow.start_run(run_id=run_id) as run:
         mlflow.log_artifact(FPATH)
-        mlflow.log_artifact(FPATH2)
         mlflow.log_metrics(metrics)
         mlflow.log_metric("test_time", inf_time)
         mlflow.log_metric("test_nmae", nmae_)
@@ -124,14 +106,14 @@ def test_iteration(history: InputData, test_data: InputData, config: Dict = {}, 
 
 
 def main(time_series: str, config: dict = {}, train: bool = True, test: bool = True):
-    """Read all Rolling Window iterarion training files from a given time-series and train a Linear Regression model for each.
+    """_summary_
 
     Parameters
     ----------
     time_series : str
         _description_
     config : dict, optional
-        Configuration dict from config.yaml file, by default {}
+        _description_, by default {}
     """
     # Get train files
     train_files = list_files(time_series, config, pattern="*_tr.csv")
@@ -139,17 +121,13 @@ def main(time_series: str, config: dict = {}, train: bool = True, test: bool = T
     if len(train_files) == 0:
         print("Error: no files found!")
         sys.exit()
-    # Define a few parameters
-    H = config["TS"][time_series]["H"]
+    # Train AUTOTS models
     target = config["TS"][time_series]["target"]
-    task = Task(TaskTypesEnum.ts_forecasting,
-                TsForecastingParams(forecast_length=H))
-    # Train FEDOT models
-    for n, (file, file2) in tqdm(enumerate(zip(train_files, test_files))):
+    for n, file in enumerate(tqdm(train_files)):
         params = {
             'time_series': time_series,
             'target': target,
-            'model': "FEDOT",
+            'model': "AUTOTS",
             'iter': n+1
         }
         FDIR = path.join(config["DATA_PATH"], config["PRED_PATH"], time_series, params["model"])
@@ -157,17 +135,15 @@ def main(time_series: str, config: dict = {}, train: bool = True, test: bool = T
 
         if path.exists(FPATH):
             continue
-        run_name = f"{time_series}_{target}_FEDOT_{n+1}"
-        
-        tr_data = InputData.from_csv_time_series(task, file, target_column=target)
+        run_name = f"{time_series}_{target}_AUTOTS_{n+1}"
+        X, y = load_data(file,config["TS"][time_series]["target"])
+        #ta martelado, voltar a ver
         if train:
-            train_iteration(tr_data, task, config, run_name, params)
+            train_iteration(X, y, config, run_name, params)
         if test:
-            ts_data = InputData.from_csv_time_series(task, file2, target_column=target)
-            test_iteration(tr_data, ts_data, config, run_name, params)
-        # TODO: remove this for all train/test datasets
-        #break
-
+           _, y_ts = load_data(test_files[n], target)
+           test_iteration(y_ts, config, run_name, params)
+        
 
 if __name__ == "__main__":
     # Read arguments
@@ -181,6 +157,7 @@ if __name__ == "__main__":
     parser.add_argument('-tr', '--train', dest="train",
                         action=argparse.BooleanOptionalAction,
                         help="Performs model training.")
+    parser.set_defaults(train=True)
     parser.add_argument('-ts', '--test', dest="test",
                         action=argparse.BooleanOptionalAction,
                         help="Performs model testing (evaluation).")
@@ -191,10 +168,9 @@ if __name__ == "__main__":
     except Exception as e:
         print("Error loading config file: ", e)
         sys.exit()
-    # Train/Test FEDOT model
+    # Train/Test AUTOTS
     if args.time_series == "ALL":
         for time_series in config["TS"].keys():
             main(time_series, config, args.train, args.test)
     else:
         main(args.time_series, config, args.train, args.test)
-    

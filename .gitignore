@@ -134,7 +134,10 @@ dmypy.json
 # Data
 data/**/*.csv
 data/6_mlflow/mlruns/
+data/6_mlflow/backup/
 data/3_models/*
+data/5_results/*
 
 # Notebooks
 notebooks/*
+src/mlruns/0/1eb2aae4cfc14ca6b2defc3aebf071a7/artifacts/description.json
