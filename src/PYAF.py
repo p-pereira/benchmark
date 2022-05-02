@@ -1,5 +1,7 @@
+from cgi import test
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
+warnings.simplefilter(action='ignore', category=UserWarning)
 import argparse
 from os import path, getcwd, makedirs
 from typing import Dict
@@ -13,6 +15,7 @@ from tqdm import tqdm
 from time import time
 from pickle import dump, load
 import pyaf.ForecastEngine as autof
+import numpy as np
 
 def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: str="", params: Dict = {}):
     """_summary_
@@ -45,19 +48,20 @@ def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: s
         mlflow.log_params(params)
         start = time()
         model = autof.cForecastEngine()
-
+        model.mOptions.set_active_autoregressions(['SVR'])
         model.train(X, 'date_time', 'tempC', 15)
         end = time()
         tr_time = end - start
 
         print(model.getModelInfo())
-
+        
         with open(FPATH, "wb") as f:
             dump(model, f)
 
         mlflow.log_metric("training_time", tr_time)
-        mlflow.pmdarima.log_model(model, "model")
-        
+        #mlflow.pyfunc.log_model(model, "model")
+        mlflow.sklearn.log_model(model, "model")
+     
     mlflow.end_run()
 
 def test_iteration(Xtrain:pd.DataFrame, ytrain: pd.Series, Xtest: pd.DataFrame, ytest: pd.Series, config: Dict = {}, run_name: str = "", params: Dict = {}):
@@ -81,22 +85,18 @@ def test_iteration(Xtrain:pd.DataFrame, ytrain: pd.Series, Xtest: pd.DataFrame, 
     with open(FPATH, "rb") as f:
         model = load(f)
 
-    # Predic and compute metrics
+    # Predict and compute metrics
     start = time()
     pred = model.forecast(Xtrain, 30)
     end = time()
-    pred = pred[['date_time', 'tempC_Forecast']].tail(30)
-    print(pred)
-    print(ytest)
-    print("*********************************")
+    pred = pred[['date_time', 'tempC_Forecast']]
+    final = pred.merge(Xtest)
+    pred = final['tempC_Forecast'].to_numpy()
+    ytest = final['tempC']
     inf_time = (end - start) / len(pred)
-    print(pred)
-    print(ytest)
     metrics = compute_metrics(ytest, pred, "ALL", "test_")
     # Store predictions and target values
     info = pd.DataFrame([ytest, pred]).T
-    print(info)
-    print("---------------------------------")
     info.columns = ["y_true", "y_pred"]
     FDIR = path.join(config["DATA_PATH"], config["PRED_PATH"], params['time_series'], "PYAF")
     makedirs(FDIR, exist_ok=True)
