@@ -44,11 +44,13 @@ def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: s
     makedirs(FDIR, exist_ok=True)
     FPATH = path.join(FDIR, "MODEL.pkl")
 
+    mlflow.autolog(log_models=False, log_model_signatures=False, silent=True)
     with mlflow.start_run(run_name=run_name) as run:
         mlflow.log_params(params)
         start = time()
         model = autof.cForecastEngine()
         model.mOptions.enable_slow_mode()
+        #model.mOptions.set_active_autoregressions(['XGB']);
         model.train(X, 'date_time', 'tempC', 15)
         end = time()
         tr_time = end - start
