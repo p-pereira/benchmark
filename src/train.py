@@ -11,6 +11,7 @@ from LUDWIG import main as ludwig
 from ARIMA import main as arima
 from AUTOTS import main as autots
 from PYAF import main as pyaf
+from HCRYSTALBALL import main as hcryst
 
 MODELS = {
     "ARIMA": arima,
@@ -18,6 +19,7 @@ MODELS = {
     "PYAF": pyaf,
     "FEDOT": fedot,
     "LUDWIG": ludwig,
+    "HCRYSTALBALL": hcryst,
     "LR": lr
     }
 
