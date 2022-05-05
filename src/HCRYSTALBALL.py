@@ -139,7 +139,7 @@ def main(time_series: str, config: dict = {}, train: bool = True, test: bool = T
             train_iteration(X, y, config, run_name, params)
         if test:
            X_ts, y_ts = load_data(test_files[n], target)
-           test_iteration(X, y, config, run_name, params)
+           test_iteration(X_ts, y_ts, config, run_name, params)
         break
 
 if __name__ == "__main__":

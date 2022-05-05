@@ -50,7 +50,7 @@ def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: s
         start = time()
         model = autof.cForecastEngine()
         model.mOptions.enable_slow_mode()
-        #model.mOptions.set_active_autoregressions(['XGB']);
+        #model.mOptions.set_active_autoregressions(['XGB'])
         model.train(X, 'date_time', 'tempC', 15)
         end = time()
         tr_time = end - start
@@ -89,9 +89,9 @@ def test_iteration(Xtrain:pd.DataFrame, ytrain: pd.Series, Xtest: pd.DataFrame, 
 
     # Predict and compute metrics
     start = time()
-    pred = model.forecast(Xtrain, 30)
+    pred = model.forecast(Xtrain, 31)
     end = time()
-    pred = pred[['date_time', 'tempC_Forecast']]
+    pred = pred[['date_time', 'tempC_Forecast']].tail(30)
     final = pred.merge(Xtest)
     pred = final['tempC_Forecast'].to_numpy()
     ytest = final['tempC']
