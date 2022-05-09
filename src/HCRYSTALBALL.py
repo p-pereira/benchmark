@@ -13,6 +13,7 @@ from tqdm import tqdm
 from time import time
 from pickle import dump, load
 from hcrystalball.wrappers import ProphetWrapper
+from hcrystalball.model_selection import ModelSelector
 import numpy as np
 
 def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: str="", params: Dict = {}):
@@ -30,9 +31,14 @@ def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: s
         _description_, by default ""
     """
 
-    X=X.set_index('date_time')
-    X.index=pd.to_datetime(X.index)
+    #X=X.set_index('date_time')
+    #X.index=pd.to_datetime(X.index)
     
+    X = pd.concat([X.date_time, y],axis=1)
+    X = X.set_index('date_time')
+    X.index=pd.to_datetime(X.index)
+    #X['date_time'] = pd.to_datetime(X['date_time'])
+    print(X)
     # mlflow configs
     mlflow.set_tracking_uri(config["MLFLOW_URI"])
     try:
@@ -48,8 +54,23 @@ def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: s
     with mlflow.start_run(run_name=run_name) as run:
         mlflow.log_params(params)
         start = time()
-        model = ProphetWrapper()
-        model = model.fit(X,y)
+        ms = ModelSelector(horizon=30,
+                   frequency='D',
+                  )
+        ms.create_gridsearch(n_splits=2,
+                     sklearn_models=True,
+                     sklearn_models_optimize_for_horizon=True,
+                     autosarimax_models = True,
+                     prophet_models=True,
+                     exp_smooth_models = True,
+                     average_ensembles = True,
+                     stacking_ensembles = True,
+                     hcb_verbose = False
+                     )
+        ms.select_model(df=X,
+                target_col_name="tempC",
+                )
+        model=ms.results[0].best_model.fit(X,y)
         end = time()
         tr_time = end - start
 
