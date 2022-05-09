@@ -87,6 +87,7 @@ def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: s
 
 def test_iteration(X:pd.DataFrame, y: pd.Series, config: Dict = {}, run_name: str = "", params: Dict = {}):
     X=X['date_time']
+    X=X.to_frame()
     X=X.set_index('date_time')
     X.index=pd.to_datetime(X.index)
     print(X)
@@ -159,7 +160,6 @@ def main(time_series: str, config: dict = {}, train: bool = True, test: bool = T
         }
         run_name = f"{time_series}_{target}_HCRYSTALBALL_{n+1}"
         X, y = load_data(file,config["TS"][time_series]["target"])
-        #ta martelado, voltar a ver
         if train:
             train_iteration(X, y, config, run_name, params)
         if test:
