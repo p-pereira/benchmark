@@ -65,6 +65,8 @@ def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: s
                      exp_smooth_models = True,
                      average_ensembles = True,
                      stacking_ensembles = True,
+                     theta_models=True,
+                     tbats_models=True,
                      hcb_verbose = False
                      )
         ms.select_model(df=X,
@@ -73,7 +75,7 @@ def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: s
         model=ms.results[0].best_model.fit(X,y)
         end = time()
         tr_time = end - start
-
+        print(model)
         with open(FPATH, "wb") as f:
             dump(model, f)
 
@@ -84,10 +86,11 @@ def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: s
     mlflow.end_run()
 
 def test_iteration(X:pd.DataFrame, y: pd.Series, config: Dict = {}, run_name: str = "", params: Dict = {}):
-   
+    X=X['date_time']
     X=X.set_index('date_time')
     X.index=pd.to_datetime(X.index)
-
+    print(X)
+    print(y)
     # mlflow configs
     mlflow.set_tracking_uri(config["MLFLOW_URI"])
 
@@ -105,6 +108,7 @@ def test_iteration(X:pd.DataFrame, y: pd.Series, config: Dict = {}, run_name: st
     # Predict and compute metrics
     start = time()
     pred = model.predict(X)
+    print(pred)
     end = time()
     inf_time = (end - start) / len(pred)
     pred = pred['prophet'].to_numpy()
