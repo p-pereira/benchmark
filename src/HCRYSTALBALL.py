@@ -31,13 +31,9 @@ def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: s
         _description_, by default ""
     """
 
-    #X=X.set_index('date_time')
-    #X.index=pd.to_datetime(X.index)
-    
     X = pd.concat([X.date_time, y],axis=1)
     X = X.set_index('date_time')
     X.index=pd.to_datetime(X.index)
-    #X['date_time'] = pd.to_datetime(X['date_time'])
     print(X)
     # mlflow configs
     mlflow.set_tracking_uri(config["MLFLOW_URI"])
@@ -72,6 +68,8 @@ def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: s
         ms.select_model(df=X,
                 target_col_name="tempC",
                 )
+        #X=X.drop(['tempC'], axis=1)
+        #print(X)
         model=ms.results[0].best_model.fit(X,y)
         end = time()
         tr_time = end - start
@@ -86,10 +84,15 @@ def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: s
     mlflow.end_run()
 
 def test_iteration(X:pd.DataFrame, y: pd.Series, config: Dict = {}, run_name: str = "", params: Dict = {}):
-    X=X['date_time']
-    X=X.to_frame()
-    X=X.set_index('date_time')
+    #X=X['date_time']
+    #X=X.to_frame()
+    #X=X.set_index('date_time')
+    #X.index=pd.to_datetime(X.index)
+    #X.date_time=pd.to_datetime(X.date_time)
+    X = pd.concat([X.date_time, y],axis=1)
+    X = X.set_index('date_time')
     X.index=pd.to_datetime(X.index)
+    #X=X.drop(['tempC'], axis=1)
     print(X)
     print(y)
     # mlflow configs
@@ -108,11 +111,12 @@ def test_iteration(X:pd.DataFrame, y: pd.Series, config: Dict = {}, run_name: st
         model = load(f)
     # Predict and compute metrics
     start = time()
+    print("----------------------------------")
     pred = model.predict(X)
     print(pred)
     end = time()
     inf_time = (end - start) / len(pred)
-    pred = pred['prophet'].to_numpy()
+    #pred = pred['prophet'].to_numpy()
     metrics = compute_metrics(y, pred, "ALL", "test_")
     print(y)
     print(pred)
