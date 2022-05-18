@@ -39,19 +39,24 @@ def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: s
         mlflow.create_experiment(name=config["EXPERIMENT"])
     except:
         pass
-    
+    print(path)
     FDIR = path.join(config["DATA_PATH"], config["MODELS_PATH"], params["time_series"], str(params["iter"]), "PYAF")
     makedirs(FDIR, exist_ok=True)
     FPATH = path.join(FDIR, "MODEL.pkl")
+
+    time_series = params["time_series"]
+    target=config["TS"][time_series]["target"]
+    date=config["TS"][time_series]["date"]
+    ahead=config["TS"][time_series]["H"]
 
     mlflow.autolog(log_models=False, log_model_signatures=False, silent=True)
     with mlflow.start_run(run_name=run_name) as run:
         mlflow.log_params(params)
         start = time()
         model = autof.cForecastEngine()
-        model.mOptions.enable_slow_mode()
-        #model.mOptions.set_active_autoregressions(['XGB']);
-        model.train(X, 'date_time', 'tempC', 15)
+        #model.mOptions.enable_slow_mode()
+        #model.mOptions.set_active_autoregressions(['XGB'])
+        model.train(X, date, target, ahead)
         end = time()
         tr_time = end - start
 
@@ -67,11 +72,19 @@ def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: s
     mlflow.end_run()
 
 def test_iteration(Xtrain:pd.DataFrame, ytrain: pd.Series, Xtest: pd.DataFrame, ytest: pd.Series, config: Dict = {}, run_name: str = "", params: Dict = {}):
-    Xtrain = pd.concat([Xtrain.date_time, ytrain],axis=1)
-    Xtrain['date_time'] = pd.to_datetime(Xtrain['date_time'])
-
-    Xtest = pd.concat([Xtest.date_time, ytest],axis=1)
-    Xtest['date_time'] = pd.to_datetime(Xtest['date_time'])
+    
+    time_series = params["time_series"]
+    target=config["TS"][time_series]["target"]
+    date=config["TS"][time_series]["date"]
+    forecast=config["TS"][time_series]["forecast"]
+    ahead=config["TS"][time_series]["H"]
+    
+    Xtrain = pd.concat([Xtrain[date], ytrain],axis=1)
+    Xtrain[date] = pd.to_datetime(Xtrain[date])
+    #print(Xtrain)
+    Xtest = pd.concat([Xtest[date], ytest],axis=1)
+    Xtest[date] = pd.to_datetime(Xtest[date])
+    print(Xtest)
     # mlflow configs
     mlflow.set_tracking_uri(config["MLFLOW_URI"])
 
@@ -89,12 +102,22 @@ def test_iteration(Xtrain:pd.DataFrame, ytrain: pd.Series, Xtest: pd.DataFrame, 
 
     # Predict and compute metrics
     start = time()
-    pred = model.forecast(Xtrain, 30)
+    pred = model.forecast(Xtrain, ahead)#.tail(ahead)
+    print(pred.iloc[-ahead:,])
+    pred = pred[[date, forecast]]
     end = time()
-    pred = pred[['date_time', 'tempC_Forecast']]
+    #print('pred')
+    #print(pred)
+    pred = pred[[date, forecast]].tail(ahead)
+    #print("Xtest", Xtest)
+    #print("pred",pred)
     final = pred.merge(Xtest)
-    pred = final['tempC_Forecast'].to_numpy()
-    ytest = final['tempC']
+    #print("final", final)
+    pred = final[forecast].to_numpy()
+    ytest = final[target]
+    #print(ytest)
+    #print(pred)
+    #print(len(pred))
     inf_time = (end - start) / len(pred)
     metrics = compute_metrics(ytest, pred, "ALL", "test_")
     # Store predictions and target values
@@ -123,9 +146,10 @@ def main(time_series: str, config: dict = {}, train: bool = True, test: bool = T
     config : dict, optional
         _description_, by default {}
     """
+    pd.set_option('mode.chained_assignment', None)
     # Get train files
-    train_files = list_files(time_series, config, pattern="?_tr.csv")
-    test_files = list_files(time_series, config, pattern="?_ts.csv")
+    train_files = list_files(time_series, config, pattern="*_tr.csv")
+    test_files = list_files(time_series, config, pattern="*_ts.csv")
     if len(train_files) == 0:
         print("Error: no files found!")
         sys.exit()
@@ -138,6 +162,11 @@ def main(time_series: str, config: dict = {}, train: bool = True, test: bool = T
             'model': "PYAF",
             'iter': n+1
         }
+        FDIR = path.join(config["DATA_PATH"], config["PRED_PATH"], time_series, params["model"])
+        FPATH = path.join(FDIR, f"pred_{str(n+1)}.csv")
+
+        if path.exists(FPATH):
+            continue
         run_name = f"{time_series}_{target}_PYAF_{n+1}"
         X, y = load_data(file,config["TS"][time_series]["target"])
         #ta martelado, voltar a ver
@@ -146,7 +175,7 @@ def main(time_series: str, config: dict = {}, train: bool = True, test: bool = T
         if test:
            X_ts, y_ts = load_data(test_files[n], target)
            test_iteration(X, y, X_ts, y_ts, config, run_name, params)
-        break
+        #break
 
 if __name__ == "__main__":
     # Read arguments

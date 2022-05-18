@@ -1,7 +1,9 @@
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
+warnings.simplefilter(action='ignore', category=UserWarning)
 import argparse
 from os import path, getcwd, makedirs
 from typing import Dict
-from autots import AutoTS
 import pandas as pd
 import sys
 from utilities import compute_metrics, load_data, list_files
@@ -10,6 +12,9 @@ import mlflow
 from tqdm import tqdm
 from time import time
 from pickle import dump, load
+from hcrystalball.wrappers import ProphetWrapper
+from hcrystalball.model_selection import ModelSelector
+import numpy as np
 
 def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: str="", params: Dict = {}):
     """_summary_
@@ -27,9 +32,9 @@ def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: s
     """
 
     X = pd.concat([X.date_time, y],axis=1)
-    X['date_time'] = pd.to_datetime(X['date_time'])
     X = X.set_index('date_time')
-
+    X.index=pd.to_datetime(X.index)
+    print(X)
     # mlflow configs
     mlflow.set_tracking_uri(config["MLFLOW_URI"])
     try:
@@ -37,36 +42,59 @@ def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: s
     except:
         pass
     
-    FDIR = path.join(config["DATA_PATH"], config["MODELS_PATH"], params["time_series"], str(params["iter"]), "AUTOTS")
+    FDIR = path.join(config["DATA_PATH"], config["MODELS_PATH"], params["time_series"], str(params["iter"]), "HCRYSTALBALL")
     makedirs(FDIR, exist_ok=True)
     FPATH = path.join(FDIR, "MODEL.pkl")
 
+    mlflow.autolog(log_models=False, log_model_signatures=False, silent=True)
     with mlflow.start_run(run_name=run_name) as run:
         mlflow.log_params(params)
         start = time()
-        model = AutoTS(
-            forecast_length=30,
-            frequency='infer',
-            ensemble=None,
-            model_list="superfast", 
-            transformer_list="superfast",
-            max_generations=2,
-            num_validations=2
-        )
-
-        model = model.fit(X)
+        ms = ModelSelector(horizon=30,
+                   frequency='D',
+                  )
+        ms.create_gridsearch(n_splits=2,
+                     sklearn_models=True,
+                     sklearn_models_optimize_for_horizon=True,
+                     autosarimax_models = True,
+                     prophet_models=True,
+                     exp_smooth_models = True,
+                     average_ensembles = True,
+                     stacking_ensembles = True,
+                     theta_models=True,
+                     tbats_models=True,
+                     hcb_verbose = False
+                     )
+        ms.select_model(df=X,
+                target_col_name="tempC",
+                )
+        #X=X.drop(['tempC'], axis=1)
+        #print(X)
+        model=ms.results[0].best_model.fit(X,y)
         end = time()
         tr_time = end - start
-
+        print(model)
         with open(FPATH, "wb") as f:
             dump(model, f)
 
         mlflow.log_metric("training_time", tr_time)
-        mlflow.pmdarima.log_model(model, "model")
-        
+        #mlflow.pyfunc.log_model(model, "model")
+        mlflow.sklearn.log_model(model, "model")
+     
     mlflow.end_run()
 
-def test_iteration(X: pd.DataFrame, y: pd.Series, config: Dict = {}, run_name: str = "", params: Dict = {}):
+def test_iteration(X:pd.DataFrame, y: pd.Series, config: Dict = {}, run_name: str = "", params: Dict = {}):
+    #X=X['date_time']
+    #X=X.to_frame()
+    #X=X.set_index('date_time')
+    #X.index=pd.to_datetime(X.index)
+    #X.date_time=pd.to_datetime(X.date_time)
+    X = pd.concat([X.date_time, y],axis=1)
+    X = X.set_index('date_time')
+    X.index=pd.to_datetime(X.index)
+    #X=X.drop(['tempC'], axis=1)
+    print(X)
+    print(y)
     # mlflow configs
     mlflow.set_tracking_uri(config["MLFLOW_URI"])
 
@@ -75,23 +103,28 @@ def test_iteration(X: pd.DataFrame, y: pd.Series, config: Dict = {}, run_name: s
     run_id = runs[runs['tags.mlflow.runName']==run_name]["run_id"].values[0]
 
     # Load model
-    FDIR = path.join(config["DATA_PATH"], config["MODELS_PATH"], params["time_series"], str(params["iter"]), "AUTOTS")
+    FDIR = path.join(config["DATA_PATH"], config["MODELS_PATH"], params["time_series"], str(params["iter"]), "HCRYSTALBALL")
     makedirs(FDIR, exist_ok=True)
     FPATH = path.join(FDIR, "MODEL.pkl")
    
     with open(FPATH, "rb") as f:
         model = load(f)
-
-    # Predic and compute metrics
+    # Predict and compute metrics
     start = time()
-    pred = model.predict().forecast.values.T[0]
+    print("----------------------------------")
+    pred = model.predict(X)
+    print(pred)
     end = time()
     inf_time = (end - start) / len(pred)
+    #pred = pred['prophet'].to_numpy()
     metrics = compute_metrics(y, pred, "ALL", "test_")
+    print(y)
+    print(pred)
+    print(metrics)
     # Store predictions and target values
     info = pd.DataFrame([y, pred]).T
     info.columns = ["y_true", "y_pred"]
-    FDIR = path.join(config["DATA_PATH"], config["PRED_PATH"], params['time_series'], "AUTOTS")
+    FDIR = path.join(config["DATA_PATH"], config["PRED_PATH"], params['time_series'], "HCRYSTALBALL")
     makedirs(FDIR, exist_ok=True)
     FPATH = path.join(FDIR, f"pred_{str(params['iter'])}.csv")
     info.to_csv(FPATH, index=False)
@@ -101,6 +134,7 @@ def test_iteration(X: pd.DataFrame, y: pd.Series, config: Dict = {}, run_name: s
         mlflow.log_metrics(metrics)
         mlflow.log_metric("test_time", inf_time)
     mlflow.end_run()
+
 
 
 def main(time_series: str, config: dict = {}, train: bool = True, test: bool = True):
@@ -119,18 +153,17 @@ def main(time_series: str, config: dict = {}, train: bool = True, test: bool = T
     if len(train_files) == 0:
         print("Error: no files found!")
         sys.exit()
-    # Train AUTOTS models
+    # Train PYAF models
     target = config["TS"][time_series]["target"]
     for n, file in enumerate(tqdm(train_files)):
         params = {
             'time_series': time_series,
             'target': target,
-            'model': "AUTOTS",
+            'model': "HCRYSTALBALL",
             'iter': n+1
         }
-        run_name = f"{time_series}_{target}_AUTOTS_{n+1}"
+        run_name = f"{time_series}_{target}_HCRYSTALBALL_{n+1}"
         X, y = load_data(file,config["TS"][time_series]["target"])
-        #ta martelado, voltar a ver
         if train:
             train_iteration(X, y, config, run_name, params)
         if test:
@@ -160,5 +193,5 @@ if __name__ == "__main__":
     except Exception as e:
         print("Error loading config file: ", e)
         sys.exit()
-    # Train/Test AUTOTS
+    # Train/Test PYAF
     main(args.time_series, config, args.train, args.test)

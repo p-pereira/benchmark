@@ -31,7 +31,7 @@ def train_iteration(y: pd.Series, config: Dict ={}, run_name: str="", params: Di
         mlflow.create_experiment(name=config["EXPERIMENT"])
     except:
         pass
-    
+    print(path)
     FDIR = path.join(config["DATA_PATH"], config["MODELS_PATH"], params["time_series"], str(params["iter"]), "PMDARIMA")
     makedirs(FDIR, exist_ok=True)
     FPATH = path.join(FDIR, "MODEL.pkl")
@@ -109,6 +109,12 @@ def main(time_series: str, config: dict = {}, train: bool = True, test: bool = T
             'model': "ARIMA",
             'iter': n+1
         }
+
+        FDIR = path.join(config["DATA_PATH"], config["PRED_PATH"], time_series, params["model"])
+        FPATH = path.join(FDIR, f"pred_{str(n+1)}.csv")
+
+        if path.exists(FPATH):
+            continue
         run_name = f"{time_series}_{target}_ARIMA_{n+1}"
         _, y = load_data(file,config["TS"][time_series]["target"])
         #ta martelado, voltar a ver
@@ -117,7 +123,7 @@ def main(time_series: str, config: dict = {}, train: bool = True, test: bool = T
         if test:
             _, y_ts = load_data(test_files[n], target)
             test_iteration(y_ts, config, run_name, params)
-        break
+        #break
 
 if __name__ == "__main__":
     # Read arguments
