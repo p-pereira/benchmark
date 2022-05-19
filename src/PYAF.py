@@ -31,8 +31,15 @@ def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: s
     run_name : str, optional
         _description_, by default ""
     """
-    X = pd.concat([X.date_time, y],axis=1)
-    X['date_time'] = pd.to_datetime(X['date_time'])
+
+    time_series = params["time_series"]
+    target=config["TS"][time_series]["target"]
+    date=config["TS"][time_series]["date"]
+    ahead=config["TS"][time_series]["H"]
+
+    X = pd.concat([X[date], y],axis=1)
+    X[date] = pd.to_datetime(X[date])
+    #print(X)
     # mlflow configs
     mlflow.set_tracking_uri(config["MLFLOW_URI"])
     try:
@@ -44,18 +51,13 @@ def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: s
     makedirs(FDIR, exist_ok=True)
     FPATH = path.join(FDIR, "MODEL.pkl")
 
-    time_series = params["time_series"]
-    target=config["TS"][time_series]["target"]
-    date=config["TS"][time_series]["date"]
-    ahead=config["TS"][time_series]["H"]
-
     mlflow.autolog(log_models=False, log_model_signatures=False, silent=True)
     with mlflow.start_run(run_name=run_name) as run:
         mlflow.log_params(params)
         start = time()
         model = autof.cForecastEngine()
         #model.mOptions.enable_slow_mode()
-        #model.mOptions.set_active_autoregressions(['XGB'])
+        model.mOptions.set_active_autoregressions(['XGB'])
         model.train(X, date, target, ahead)
         end = time()
         tr_time = end - start
@@ -81,7 +83,7 @@ def test_iteration(Xtrain:pd.DataFrame, ytrain: pd.Series, Xtest: pd.DataFrame, 
     
     Xtrain = pd.concat([Xtrain[date], ytrain],axis=1)
     Xtrain[date] = pd.to_datetime(Xtrain[date])
-    #print(Xtrain)
+    print(Xtrain)
     Xtest = pd.concat([Xtest[date], ytest],axis=1)
     Xtest[date] = pd.to_datetime(Xtest[date])
     print(Xtest)
@@ -175,7 +177,10 @@ def main(time_series: str, config: dict = {}, train: bool = True, test: bool = T
         if test:
            X_ts, y_ts = load_data(test_files[n], target)
            test_iteration(X, y, X_ts, y_ts, config, run_name, params)
-        #break
+           break
+
+        if n==2:
+            break
 
 if __name__ == "__main__":
     # Read arguments
