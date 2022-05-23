@@ -34,8 +34,10 @@ def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: s
     time_series = params["time_series"]   
     date=config["TS"][time_series]["date"] 
     target=config["TS"][time_series]["target"]
+    f=config["TS"][time_series]["freq"]
     df = pd.concat([X[date], y],axis=1)
     df = df.set_index(date)
+    df = df.asfreq(freq=f)
     df.index=pd.to_datetime(df.index)
     X = X.set_index(date)
     X.index=pd.to_datetime(X.index)
