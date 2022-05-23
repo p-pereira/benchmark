@@ -1,9 +1,8 @@
-from cgi import test
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 warnings.simplefilter(action='ignore', category=UserWarning)
 import argparse
-from os import path, getcwd, makedirs
+from os import path, makedirs
 from typing import Dict
 from autots import AutoTS
 import pandas as pd
@@ -15,7 +14,7 @@ from tqdm import tqdm
 from time import time
 from pickle import dump, load
 import pyaf.ForecastEngine as autof
-import numpy as np
+
 
 def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: str="", params: Dict = {}):
     """_summary_
@@ -51,7 +50,7 @@ def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: s
     makedirs(FDIR, exist_ok=True)
     FPATH = path.join(FDIR, "MODEL.pkl")
 
-    mlflow.autolog(log_models=False, log_model_signatures=False, silent=True)
+    mlflow.autolog(log_models=True, log_model_signatures=False, silent=True)
     with mlflow.start_run(run_name=run_name) as run:
         mlflow.log_params(params)
         start = time()
@@ -78,14 +77,14 @@ def test_iteration(Xtrain:pd.DataFrame, ytrain: pd.Series, Xtest: pd.DataFrame, 
     time_series = params["time_series"]
     target=config["TS"][time_series]["target"]
     date=config["TS"][time_series]["date"]
-    forecast=config["TS"][time_series]["forecast"]
+    #forecast=config["TS"][time_series]["forecast"]
     ahead=config["TS"][time_series]["H"]
     
     Xtrain = pd.concat([Xtrain[date], ytrain],axis=1)
-    Xtrain[date] = pd.to_datetime(Xtrain[date])
+    Xtrain[date] = pd.to_datetime(Xtrain[date], dayfirst=True)
     print(Xtrain.tail())
     Xtest = pd.concat([Xtest[date], ytest],axis=1)
-    Xtest[date] = pd.to_datetime(Xtest[date])
+    Xtest[date] = pd.to_datetime(Xtest[date], dayfirst=True)
     print(Xtest.head())
     # mlflow configs
     mlflow.set_tracking_uri(config["MLFLOW_URI"])
@@ -104,22 +103,10 @@ def test_iteration(Xtrain:pd.DataFrame, ytrain: pd.Series, Xtest: pd.DataFrame, 
 
     # Predict and compute metrics
     start = time()
-    pred = model.forecast(Xtrain, ahead)#.tail(ahead)
-    print(pred.iloc[-ahead:,].head())
-    pred = pred[[date, forecast]]
+    pred = model.forecast(Xtrain, ahead).iloc[-ahead:,]#.tail(ahead)
+    pred = pred[f"{target}_Forecast"].values
     end = time()
-    #print('pred')
-    #print(pred)
-    pred = pred[[date, forecast]].tail(ahead)
-    #print("Xtest", Xtest)
-    #print("pred",pred)
-    final = pred.merge(Xtest)
-    #print("final", final)
-    pred = final[forecast].to_numpy()
-    ytest = final[target]
-    #print(ytest)
-    #print(pred)
-    #print(len(pred))
+    
     inf_time = (end - start) / len(pred)
     metrics = compute_metrics(ytest, pred, "ALL", "test_")
     # Store predictions and target values
