@@ -31,10 +31,14 @@ def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: s
         _description_, by default ""
     """
 
-    X = pd.concat([X.date_time, y],axis=1)
-    X = X.set_index('date_time')
+    time_series = params["time_series"]   
+    date=config["TS"][time_series]["date"] 
+    target=config["TS"][time_series]["target"]
+    df = pd.concat([X[date], y],axis=1)
+    df = df.set_index(date)
+    df.index=pd.to_datetime(df.index)
+    X = X.set_index(date)
     X.index=pd.to_datetime(X.index)
-    print(X)
     # mlflow configs
     mlflow.set_tracking_uri(config["MLFLOW_URI"])
     try:
@@ -46,55 +50,51 @@ def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: s
     makedirs(FDIR, exist_ok=True)
     FPATH = path.join(FDIR, "MODEL.pkl")
 
-    mlflow.autolog(log_models=False, log_model_signatures=False, silent=True)
+    #mlflow.autolog(log_models=False, log_model_signatures=False, silent=True)
     with mlflow.start_run(run_name=run_name) as run:
         mlflow.log_params(params)
         start = time()
         ms = ModelSelector(horizon=30,
                    frequency='D',
                   )
-        ms.create_gridsearch(n_splits=2,
+        ms.create_gridsearch(n_splits=1,
                      sklearn_models=True,
                      sklearn_models_optimize_for_horizon=True,
                      autosarimax_models = True,
                      prophet_models=True,
                      exp_smooth_models = True,
-                     average_ensembles = True,
+                     #average_ensembles = True,
                      stacking_ensembles = True,
                      theta_models=True,
                      tbats_models=True,
                      hcb_verbose = False
                      )
-        ms.select_model(df=X,
-                target_col_name="tempC",
+        ms.select_model(df=df,
+                target_col_name=target,
                 )
         #X=X.drop(['tempC'], axis=1)
         #print(X)
         model=ms.results[0].best_model.fit(X,y)
         end = time()
         tr_time = end - start
-        print(model)
+        #print(model)
         with open(FPATH, "wb") as f:
             dump(model, f)
 
         mlflow.log_metric("training_time", tr_time)
-        #mlflow.pyfunc.log_model(model, "model")
+        #mlflow.log_artifact(FPATH)
         mlflow.sklearn.log_model(model, "model")
      
     mlflow.end_run()
 
 def test_iteration(X:pd.DataFrame, y: pd.Series, config: Dict = {}, run_name: str = "", params: Dict = {}):
-    #X=X['date_time']
-    #X=X.to_frame()
-    #X=X.set_index('date_time')
-    #X.index=pd.to_datetime(X.index)
-    #X.date_time=pd.to_datetime(X.date_time)
-    X = pd.concat([X.date_time, y],axis=1)
-    X = X.set_index('date_time')
+    
+    time_series = params["time_series"]   
+    date=config["TS"][time_series]["date"] 
+    X = X.set_index(date)
     X.index=pd.to_datetime(X.index)
-    #X=X.drop(['tempC'], axis=1)
-    print(X)
-    print(y)
+    
+
     # mlflow configs
     mlflow.set_tracking_uri(config["MLFLOW_URI"])
 
@@ -111,16 +111,11 @@ def test_iteration(X:pd.DataFrame, y: pd.Series, config: Dict = {}, run_name: st
         model = load(f)
     # Predict and compute metrics
     start = time()
-    print("----------------------------------")
     pred = model.predict(X)
-    print(pred)
     end = time()
     inf_time = (end - start) / len(pred)
-    #pred = pred['prophet'].to_numpy()
+    pred = pred[pred.columns[-1]].to_numpy()
     metrics = compute_metrics(y, pred, "ALL", "test_")
-    print(y)
-    print(pred)
-    print(metrics)
     # Store predictions and target values
     info = pd.DataFrame([y, pred]).T
     info.columns = ["y_true", "y_pred"]
@@ -148,8 +143,8 @@ def main(time_series: str, config: dict = {}, train: bool = True, test: bool = T
         _description_, by default {}
     """
     # Get train files
-    train_files = list_files(time_series, config, pattern="?_tr.csv")
-    test_files = list_files(time_series, config, pattern="?_ts.csv")
+    train_files = list_files(time_series, config, pattern="*_tr.csv")
+    test_files = list_files(time_series, config, pattern="*_ts.csv")
     if len(train_files) == 0:
         print("Error: no files found!")
         sys.exit()
@@ -169,7 +164,7 @@ def main(time_series: str, config: dict = {}, train: bool = True, test: bool = T
         if test:
            X_ts, y_ts = load_data(test_files[n], target)
            test_iteration(X_ts, y_ts, config, run_name, params)
-        break
+        
 
 if __name__ == "__main__":
     # Read arguments

@@ -83,10 +83,10 @@ def test_iteration(Xtrain:pd.DataFrame, ytrain: pd.Series, Xtest: pd.DataFrame, 
     
     Xtrain = pd.concat([Xtrain[date], ytrain],axis=1)
     Xtrain[date] = pd.to_datetime(Xtrain[date])
-    print(Xtrain)
+    print(Xtrain.tail())
     Xtest = pd.concat([Xtest[date], ytest],axis=1)
     Xtest[date] = pd.to_datetime(Xtest[date])
-    print(Xtest)
+    print(Xtest.head())
     # mlflow configs
     mlflow.set_tracking_uri(config["MLFLOW_URI"])
 
@@ -105,7 +105,7 @@ def test_iteration(Xtrain:pd.DataFrame, ytrain: pd.Series, Xtest: pd.DataFrame, 
     # Predict and compute metrics
     start = time()
     pred = model.forecast(Xtrain, ahead)#.tail(ahead)
-    print(pred.iloc[-ahead:,])
+    print(pred.iloc[-ahead:,].head())
     pred = pred[[date, forecast]]
     end = time()
     #print('pred')
@@ -177,10 +177,7 @@ def main(time_series: str, config: dict = {}, train: bool = True, test: bool = T
         if test:
            X_ts, y_ts = load_data(test_files[n], target)
            test_iteration(X, y, X_ts, y_ts, config, run_name, params)
-           break
-
-        if n==2:
-            break
+           #break
 
 if __name__ == "__main__":
     # Read arguments

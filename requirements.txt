@@ -16,3 +16,4 @@ tensorflow==2.5.1
 torch==1.11.0
 tqdm==4.63.1
 xgboost==1.2.1
+tbats==1.1.0
