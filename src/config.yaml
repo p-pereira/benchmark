@@ -7,9 +7,12 @@ PRED_PATH: "4_predictions"
 RES_PATH: "5_results"
 MLFLOW_PATH: "6_mlflow/mlruns"
 
+# Mlflow config
+MLFLOW_URI: "http://localhost:5000"
+
 # ML FLOW
 EXPERIMENT: "Benchmark TS"
-MLFLOW_URI: "http://localhost:5000"
+
 # Time-series parameters:
 TS:
   porto:
@@ -17,27 +20,25 @@ TS:
     K: 365 # seasonal period: 365 (1 year)
     U: 20 # rolling window iterations: 20
     W: 1825 # Window - data size per iterarion: 1825 (5 years)
-    H: 30 # time-ahead predictions
+    H: 7 # time-ahead predictions
     target: "tempC" # target column
-    WR: [1, 365, 366] # lag window for regression dataset creation
+    WR: [1, 2, 3, 4, 5, 6, 365, 366] # lag window for regression dataset creation
     date: date_time # column with timestamp
     freq: "D" # daily data
     max: 40 # max ts value
     min: 5 # min ts value
-    forecast: "tempC_Forecast"
   lisbon:
     format: ".csv"
     K: 365 # seasonal period: 365 (1 year)
     U: 20 # rolling window iterations: 20
     W: 1825 # Window - data size per iterarion: 10825 (5 years)
-    H: 30 # time-ahead predictions
+    H: 7 # time-ahead predictions
     target: "tempC" # target column
     WR: [1, 2, 3, 4, 5, 6, 365, 366] # lag window for regression dataset creation
     date: date_time # column with timestamp
     freq: "D" # daily data
     max: 40 # max ts value
     min: 8 # min ts value
-    forecast: "tempC_Forecast"
   madrid:
     format: ".csv"
     K: 365 # seasonal period: 365 (1 year)
@@ -50,7 +51,6 @@ TS:
     freq: "D" # daily data
     max: 40 # max ts value
     min: 0 # min ts value
-    forecast: "tempC_Forecast"
   AEP:
     format: ".csv"
     K: 7 # seasonal period: 7 (1 week)
@@ -63,7 +63,6 @@ TS:
     freq: "D" # daily data
     max: 548349 # max ts value
     min: 14809 # min ts value
-    forecast: "AEP_MW_Forecast"
   COMED:
     format: ".csv"
     K: 7 # seasonal period: 7 (1 week)
@@ -76,7 +75,6 @@ TS:
     freq: "D" # daily data
     max: 478087 # max ts value
     min: 13335 # min ts value
-    forecast: "COMED_MW_Forecast"
   PJME:
     format: ".csv"
     K: 7 # seasonal period: 7 (1 week)
@@ -89,7 +87,6 @@ TS:
     freq: "D" # daily data
     max: 1253516 # max ts value
     min: 35486 # min ts value
-    forecast: "PJME_MW_Forecast"
   junction1:
     format: ".csv"
     K: 24 # seasonal period: 24 (1 day)
@@ -102,7 +99,6 @@ TS:
     freq: "H" # hourly data
     max: 156 # max ts value
     min: 14 # min ts value
-    forecast: "Vehicles_Forecast"
   junction2:
     format: ".csv"
     K: 24 # seasonal period: 24 (1 day)
@@ -115,7 +111,6 @@ TS:
     freq: "H" # hourly data
     max: 48 # max ts value
     min: 2 # min ts value
-    forecast: "Vehicles_Forecast"
   junction3:
     format: ".csv"
     K: 24 # seasonal period: 24 (1 day)
@@ -128,7 +123,6 @@ TS:
     freq: "H" # hourly data
     max: 180 # max ts value
     min: 2 # min ts value
-    forecast: "Vehicles_Forecast"
 
 # Models parameters:
 MODELS:
