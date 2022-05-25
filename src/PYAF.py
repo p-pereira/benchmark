@@ -1,3 +1,5 @@
+from signal import signal, SIGPIPE, SIG_DFL  
+signal(SIGPIPE,SIG_DFL)
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 warnings.simplefilter(action='ignore', category=UserWarning)
@@ -7,7 +9,7 @@ from typing import Dict
 from autots import AutoTS
 import pandas as pd
 import sys
-from utilities import compute_metrics, load_data, list_files
+from utilities import compute_metrics, load_data, list_files, nmae
 import yaml
 import mlflow
 from tqdm import tqdm
@@ -55,8 +57,9 @@ def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: s
         mlflow.log_params(params)
         start = time()
         model = autof.cForecastEngine()
+        model.cModelControl.set_active_transformations
         #model.mOptions.enable_slow_mode()
-        model.mOptions.set_active_autoregressions(['XGB'])
+        #model.mOptions.set_active_autoregressions(['XGB'])
         model.train(X, date, target, ahead)
         end = time()
         tr_time = end - start
@@ -69,6 +72,7 @@ def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: s
         mlflow.log_metric("training_time", tr_time)
         #mlflow.pyfunc.log_model(model, "model")
         mlflow.sklearn.log_model(model, "model")
+        
      
     mlflow.end_run()
 
@@ -103,12 +107,16 @@ def test_iteration(Xtrain:pd.DataFrame, ytrain: pd.Series, Xtest: pd.DataFrame, 
 
     # Predict and compute metrics
     start = time()
+
     pred = model.forecast(Xtrain, ahead).iloc[-ahead:,]#.tail(ahead)
     pred = pred[f"{target}_Forecast"].values
     end = time()
     
     inf_time = (end - start) / len(pred)
     metrics = compute_metrics(ytest, pred, "ALL", "test_")
+    min_v = config["TS"][params["time_series"]]["min"]
+    max_v = config["TS"][params["time_series"]]["max"]
+    nmae_ = nmae(ytest, pred, min_v, max_v)
     # Store predictions and target values
     info = pd.DataFrame([ytest, pred]).T
     info.columns = ["y_true", "y_pred"]
@@ -121,6 +129,7 @@ def test_iteration(Xtrain:pd.DataFrame, ytrain: pd.Series, Xtest: pd.DataFrame, 
         mlflow.log_artifact(FPATH)
         mlflow.log_metrics(metrics)
         mlflow.log_metric("test_time", inf_time)
+        mlflow.log_metric("test_nmae", nmae_)
     mlflow.end_run()
 
 

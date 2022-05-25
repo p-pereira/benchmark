@@ -6,7 +6,7 @@ from os import path, getcwd, makedirs
 from typing import Dict
 import pandas as pd
 import sys
-from utilities import compute_metrics, load_data, list_files
+from utilities import compute_metrics, load_data, list_files, nmae
 import yaml
 import mlflow
 from tqdm import tqdm
@@ -34,10 +34,12 @@ def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: s
     time_series = params["time_series"]   
     date=config["TS"][time_series]["date"] 
     target=config["TS"][time_series]["target"]
-    f=config["TS"][time_series]["freq"]
+    fr=config["TS"][time_series]["freq"]
+    print("freq ",fr)
+    h=config["TS"][time_series]["H"]
     df = pd.concat([X[date], y],axis=1)
     df = df.set_index(date)
-    df = df.asfreq(freq=f)
+    df = df.asfreq(freq=fr)
     df.index=pd.to_datetime(df.index)
     X = X.set_index(date)
     X.index=pd.to_datetime(X.index)
@@ -56,8 +58,8 @@ def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: s
     with mlflow.start_run(run_name=run_name) as run:
         mlflow.log_params(params)
         start = time()
-        ms = ModelSelector(horizon=30,
-                   frequency='D',
+        ms = ModelSelector(horizon=h,
+                   frequency=fr,
                   )
         ms.create_gridsearch(n_splits=1,
                      sklearn_models=True,
@@ -118,6 +120,9 @@ def test_iteration(X:pd.DataFrame, y: pd.Series, config: Dict = {}, run_name: st
     inf_time = (end - start) / len(pred)
     pred = pred[pred.columns[-1]].to_numpy()
     metrics = compute_metrics(y, pred, "ALL", "test_")
+    min_v = config["TS"][params["time_series"]]["min"]
+    max_v = config["TS"][params["time_series"]]["max"]
+    nmae_ = nmae(y, pred, min_v, max_v)
     # Store predictions and target values
     info = pd.DataFrame([y, pred]).T
     info.columns = ["y_true", "y_pred"]
@@ -130,6 +135,7 @@ def test_iteration(X:pd.DataFrame, y: pd.Series, config: Dict = {}, run_name: st
         mlflow.log_artifact(FPATH)
         mlflow.log_metrics(metrics)
         mlflow.log_metric("test_time", inf_time)
+        mlflow.log_metric("test_nmae", nmae_)
     mlflow.end_run()
 
 
