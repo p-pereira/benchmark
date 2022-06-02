@@ -24,6 +24,8 @@ def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict = {}, run_name: 
         Configuration dict from config.yaml file, by default {}
     run_name : str, optional
         Run name for MLflow, by default "" (empty)
+    params : Dict, optional
+        Run/model parameters, by default {} (empty)
     """
     # mlflow configs
     mlflow.set_tracking_uri(config["MLFLOW_URI"])
@@ -44,6 +46,21 @@ def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict = {}, run_name: 
     mlflow.end_run()
 
 def test_iteration(X: pd.DataFrame, y: pd.Series, config: Dict = {}, run_name: str = "", params: Dict = {}):
+    """Test a Linear Regression model and storing metrics in MLflow.
+
+    Parameters
+    ----------
+    X : pd.DataFrame
+        X data.
+    y : pd.Series
+        Target values.
+    config : Dict, optional
+        Configuration dict from config.yaml file, by default {}
+    run_name : str, optional
+        Run name for MLflow, by default "" (empty)
+    params : Dict, optional
+        Run/model parameters, by default {} (empty)
+    """
     # mlflow configs
     mlflow.set_tracking_uri(config["MLFLOW_URI"])
 

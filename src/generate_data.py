@@ -9,27 +9,29 @@ from tqdm import tqdm
 
 
 def rw(y: Union[pd.Series, List], ratio: Union[float,int], W: int, S: int, iteration: int=1, mode: str="rolling", val_ratio: Union[float, str]=0) -> Dict:
-    """Generate train, validation and test indexes for Rolling Window procedure.
+    """Generate train, validation and test indexes for Rolling Window
+
     Parameters
     ----------
-    y : Union[pd.Series, Array]
+    y : Union[pd.Series, List]
         _description_
     ratio : Union[float,int]
         _description_
     W : int
-        _description_
+        Window - data size per iterarion
     S : int
-        _description_
+        Rolling window step
     iteration : int, optional
         _description_, by default 1
     mode : str, optional
         _description_, by default "rolling"
     val_ratio : Union[float, str], optional
         _description_, by default 0
+
     Returns
     -------
     Dict
-        Training, validation and testing indexes.
+        Taining, validation and testing indexes
     """
     ALLITR=None
     VAL=None
@@ -93,12 +95,15 @@ def cases_series(t: pd.Series, W: Tuple, target: str = "y", start: int=1, end: i
 
 def main(time_series: str, config: Dict = {}, make_regression: bool = False):
     """Generate cross-validation data files for a time-series dataset.
+
     Parameters
     ----------
     time_series : str
-        time series name (same as the file).
-    config_file : str, optional
-        configuration file path, by default "config.yaml"
+        Time series name (same as the file).
+    config : Dict, optional
+        Configuration file path, by default "config.yaml"
+    make_regression : bool, optional
+        Convert time-series data in regression task, by default False
     """
     DATA_PATH = config["DATA_PATH"]
     RAW_PATH = config["RAW_PATH"]

@@ -19,18 +19,20 @@ import pyaf.ForecastEngine as autof
 
 
 def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: str="", params: Dict = {}):
-    """_summary_
+    """Train a PyAF model and storing metrics in MLflow.
 
     Parameters
     ----------
     X : pd.DataFrame
-        _description_
+        X data.
     y : pd.Series
-        _description_
+        Target values.
     config : Dict, optional
-        _description_, by default {}
+        Configuration dict from config.yaml file, by default {}
     run_name : str, optional
-        _description_, by default ""
+        Run name for MLflow, by default "" (empty)
+    params : Dict, optional
+        Run/model parameters, by default {} (empty)
     """
 
     time_series = params["time_series"]
@@ -40,14 +42,12 @@ def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: s
 
     X = pd.concat([X[date], y],axis=1)
     X[date] = pd.to_datetime(X[date])
-    #print(X)
     # mlflow configs
     mlflow.set_tracking_uri(config["MLFLOW_URI"])
     try:
         mlflow.create_experiment(name=config["EXPERIMENT"])
     except:
         pass
-    print(path)
     FDIR = path.join(config["DATA_PATH"], config["MODELS_PATH"], params["time_series"], str(params["iter"]), "PYAF")
     makedirs(FDIR, exist_ok=True)
     FPATH = path.join(FDIR, "MODEL.pkl")
@@ -57,39 +57,47 @@ def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: s
         mlflow.log_params(params)
         start = time()
         model = autof.cForecastEngine()
-        model.cModelControl.set_active_transformations
-        #model.mOptions.enable_slow_mode()
-        #model.mOptions.set_active_autoregressions(['XGB'])
         model.train(X, date, target, ahead)
         end = time()
         tr_time = end - start
-
-        print(model.getModelInfo())
         
         with open(FPATH, "wb") as f:
             dump(model, f)
 
         mlflow.log_metric("training_time", tr_time)
-        #mlflow.pyfunc.log_model(model, "model")
         mlflow.sklearn.log_model(model, "model")
-        
      
     mlflow.end_run()
 
 def test_iteration(Xtrain:pd.DataFrame, ytrain: pd.Series, Xtest: pd.DataFrame, ytest: pd.Series, config: Dict = {}, run_name: str = "", params: Dict = {}):
-    
+    """Test a PyAF model and storing metrics in MLflow.
+
+    Parameters
+    ----------
+    Xtrain : pd.DataFrame
+        X data for comparison.
+    ytrain : pd.Series
+        Target values.
+    Xtest : pd.DataFrame
+        X data for comparison.
+    ytest : pd.Series
+        Target values.
+    config : Dict, optional
+        Configuration dict from config.yaml file, by default {}
+    run_name : str, optional
+        Run name for MLflow, by default "" (empty)
+    params : Dict, optional
+        Run/model parameters, by default {} (empty)
+    """
     time_series = params["time_series"]
     target=config["TS"][time_series]["target"]
     date=config["TS"][time_series]["date"]
-    #forecast=config["TS"][time_series]["forecast"]
     ahead=config["TS"][time_series]["H"]
     
     Xtrain = pd.concat([Xtrain[date], ytrain],axis=1)
     Xtrain[date] = pd.to_datetime(Xtrain[date], dayfirst=True)
-    print(Xtrain.tail())
     Xtest = pd.concat([Xtest[date], ytest],axis=1)
     Xtest[date] = pd.to_datetime(Xtest[date], dayfirst=True)
-    print(Xtest.head())
     # mlflow configs
     mlflow.set_tracking_uri(config["MLFLOW_URI"])
 
@@ -107,8 +115,7 @@ def test_iteration(Xtrain:pd.DataFrame, ytrain: pd.Series, Xtest: pd.DataFrame, 
 
     # Predict and compute metrics
     start = time()
-
-    pred = model.forecast(Xtrain, ahead).iloc[-ahead:,]#.tail(ahead)
+    pred = model.forecast(Xtrain, ahead).iloc[-ahead:,]
     pred = pred[f"{target}_Forecast"].values
     end = time()
     
@@ -135,14 +142,18 @@ def test_iteration(Xtrain:pd.DataFrame, ytrain: pd.Series, Xtest: pd.DataFrame, 
 
 
 def main(time_series: str, config: dict = {}, train: bool = True, test: bool = True):
-    """_summary_
+    """Read all Rolling Window iterarion training files from a given time-series and train a PyAF model for each.
 
     Parameters
     ----------
     time_series : str
-        _description_
+        Time-series name.
     config : dict, optional
-        _description_, by default {}
+        Configuration dict from config.yaml file, by default {}
+    train: bool, optional
+        Whether performs model training or not, by default True (it does)
+    test: bool, optional
+        Whether performs model testing/evaluation or not, by default True (it does)
     """
     pd.set_option('mode.chained_assignment', None)
     # Get train files
@@ -167,13 +178,13 @@ def main(time_series: str, config: dict = {}, train: bool = True, test: bool = T
             continue
         run_name = f"{time_series}_{target}_PYAF_{n+1}"
         X, y = load_data(file,config["TS"][time_series]["target"])
-        #ta martelado, voltar a ver
         if train:
             train_iteration(X, y, config, run_name, params)
         if test:
            X_ts, y_ts = load_data(test_files[n], target)
            test_iteration(X, y, X_ts, y_ts, config, run_name, params)
-           #break
+        # TODO: remove this for all train/test datasets
+        #break   
 
 if __name__ == "__main__":
     # Read arguments

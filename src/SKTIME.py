@@ -28,7 +28,7 @@ def train_iteration(y: pd.Series, config: Dict ={}, run_name: str="", params: Di
     Parameters
     ----------
     y: pd.Series
-        Tim-series values.
+        Time-series values.
     config : Dict, optional
         Configuration dict from config.yaml file, by default {}
     run_name : str, optional
@@ -84,6 +84,19 @@ def train_iteration(y: pd.Series, config: Dict ={}, run_name: str="", params: Di
     mlflow.end_run()
 
 def test_iteration(y: pd.Series, config: Dict = {}, run_name: str = "", params: Dict = {}):
+    """Test a SKTIME model and storing metrics in MLflow.
+
+    Parameters
+    ----------
+    y : pd.Series
+        Target values.
+    config : Dict, optional
+        Configuration dict from config.yaml file, by default {}
+    run_name : str, optional
+        Run name for MLflow, by default "" (empty)
+    params : Dict, optional
+        Run/model parameters, by default {} (empty)
+    """
     time_series = params["time_series"]
     H = config["TS"][time_series]["H"]
     # mlflow configs
@@ -127,9 +140,13 @@ def main(time_series: str, config: dict = {}, train: bool = True, test: bool = T
     Parameters
     ----------
     time_series : str
-        _description_
+        Time-series name.
     config : dict, optional
         Configuration dict from config.yaml file, by default {}
+    train: bool, optional
+        Whether performs model training or not, by default True (it does)
+    test: bool, optional
+        Whether performs model testing/evaluation or not, by default True (it does)  
     """
     # Get train files
     train_files = list_files(time_series, config, pattern="*_tr.csv")

@@ -12,18 +12,18 @@ from time import time
 import pickle
 
 def train_iteration(y: pd.Series, config: Dict ={}, run_name: str="", params: Dict = {}):
-    """_summary_
+    """Train a Pmdarima model and storing metrics in MLflow.
 
     Parameters
     ----------
-    X : pd.DataFrame
-        _description_
     y : pd.Series
-        _description_
+        Target values.
     config : Dict, optional
-        _description_, by default {}
+        Configuration dict from config.yaml file, by default {}
     run_name : str, optional
-        _description_, by default ""
+        Run name for MLflow, by default "" (empty)
+    params : Dict, optional
+        Run/model parameters, by default {} (empty)
     """
     # mlflow configs
     mlflow.set_tracking_uri("http://localhost:5000")
@@ -51,6 +51,19 @@ def train_iteration(y: pd.Series, config: Dict ={}, run_name: str="", params: Di
     mlflow.end_run()
 
 def test_iteration(y: pd.Series, config: Dict = {}, run_name: str = "", params: Dict = {}):
+    """Test a Pmdarima model and storing metrics in MLflow.
+
+    Parameters
+    ----------
+    y : pd.Series
+        Target values.
+    config : Dict, optional
+        Configuration dict from config.yaml file, by default {}
+    run_name : str, optional
+        Run name for MLflow, by default "" (empty)
+    params : Dict, optional
+        Run/model parameters, by default {} (empty)
+    """
     # mlflow configs
     mlflow.set_tracking_uri(config["MLFLOW_URI"])
 
@@ -85,14 +98,18 @@ def test_iteration(y: pd.Series, config: Dict = {}, run_name: str = "", params: 
 
 
 def main(time_series: str, config: dict = {}, train: bool = True, test: bool = True):
-    """_summary_
+    """Read all Rolling Window iterarion training files from a given time-series and train a Pmdarima model for each.
 
     Parameters
     ----------
     time_series : str
-        _description_
+        Time-series name.
     config : dict, optional
-        _description_, by default {}
+        Configuration dict from config.yaml file, by default {}
+    train: bool, optional
+        Whether performs model training or not, by default True (it does)
+    test: bool, optional
+        Whether performs model testing/evaluation or not, by default True (it does)
     """
     # Get train files
     train_files = list_files(time_series, config, pattern="*_tr.csv")
@@ -117,12 +134,12 @@ def main(time_series: str, config: dict = {}, train: bool = True, test: bool = T
             continue
         run_name = f"{time_series}_{target}_ARIMA_{n+1}"
         _, y = load_data(file,config["TS"][time_series]["target"])
-        #ta martelado, voltar a ver
         if train:
             train_iteration(y, config, run_name, params)
         if test:
             _, y_ts = load_data(test_files[n], target)
             test_iteration(y_ts, config, run_name, params)
+        # TODO: remove this for all train/test datasets
         #break
 
 if __name__ == "__main__":

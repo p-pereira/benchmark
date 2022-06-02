@@ -17,25 +17,26 @@ from hcrystalball.model_selection import ModelSelector
 import numpy as np
 
 def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: str="", params: Dict = {}):
-    """_summary_
+    """Train a HCrystalBall model and storing metrics in MLflow.
 
     Parameters
     ----------
     X : pd.DataFrame
-        _description_
+        X data.
     y : pd.Series
-        _description_
+        Target values.
     config : Dict, optional
-        _description_, by default {}
+        Configuration dict from config.yaml file, by default {}
     run_name : str, optional
-        _description_, by default ""
+        Run name for MLflow, by default "" (empty)
+    params : Dict, optional
+        Execution settings for MLflow, by default {}
     """
 
     time_series = params["time_series"]   
     date=config["TS"][time_series]["date"] 
     target=config["TS"][time_series]["target"]
     fr=config["TS"][time_series]["freq"]
-    print("freq ",fr)
     h=config["TS"][time_series]["H"]
     df = pd.concat([X[date], y],axis=1)
     df = df.set_index(date)
@@ -54,7 +55,6 @@ def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: s
     makedirs(FDIR, exist_ok=True)
     FPATH = path.join(FDIR, "MODEL.pkl")
 
-    #mlflow.autolog(log_models=False, log_model_signatures=False, silent=True)
     with mlflow.start_run(run_name=run_name) as run:
         mlflow.log_params(params)
         start = time()
@@ -67,7 +67,6 @@ def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: s
                      autosarimax_models = True,
                      prophet_models=True,
                      exp_smooth_models = True,
-                     #average_ensembles = True,
                      stacking_ensembles = True,
                      theta_models=True,
                      tbats_models=True,
@@ -76,29 +75,37 @@ def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: s
         ms.select_model(df=df,
                 target_col_name=target,
                 )
-        #X=X.drop(['tempC'], axis=1)
-        #print(X)
         model=ms.results[0].best_model.fit(X,y)
         end = time()
         tr_time = end - start
-        #print(model)
         with open(FPATH, "wb") as f:
             dump(model, f)
 
         mlflow.log_metric("training_time", tr_time)
-        #mlflow.log_artifact(FPATH)
         mlflow.sklearn.log_model(model, "model")
      
     mlflow.end_run()
 
 def test_iteration(X:pd.DataFrame, y: pd.Series, config: Dict = {}, run_name: str = "", params: Dict = {}):
-    
+    """Test a HCrystalBall model and storing metrics in MLflow.
+
+    Parameters
+    ----------
+    X : pd.DataFrame
+        X data.
+    y : pd.Series
+        Target values.
+    config : Dict, optional
+        Configuration dict from config.yaml file, by default {}
+    run_name : str, optional
+        Run name for MLflow, by default "" (empty)
+    params : Dict, optional
+        Run/model parameters, by default {} (empty)
+    """
     time_series = params["time_series"]   
     date=config["TS"][time_series]["date"] 
     X = X.set_index(date)
     X.index=pd.to_datetime(X.index)
-    
-
     # mlflow configs
     mlflow.set_tracking_uri(config["MLFLOW_URI"])
 
@@ -141,14 +148,18 @@ def test_iteration(X:pd.DataFrame, y: pd.Series, config: Dict = {}, run_name: st
 
 
 def main(time_series: str, config: dict = {}, train: bool = True, test: bool = True):
-    """_summary_
+    """Read all Rolling Window iterarion training files from a given time-series and train a HCrsytalBall model for each.
 
     Parameters
     ----------
     time_series : str
-        _description_
+        Time-series name.
     config : dict, optional
-        _description_, by default {}
+        Configuration dict from config.yaml file, by default {}
+    train: bool, optional
+        Whether performs model training or not, by default True (it does)
+    test: bool, optional
+        Whether performs model testing/evaluation or not, by default True (it does)
     """
     # Get train files
     train_files = list_files(time_series, config, pattern="*_tr.csv")
@@ -156,7 +167,7 @@ def main(time_series: str, config: dict = {}, train: bool = True, test: bool = T
     if len(train_files) == 0:
         print("Error: no files found!")
         sys.exit()
-    # Train PYAF models
+    # Train HCrystalBall models
     target = config["TS"][time_series]["target"]
     for n, file in enumerate(tqdm(train_files)):
         params = {
@@ -172,7 +183,8 @@ def main(time_series: str, config: dict = {}, train: bool = True, test: bool = T
         if test:
            X_ts, y_ts = load_data(test_files[n], target)
            test_iteration(X_ts, y_ts, config, run_name, params)
-        
+        # TODO: remove this for all train/test datasets
+        #break
 
 if __name__ == "__main__":
     # Read arguments
@@ -196,5 +208,5 @@ if __name__ == "__main__":
     except Exception as e:
         print("Error loading config file: ", e)
         sys.exit()
-    # Train/Test PYAF
+    # Train/Test HCrystalBall
     main(args.time_series, config, args.train, args.test)

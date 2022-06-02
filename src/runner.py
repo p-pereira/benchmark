@@ -8,6 +8,9 @@ from PROPHET import main as prophet
 from SKTIME import main as sktime
 from LSTM import main as lstm
 from DEEPAR import main as deepar
+from HCRYSTALBALL import main as hcryst
+from PYAF import main as pyaf
+
 
 MODELS = {
     "ARIMA": arima,
@@ -17,7 +20,9 @@ MODELS = {
     "SKTIME": sktime,
     "AUTOTS": autots,
     "LSTM": lstm,
-    "DEEPAR": deepar
+    "DEEPAR": deepar,
+    "HCRYSTALBALL": hcryst,
+    "PYAF": pyaf
     }
 
 if __name__ == "__main__":

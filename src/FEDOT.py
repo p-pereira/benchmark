@@ -31,7 +31,7 @@ def train_iteration(data: InputData, task: Task, config: Dict ={}, run_name: str
     config : Dict, optional
         Configuration dict from config.yaml file, by default {}
     run_name : str, optional
-        Run name for MLflow, by default ""
+        Run name for MLflow, by default "" (empty)
     params : Dict, optional
         Run/model parameters, by default {} (empty)
     """
@@ -73,6 +73,21 @@ def train_iteration(data: InputData, task: Task, config: Dict ={}, run_name: str
     mlflow.end_run()
 
 def test_iteration(history: InputData, test_data: InputData, config: Dict = {}, run_name: str = "", params: Dict = {}):
+    """Test a FEDOT model and storing metrics in MLflow.
+
+    Parameters
+    ----------
+    history : InputData
+        Historic values
+    test_data : InputData
+        Target values
+    config : Dict, optional
+        Configuration dict from config.yaml file, by default {}
+    run_name : str, optional
+        Run name for MLflow, by default "" (empty)
+    params : Dict, optional
+        Run/model parameters, by default {} (empty)
+    """
     # mlflow configs
     mlflow.set_tracking_uri(config["MLFLOW_URI"])
     # Get mlflow run id to load the model.
@@ -110,15 +125,20 @@ def test_iteration(history: InputData, test_data: InputData, config: Dict = {}, 
 
 
 def main(time_series: str, config: dict = {}, train: bool = True, test: bool = True):
-    """Read all Rolling Window iterarion training files from a given time-series and train a Linear Regression model for each.
+    """Read all Rolling Window iterarion training files from a given time-series and train a FEDOT model for each.
 
     Parameters
     ----------
     time_series : str
-        _description_
+        Time-series name.
     config : dict, optional
         Configuration dict from config.yaml file, by default {}
+    train: bool, optional
+        Whether performs model training or not, by default True (it does)
+    test: bool, optional
+        Whether performs model testing/evaluation or not, by default True (it does)
     """
+
     # Get train files
     train_files = list_files(time_series, config, pattern="*_tr.csv")
     test_files = list_files(time_series, config, pattern="*_ts.csv")

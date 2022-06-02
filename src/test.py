@@ -16,24 +16,37 @@ from PYAF import main as pyaf
 from FEDOT import main as fedot
 from LUDWIG import main as ludwig
 from HCRYSTALBALL import main as hcryst
+from SKTIME import main as sktime
+#from DEEPAR import main as deepar
+#from LSTM import main as lstm
+#from PROPHET import main as prophet
 
 MODELS = {
     "ARIMA": arima,
     "AUTOTS": autots,
+    #"DEEPAR": deepar,
+    #"LSTM": lstm,
+    #"PROPHET": prophet,
     "PYAF": pyaf,
     "FEDOT": fedot,
     "LUDWIG": ludwig,
     "HCRYSTALBALL": hcryst,
-    "LR": lr
+    "LR": lr,
+    "SKTIME": sktime
     }
 
 def main(time_series: str= "porto", model: str = "ARIMA", config: str = "config.yaml"):
-    # Load configs
-    try:
-        config =  yaml.safe_load(open(config))
-    except Exception as e:
-        print("Error loading config file: ", e)
-        sys.exit()
+    """_summary_
+
+    Parameters
+    ----------
+    time_series : str, optional
+        Time-series name, by default "porto"
+    model : str, optional
+        ML model, by default "ARIMA"
+    config : Dict, optional
+        Configuration dict from config.yaml file, by default "config.yaml"
+    """
     
     if model == "ALL":
         for model_ in MODELS.keys():
@@ -60,8 +73,6 @@ if __name__ == "__main__":
     parser.set_defaults(config="config.yaml")
     args = parser.parse_args()
     
-    main(args.time_series, args.model, args.config)
-    '''
     try:
         config =  yaml.safe_load(open(args.config))
     except Exception as e:
@@ -71,5 +82,5 @@ if __name__ == "__main__":
     if args.model not in MODELS.keys():
         print(f"Error: unkown model {args.model}.")
         sys.exit()
-    MODELS[args.model](args.time_series, config)
-    '''
+
+    main(args.time_series, args.model, args.config)

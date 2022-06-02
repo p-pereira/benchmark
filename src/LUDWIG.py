@@ -24,14 +24,14 @@ def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: s
 
     Parameters
     ----------
-    data : InputData
-        Time-series fedot InputData object.
-    task : Task
-        Fedot task object.
+    X : pd.DataFrame
+        X data.
+    y : pd.Series
+        Target values.
     config : Dict, optional
         Configuration dict from config.yaml file, by default {}
     run_name : str, optional
-        Run name for MLflow, by default ""
+        Run name for MLflow, by default "" (empty)
     params : Dict, optional
         Run/model parameters, by default {} (empty)
     """
@@ -48,13 +48,11 @@ def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: s
     FDIR = path.join(config["DATA_PATH"], config["MODELS_PATH"],
                      params["time_series"], str(params["iter"]), "LUDWIG")
     makedirs(FDIR, exist_ok=True)
-    #model_params = config["MODELS"]["ludwig"]
     target = params['target']
 
     with mlflow.start_run(run_name=run_name) as run:
         mlflow_cb.run = run
         mlflow.log_params(params)
-        #mlflow.log_params(model_params)
         
         X['features']=[' '.join(map(str,vals)) for vals in X.values]
         data = pd.concat([X['features'],y], axis=1)
@@ -84,6 +82,21 @@ def train_iteration(X: pd.DataFrame, y: pd.Series, config: Dict ={}, run_name: s
     mlflow.end_run()
 
 def test_iteration(X:pd.DataFrame, y: pd.Series, config: Dict = {}, run_name: str = "", params: Dict = {}):
+    """Test a LUDWIG model and storing metrics in MLflow.
+
+    Parameters
+    ----------
+    X : pd.DataFrame
+        X data.
+    y : pd.Series
+        Target values.
+    config : Dict, optional
+        Configuration dict from config.yaml file, by default {}
+    run_name : str, optional
+        Run name for MLflow, by default "" (empty)
+    params : Dict, optional
+        Run/model parameters, by default {} (empty)
+    """
     FDIR = path.join(config["DATA_PATH"], config["PRED_PATH"], params['time_series'], "LUDWIG")
     makedirs(FDIR, exist_ok=True)
     FPATH = path.join(FDIR, f"pred_{str(params['iter'])}.csv")
@@ -115,7 +128,7 @@ def test_iteration(X:pd.DataFrame, y: pd.Series, config: Dict = {}, run_name: st
     mlflow.end_run()
 
 def main(time_series: str, config: dict = {}, train: bool = True, test: bool = True):
-    """Read all Rolling Window iterarion training files from a given time-series and train a Linear Regression model for each.
+    """Read all Rolling Window iterarion training files from a given time-series and train a LUDWIG model for each.
 
     Parameters
     ----------
@@ -123,6 +136,10 @@ def main(time_series: str, config: dict = {}, train: bool = True, test: bool = T
         _description_
     config : dict, optional
         Configuration dict from config.yaml file, by default {}
+    train : bool, optional
+        _description_, by default True
+    test : bool, optional
+        _description_, by default True
     """
     # Get train files
     train_files = list_files(time_series, config, pattern="*_tr_reg.csv")
@@ -176,6 +193,6 @@ if __name__ == "__main__":
     except Exception as e:
         print("Error loading config file: ", e)
         sys.exit()
-    # Train/Test FEDOT model
+    # Train/Test LUDWIG model
     main(args.time_series, config, args.train, args.test)
     
