@@ -133,13 +133,13 @@ def main(time_series: str, config: dict = {}, train: bool = True, test: bool = T
     Parameters
     ----------
     time_series : str
-        _description_
+        Time-series name.
     config : dict, optional
         Configuration dict from config.yaml file, by default {}
-    train : bool, optional
-        _description_, by default True
-    test : bool, optional
-        _description_, by default True
+    train: bool, optional
+        Whether performs model training or not, by default True (it does)
+    test: bool, optional
+        Whether performs model testing/evaluation or not, by default True (it does)
     """
     # Get train files
     train_files = list_files(time_series, config, pattern="*_tr_reg.csv")
