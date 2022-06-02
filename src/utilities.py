@@ -19,8 +19,8 @@ def rmse(y_true: Union[pd.Series, np.array], y_pred: Union[pd.Series, np.array])
 
     Returns
     -------
-    float
-        _description_
+    rmse : float
+        RMSE value
     """
     return np.sqrt(((y_pred - y_true) ** 2).mean())
 
@@ -41,8 +41,8 @@ def nmae(y_true: Union[pd.Series, np.array], y_pred: Union[pd.Series, np.array],
 
     Returns
     -------
-    float
-        _description_
+    nmae : float
+        nmae value
     """
     mae = METRICS["mae"](y_true, y_pred)
     range_vals = max_val - min_val
@@ -66,7 +66,7 @@ def load_data(fpath: str, target="tempC", return_Xy: bool = True) -> Union[Tuple
     target : str, optional
         _description_, by default "tempC"
     return_Xy : bool, optional
-        _description_, by default True
+        If True, returns ``(data, target)`` instead of a single pandas object., by default True
 
     Returns
     -------
@@ -120,7 +120,7 @@ def compute_metrics(y_true: Union[pd.Series, np.array], y_pred: Union[pd.Series,
     Returns
     -------
     Dict
-        _description_
+        Metrics values
     """
     if isinstance(metrics, list):
         if not all(elem in METRICS.keys() for elem in metrics):
