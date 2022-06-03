@@ -17,16 +17,16 @@ from FEDOT import main as fedot
 from LUDWIG import main as ludwig
 from HCRYSTALBALL import main as hcryst
 from SKTIME import main as sktime
-#from DEEPAR import main as deepar
-#from LSTM import main as lstm
-#from PROPHET import main as prophet
+from DEEPAR import main as deepar
+from LSTM import main as lstm
+from PROPHET import main as prophet
 
 MODELS = {
     "ARIMA": arima,
     "AUTOTS": autots,
-    #"DEEPAR": deepar,
-    #"LSTM": lstm,
-    #"PROPHET": prophet,
+    "DEEPAR": deepar,
+    "LSTM": lstm,
+    "PROPHET": prophet,
     "PYAF": pyaf,
     "FEDOT": fedot,
     "LUDWIG": ludwig,
@@ -36,7 +36,7 @@ MODELS = {
     }
 
 def main(time_series: str= "porto", model: str = "ARIMA", config: str = "config.yaml"):
-    """_summary_
+    """Read time series file and test according to the specified ML model
 
     Parameters
     ----------

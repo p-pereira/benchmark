@@ -22,7 +22,7 @@ def rw(y: Union[pd.Series, List], ratio: Union[float,int], W: int, S: int, itera
     S : int
         Rolling window step
     iteration : int, optional
-        _description_, by default 1
+        Number of iteration, by default 1
     mode : str, optional
         _description_, by default "rolling"
     val_ratio : Union[float, str], optional

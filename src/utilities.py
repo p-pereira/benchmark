@@ -14,6 +14,7 @@ def rmse(y_true: Union[pd.Series, np.array], y_pred: Union[pd.Series, np.array])
     ----------
     y_true : Union[pd.Series, np.array]
         Target values
+        
     y_pred : Union[pd.Series, np.array]
         Target predictions
 
@@ -32,17 +33,20 @@ def nmae(y_true: Union[pd.Series, np.array], y_pred: Union[pd.Series, np.array],
     ----------
     y_true : Union[pd.Series, np.array]
         Target values
+
     y_pred : Union[pd.Series, np.array]
         Target predictions
+        
     min_val : float
         Lowest target value
+
     max_val : float
         Highest target value
 
     Returns
     -------
     nmae : float
-        nmae value
+        NMAE value
     """
     mae = METRICS["mae"](y_true, y_pred)
     range_vals = max_val - min_val
@@ -57,21 +61,23 @@ METRICS = {
     "r2": metrics.r2_score
 }
 def load_data(fpath: str, target="tempC", return_Xy: bool = True) -> Union[Tuple[pd.DataFrame, pd.Series], pd.DataFrame]:
-    """_summary_
+    """Load data from a path separating the attributes according to the target
 
     Parameters
     ----------
     fpath : str
         Path to folder where data is stored
+
     target : str, optional
-        _description_, by default "tempC"
+        Attribute to predict, by default "tempC"
+
     return_Xy : bool, optional
         If True, returns ``(data, target)`` instead of a single pandas object., by default True
 
     Returns
     -------
     Union[Tuple[pd.DataFrame, pd.Series], pd.DataFrame]
-        _description_
+        Data on the specified format
     """
     df = pd.read_csv(fpath)
     if return_Xy:
@@ -80,21 +86,23 @@ def load_data(fpath: str, target="tempC", return_Xy: bool = True) -> Union[Tuple
         return df
 
 def list_files(time_series: str, config: Dict, pattern : str="*_tr.csv"):
-    """_summary_
+    """Read all files with a certain pattern of a specified time series
 
     Parameters
     ----------
     time_series : str
         Time-series name
+
     config : Dict, optional
         Configuration dict from config.yaml file, by default "config.yaml"
+
     pattern : str, optional
-        _description_, by default "*_tr.csv"
+        Pattern of the files to filter, by default "*_tr.csv"
 
     Returns
     -------
     _type_
-        _description_
+        List of files according to the specified configuration
     """
     DIR = os.path.join(config["DATA_PATH"], config["PREP_PATH"], time_series)
     files = glob(os.path.join(DIR,pattern))
@@ -109,13 +117,16 @@ def compute_metrics(y_true: Union[pd.Series, np.array], y_pred: Union[pd.Series,
     ----------
     y_true : Union[pd.Series, np.array]
         Target values
+
     y_pred : Union[pd.Series, np.array]
         Target predictions
+
     metrics : Union[str, List[str]], optional
         If "ALL", computes all metrics defined in the METRICS dict. 
         Otherwise, computes a specific given metric, by default "ALL"
+
     prefix : str, optional
-        _description_, by default ""
+        Prefix of the value to store, by default ""
 
     Returns
     -------

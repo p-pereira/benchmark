@@ -10,10 +10,12 @@ from LSTM import main as lstm
 from DEEPAR import main as deepar
 from HCRYSTALBALL import main as hcryst
 from PYAF import main as pyaf
+from LR import main as lr
 
 
 MODELS = {
     "ARIMA": arima,
+    "LR": lr,
     "FEDOT": fedot,
     "LUDWIG": ludwig,
     "PROPHET": prophet,
