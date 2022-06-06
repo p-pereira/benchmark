@@ -7,19 +7,18 @@ import sys
 import yaml
 import mlflow
 from tqdm import tqdm
-from utilities import list_files, load_data, compute_metrics
 from time import time
-from LR import main as lr
-from ARIMA import main as arima
-from AUTOTS import main as autots
-from PYAF import main as pyaf
-from FEDOT import main as fedot
-from LUDWIG import main as ludwig
-from HCRYSTALBALL import main as hcryst
-from SKTIME import main as sktime
-from DEEPAR import main as deepar
-from LSTM import main as lstm
-from PROPHET import main as prophet
+from .LR import main as lr
+from .ARIMA import main as arima
+from .AUTOTS import main as autots
+from .PYAF import main as pyaf
+from .FEDOT import main as fedot
+from .LUDWIG import main as ludwig
+from .HCRYSTALBALL import main as hcryst
+from .SKTIME import main as sktime
+from .DEEPAR import main as deepar
+from .LSTM import main as lstm
+from .PROPHET import main as prophet
 
 MODELS = {
     "ARIMA": arima,

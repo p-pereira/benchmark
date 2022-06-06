@@ -7,7 +7,7 @@ from os import makedirs, path
 from typing import Dict
 import pandas as pd
 import sys
-from utilities import load_data, list_files, compute_metrics
+from .utilities import load_data, list_files, compute_metrics
 import yaml
 from tqdm import tqdm
 import mlflow

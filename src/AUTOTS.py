@@ -4,7 +4,7 @@ from typing import Dict
 from autots import AutoTS
 import pandas as pd
 import sys
-from utilities import compute_metrics, load_data, list_files
+from .utilities import compute_metrics, load_data, list_files
 import yaml
 import mlflow
 from tqdm import tqdm

@@ -1,16 +1,16 @@
-from generate_data import main as gen_data
+from .generate_data import main as gen_data
 import yaml
-from FEDOT import main as fedot
-from LUDWIG import main as ludwig
-from ARIMA import main as arima
-from AUTOTS import main as autots
-from PROPHET import main as prophet
-from SKTIME import main as sktime
-from LSTM import main as lstm
-from DEEPAR import main as deepar
-from HCRYSTALBALL import main as hcryst
-from PYAF import main as pyaf
-from LR import main as lr
+from .FEDOT import main as fedot
+from .LUDWIG import main as ludwig
+from .ARIMA import main as arima
+from .AUTOTS import main as autots
+from .PROPHET import main as prophet
+from .SKTIME import main as sktime
+from .LSTM import main as lstm
+from .DEEPAR import main as deepar
+from .HCRYSTALBALL import main as hcryst
+from .PYAF import main as pyaf
+from .LR import main as lr
 
 
 MODELS = {

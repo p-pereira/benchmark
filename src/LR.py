@@ -5,7 +5,7 @@ from typing import Dict
 from sklearn.linear_model import LinearRegression
 import pandas as pd
 import sys
-from utilities import compute_metrics, load_data, list_files
+from .utilities import compute_metrics, load_data, list_files
 import yaml
 from tqdm import tqdm
 import mlflow

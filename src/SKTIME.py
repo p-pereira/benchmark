@@ -6,7 +6,7 @@ from typing import Dict
 import numpy as np
 import pandas as pd
 import sys
-from utilities import compute_metrics, load_data, list_files
+from .utilities import compute_metrics, load_data, list_files
 import yaml
 from tqdm import tqdm
 import mlflow

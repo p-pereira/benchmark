@@ -1,9 +1,6 @@
 src package
 ===========
 
-Submodules
-----------
-
 src.ARIMA module
 ----------------
 
@@ -100,14 +97,6 @@ src.generate\_data module
    :undoc-members:
    :show-inheritance:
 
-src.runner module
------------------
-
-.. automodule:: src.runner
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 src.test module
 ---------------
 
@@ -128,14 +117,6 @@ src.utilities module
 --------------------
 
 .. automodule:: src.utilities
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Module contents
----------------
-
-.. automodule:: src
    :members:
    :undoc-members:
    :show-inheritance:
