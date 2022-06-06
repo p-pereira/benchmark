@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html  lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+      <title>src.generate_data</title>
+    
+          <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+          <link rel="stylesheet" href="../../_static/theme.css " type="text/css" />
+          <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
+      
+      <!-- sphinx script_files -->
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../_static/doctools.js"></script>
+
+      
+      <!-- bundled in js (rollup iife) -->
+      <!-- <script src="../../_static/theme-vendors.js"></script> -->
+      <script src="../../_static/theme.js" defer></script>
+    
+  <link rel="index" title="Index" href="../../genindex.html" />
+  <link rel="search" title="Search" href="../../search.html" /> 
+  </head>
+
+  <body>
+    <div id="app">
+    <div class="theme-container" :class="pageClasses"><navbar @toggle-sidebar="toggleSidebar">
+  <router-link to="../../index.html" class="home-link">
+    
+      <span class="site-name">Benchmark</span>
+    
+  </router-link>
+
+  <div class="links">
+    <navlinks class="can-hide">
+
+
+
+    </navlinks>
+  </div>
+</navbar>
+
+      
+      <div class="sidebar-mask" @click="toggleSidebar(false)">
+      </div>
+        <sidebar @toggle-sidebar="toggleSidebar">
+          
+          <navlinks>
+            
+
+
+
+            
+          </navlinks><div id="searchbox" class="searchbox" role="search">
+  <div class="caption"><span class="caption-text">Quick search</span>
+    <div class="searchformwrapper">
+      <form class="search" action="../../search.html" method="get">
+        <input type="text" name="q" />
+        <input type="submit" value="Search" />
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div><div class="sidebar-links" role="navigation" aria-label="main navigation">
+  
+    <div class="sidebar-group">
+      <p class="caption">
+        <span class="caption-text"><a href="../../modules.html#src">src</a></span>
+      </p>
+      <ul class="">
+        
+          <li class="toctree-l1 ">
+            
+              <a href="../../src.html" class="reference internal ">src package</a>
+            
+
+            
+          </li>
+
+        
+      </ul>
+    </div>
+  
+</div>
+        </sidebar>
+
+      <page>
+          <div class="body-header" role="navigation" aria-label="navigation">
+  
+  <ul class="breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+    
+      <li><a href="../index.html">Module code</a> &raquo;</li>
+    
+    <li>src.generate_data</li>
+  </ul>
+  
+
+  <ul class="page-nav">
+</ul>
+  
+</div>
+<hr>
+          <div class="content" role="main" v-pre>
+            
+  <h1>Source code for src.generate_data</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">yaml</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+
+
+<div class="viewcode-block" id="rw"><a class="viewcode-back" href="../../src.html#src.generate_data.rw">[docs]</a><span class="k">def</span> <span class="nf">rw</span><span class="p">(</span><span class="n">y</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">List</span><span class="p">],</span> <span class="n">ratio</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">],</span> <span class="n">W</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">S</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">iteration</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;rolling&quot;</span><span class="p">,</span> <span class="n">val_ratio</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Generate train, validation and test indexes for Rolling Window</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    y : Union[pd.Series, List]</span>
+<span class="sd">        _description_</span>
+<span class="sd">    ratio : Union[float,int]</span>
+<span class="sd">        _description_</span>
+<span class="sd">    W : int</span>
+<span class="sd">        Window - data size per iterarion</span>
+<span class="sd">    S : int</span>
+<span class="sd">        Rolling window step</span>
+<span class="sd">    iteration : int, optional</span>
+<span class="sd">        Number of iteration, by default 1</span>
+<span class="sd">    mode : str, optional</span>
+<span class="sd">        _description_, by default &quot;rolling&quot;</span>
+<span class="sd">    val_ratio : Union[float, str], optional</span>
+<span class="sd">        _description_, by default 0</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Dict</span>
+<span class="sd">        Taining, validation and testing indexes</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ALLITR</span><span class="o">=</span><span class="kc">None</span>
+    <span class="n">VAL</span><span class="o">=</span><span class="kc">None</span>
+    <span class="n">NSIZE</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+ 
+    <span class="n">aux</span><span class="o">=</span><span class="n">W</span><span class="o">+</span><span class="n">S</span><span class="o">*</span><span class="p">(</span><span class="n">iteration</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">aux</span><span class="o">=</span><span class="nb">min</span><span class="p">(</span><span class="n">aux</span><span class="p">,</span><span class="n">NSIZE</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">mode</span><span class="o">==</span><span class="s2">&quot;rolling&quot;</span><span class="p">:</span>
+        <span class="n">iaux</span><span class="o">=</span><span class="nb">max</span><span class="p">((</span><span class="n">aux</span><span class="o">-</span><span class="n">W</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span><span class="mi">1</span><span class="p">)</span> 
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">iaux</span><span class="o">=</span><span class="mi">1</span>
+    <span class="n">ALLTR</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">iaux</span><span class="p">,</span><span class="n">aux</span><span class="p">))</span>
+    <span class="n">end</span><span class="o">=</span><span class="n">aux</span><span class="o">+</span><span class="n">ratio</span>
+    <span class="n">end</span><span class="o">=</span><span class="nb">min</span><span class="p">(</span><span class="n">end</span><span class="p">,</span><span class="n">NSIZE</span><span class="p">)</span>
+    <span class="n">iend</span><span class="o">=</span><span class="n">aux</span>
+    <span class="k">if</span> <span class="n">iend</span> <span class="o">&lt;</span> <span class="n">end</span><span class="p">:</span>
+        <span class="n">TS</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">iend</span><span class="p">,</span><span class="n">end</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">TS</span><span class="o">=</span><span class="kc">None</span>
+    
+    <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;tr&#39;</span><span class="p">:</span> <span class="n">ALLTR</span><span class="p">,</span> <span class="s1">&#39;itr&#39;</span><span class="p">:</span> <span class="n">ALLITR</span><span class="p">,</span> <span class="s1">&#39;val&#39;</span><span class="p">:</span> <span class="n">VAL</span><span class="p">,</span> <span class="s1">&#39;ts&#39;</span><span class="p">:</span> <span class="n">TS</span><span class="p">}</span></div>
+
+<div class="viewcode-block" id="cases_series"><a class="viewcode-back" href="../../src.html#src.generate_data.cases_series">[docs]</a><span class="k">def</span> <span class="nf">cases_series</span><span class="p">(</span><span class="n">t</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">W</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Python adaptation of CasesSeries R function from rminer library. Creates lag dataframe from time-series data.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    t : pd.Series</span>
+<span class="sd">        Time-series.</span>
+<span class="sd">    W : Tuple</span>
+<span class="sd">        Window.</span>
+<span class="sd">    target : str, optional</span>
+<span class="sd">        Target column, by default &quot;y&quot;</span>
+<span class="sd">    start : int, optional</span>
+<span class="sd">        Start of time-series (1 means 1st value), by default 1</span>
+<span class="sd">    end : int, optional</span>
+<span class="sd">        End of time-series, by default 0</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    pd.DataFrame</span>
+<span class="sd">        Lag dataframe.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">end</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+    <span class="n">LW</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">W</span><span class="p">)</span>
+    <span class="n">LL</span> <span class="o">=</span> <span class="n">W</span><span class="p">[</span><span class="n">LW</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">JL</span> <span class="o">=</span> <span class="p">(</span><span class="n">end</span> <span class="o">-</span> <span class="n">start</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="n">LL</span>
+    <span class="n">I</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">JL</span><span class="p">,</span> <span class="n">LW</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+    <span class="n">S</span> <span class="o">=</span> <span class="n">start</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">JL</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">LW</span><span class="p">):</span>
+            <span class="n">I</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="n">i</span><span class="p">]</span><span class="o">=</span><span class="n">t</span><span class="p">[(</span><span class="n">S</span><span class="o">+</span><span class="n">LL</span><span class="o">-</span><span class="n">W</span><span class="p">[</span><span class="n">LW</span><span class="o">-</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="n">j</span><span class="p">)]</span>
+            <span class="n">I</span><span class="p">[</span><span class="n">j</span><span class="p">,(</span><span class="n">LW</span><span class="p">)]</span><span class="o">=</span><span class="n">t</span><span class="p">[(</span><span class="n">S</span><span class="o">+</span><span class="n">LL</span><span class="o">+</span><span class="n">j</span><span class="p">)]</span>
+    <span class="n">D</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">I</span><span class="p">)</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">D</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+    <span class="n">LN</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">N</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">LN</span><span class="p">):</span>
+        <span class="n">N</span><span class="p">[</span><span class="n">LN</span><span class="o">-</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;lag</span><span class="si">{</span><span class="n">W</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">N</span><span class="p">[</span><span class="n">LN</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">target</span>
+    <span class="n">D</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">N</span>
+    <span class="k">return</span> <span class="n">D</span></div>
+
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../src.html#src.generate_data.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">time_series</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="p">{},</span> <span class="n">make_regression</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Generate cross-validation data files for a time-series dataset.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    time_series : str</span>
+<span class="sd">        Time series name (same as the file).</span>
+<span class="sd">    config : Dict, optional</span>
+<span class="sd">        Configuration file path, by default &quot;config.yaml&quot;</span>
+<span class="sd">    make_regression : bool, optional</span>
+<span class="sd">        Convert time-series data in regression task, by default False</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">DATA_PATH</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;DATA_PATH&quot;</span><span class="p">]</span>
+    <span class="n">RAW_PATH</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;RAW_PATH&quot;</span><span class="p">]</span>
+    <span class="n">PREP_PATH</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;PREP_PATH&quot;</span><span class="p">]</span>
+    <span class="n">series_config</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;TS&quot;</span><span class="p">][</span><span class="n">time_series</span><span class="p">]</span>
+
+    <span class="n">lags_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">DATA_PATH</span><span class="p">,</span> <span class="n">PREP_PATH</span><span class="p">,</span> <span class="n">time_series</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">lags_path</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="nb">format</span> <span class="o">=</span> <span class="n">series_config</span><span class="p">[</span><span class="s2">&quot;format&quot;</span><span class="p">]</span>
+    <span class="n">fpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">DATA_PATH</span><span class="p">,</span> <span class="n">RAW_PATH</span><span class="p">,</span> <span class="n">time_series</span> <span class="o">+</span> <span class="nb">format</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">fpath</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error loading data: &quot;</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+    
+    <span class="n">target</span> <span class="o">=</span> <span class="n">series_config</span><span class="p">[</span><span class="s2">&quot;target&quot;</span><span class="p">]</span>
+    <span class="n">U</span> <span class="o">=</span> <span class="n">series_config</span><span class="p">[</span><span class="s2">&quot;U&quot;</span><span class="p">]</span>
+    <span class="n">WR</span> <span class="o">=</span> <span class="n">series_config</span><span class="p">[</span><span class="s2">&quot;WR&quot;</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">make_regression</span><span class="p">:</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">cases_series</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">target</span><span class="p">],</span> <span class="n">WR</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+        <span class="n">fn</span> <span class="o">=</span> <span class="s2">&quot;_reg&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">fn</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    
+    <span class="n">H</span> <span class="o">=</span> <span class="n">series_config</span><span class="p">[</span><span class="s2">&quot;H&quot;</span><span class="p">]</span>
+    <span class="n">W</span> <span class="o">=</span> <span class="n">series_config</span><span class="p">[</span><span class="s2">&quot;W&quot;</span><span class="p">]</span>
+    <span class="n">L</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">S</span> <span class="o">=</span> <span class="p">(</span><span class="n">L</span><span class="o">-</span><span class="p">(</span><span class="n">W</span><span class="o">+</span><span class="n">H</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span> <span class="o">//</span> <span class="n">U</span>
+
+    <span class="k">for</span> <span class="n">it</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">U</span><span class="o">+</span><span class="mi">1</span><span class="p">)):</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">rw</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">target</span><span class="p">],</span> <span class="n">ratio</span><span class="o">=</span><span class="n">H</span><span class="p">,</span> <span class="n">W</span><span class="o">=</span><span class="n">W</span><span class="p">,</span> <span class="n">S</span><span class="o">=</span><span class="n">S</span><span class="p">,</span> <span class="n">iteration</span><span class="o">=</span><span class="n">it</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;rolling&quot;</span><span class="p">)</span>
+
+        <span class="n">dtr</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">res</span><span class="p">[</span><span class="s2">&quot;tr&quot;</span><span class="p">],</span> <span class="p">]</span>
+        <span class="n">dts</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">res</span><span class="p">[</span><span class="s2">&quot;ts&quot;</span><span class="p">],</span> <span class="p">]</span>
+        <span class="n">tr_fpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lags_path</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">it</span><span class="si">}</span><span class="s2">_tr</span><span class="si">{</span><span class="n">fn</span><span class="si">}{</span><span class="nb">format</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">ts_fpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lags_path</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">it</span><span class="si">}</span><span class="s2">_ts</span><span class="si">{</span><span class="n">fn</span><span class="si">}{</span><span class="nb">format</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">dtr</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">tr_fpath</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">dts</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">ts_fpath</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="c1"># Read arguments</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;Generate CV data files for a time-series dataset, based on config.yaml params&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="n">help</span><span class="o">=</span><span class="s1">&#39;Time-series name.&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;time_series&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">time_series</span><span class="o">=</span><span class="s2">&quot;porto&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-c&#39;</span><span class="p">,</span> <span class="s1">&#39;--config&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;config&#39;</span><span class="p">,</span> 
+                        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Config yaml file.&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="s2">&quot;config.yaml&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-r&#39;</span><span class="p">,</span> <span class="s1">&#39;--reg&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;make_regression&#39;</span><span class="p">,</span> 
+                        <span class="n">action</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">BooleanOptionalAction</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Convert time-series data in regression task.&#39;</span><span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">config</span> <span class="o">=</span>  <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">config</span><span class="p">))</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error loading config file: &quot;</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+    <span class="c1"># Generate dataset files</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">time_series</span> <span class="o">==</span> <span class="s2">&quot;ALL&quot;</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">time_series</span> <span class="ow">in</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;TS&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">main</span><span class="p">(</span><span class="n">time_series</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">make_regression</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">main</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">time_series</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">make_regression</span><span class="p">)</span>
+</pre></div>
+
+          </div>
+          <div class="page-nav">
+            <div class="inner"><ul class="page-nav">
+</ul><div class="footer" role="contentinfo">
+      &#169; Copyright 2022, Pedro Pereira, Margarida Barros, Nuno Costa.
+    <br>
+    Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.0.0 with <a href="https://github.com/schettino72/sphinx_press_theme">Press Theme</a> 0.8.0.
+</div>
+            </div>
+          </div>
+      </page>
+    </div></div>
+    
+    
+  </body>
+</html>

@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html  lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+      <title>src package</title>
+    
+          <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+          <link rel="stylesheet" href="_static/theme.css " type="text/css" />
+          <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+      
+      <!-- sphinx script_files -->
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+
+      
+      <!-- bundled in js (rollup iife) -->
+      <!-- <script src="_static/theme-vendors.js"></script> -->
+      <script src="_static/theme.js" defer></script>
+    
+  <link rel="index" title="Index" href="genindex.html" />
+  <link rel="search" title="Search" href="search.html" />
+  <link rel="prev" title="src" href="modules.html" /> 
+  </head>
+
+  <body>
+    <div id="app">
+    <div class="theme-container" :class="pageClasses"><navbar @toggle-sidebar="toggleSidebar">
+  <router-link to="index.html" class="home-link">
+    
+      <span class="site-name">Benchmark</span>
+    
+  </router-link>
+
+  <div class="links">
+    <navlinks class="can-hide">
+
+
+
+    </navlinks>
+  </div>
+</navbar>
+
+      
+      <div class="sidebar-mask" @click="toggleSidebar(false)">
+      </div>
+        <sidebar @toggle-sidebar="toggleSidebar">
+          
+          <navlinks>
+            
+
+
+
+            
+          </navlinks><div id="searchbox" class="searchbox" role="search">
+  <div class="caption"><span class="caption-text">Quick search</span>
+    <div class="searchformwrapper">
+      <form class="search" action="search.html" method="get">
+        <input type="text" name="q" />
+        <input type="submit" value="Search" />
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div><div class="sidebar-links" role="navigation" aria-label="main navigation">
+  
+    <div class="sidebar-group">
+      <p class="caption">
+        <span class="caption-text"><a href="modules.html#src">src</a></span>
+      </p>
+      <ul class="current">
+        
+          <li class="toctree-l1 current">
+            
+              <a href="#" class="reference internal current">src package</a>
+            
+
+            
+              <ul>
+                
+                  <li class="toctree-l2"><a href="#module-src.ARIMA" class="reference internal">src.ARIMA module</a></li>
+                
+                  <li class="toctree-l2"><a href="#module-src.AUTOTS" class="reference internal">src.AUTOTS module</a></li>
+                
+                  <li class="toctree-l2"><a href="#module-src.DEEPAR" class="reference internal">src.DEEPAR module</a></li>
+                
+                  <li class="toctree-l2"><a href="#module-src.FEDOT" class="reference internal">src.FEDOT module</a></li>
+                
+                  <li class="toctree-l2"><a href="#module-src.HCRYSTALBALL" class="reference internal">src.HCRYSTALBALL module</a></li>
+                
+                  <li class="toctree-l2"><a href="#module-src.LR" class="reference internal">src.LR module</a></li>
+                
+                  <li class="toctree-l2"><a href="#module-src.LSTM" class="reference internal">src.LSTM module</a></li>
+                
+                  <li class="toctree-l2"><a href="#module-src.LUDWIG" class="reference internal">src.LUDWIG module</a></li>
+                
+                  <li class="toctree-l2"><a href="#module-src.PROPHET" class="reference internal">src.PROPHET module</a></li>
+                
+                  <li class="toctree-l2"><a href="#module-src.PYAF" class="reference internal">src.PYAF module</a></li>
+                
+                  <li class="toctree-l2"><a href="#module-src.SKTIME" class="reference internal">src.SKTIME module</a></li>
+                
+                  <li class="toctree-l2"><a href="#module-src.generate_data" class="reference internal">src.generate_data module</a></li>
+                
+                  <li class="toctree-l2"><a href="#module-src.test" class="reference internal">src.test module</a></li>
+                
+                  <li class="toctree-l2"><a href="#module-src.train" class="reference internal">src.train module</a></li>
+                
+                  <li class="toctree-l2"><a href="#module-src.utilities" class="reference internal">src.utilities module</a></li>
+                
+              </ul>
+            
+          </li>
+
+        
+      </ul>
+    </div>
+  
+</div>
+        </sidebar>
+
+      <page>
+          <div class="body-header" role="navigation" aria-label="navigation">
+  
+  <ul class="breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+    
+      <li><a href="modules.html">src</a> &raquo;</li>
+    
+    <li>src package</li>
+  </ul>
+  
+
+  <ul class="page-nav">
+  <li class="prev">
+    <a href="modules.html"
+       title="previous chapter">← src</a>
+  </li>
+</ul>
+  
+</div>
+<hr>
+          <div class="content" role="main" v-pre>
+            
+  <section id="src-package">
+<h1>src package<a class="headerlink" href="#src-package" title="Permalink to this heading">¶</a></h1>
+<section id="module-src.ARIMA">
+<span id="src-arima-module"></span><h2>src.ARIMA module<a class="headerlink" href="#module-src.ARIMA" title="Permalink to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="src.ARIMA.main">
+<span class="sig-prename descclassname"><span class="pre">src.ARIMA.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_series</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/ARIMA.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.ARIMA.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read all Rolling Window iterarion training files from a given time-series and train a Pmdarima model for each.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>time_series</strong><span class="classifier">str</span></dt><dd><p>Time-series name.</p>
+</dd>
+<dt><strong>config</strong><span class="classifier">dict, optional</span></dt><dd><p>Configuration dict from config.yaml file, by default {}</p>
+</dd>
+<dt><strong>train: bool, optional</strong></dt><dd><p>Whether performs model training or not, by default True (it does)</p>
+</dd>
+<dt><strong>test: bool, optional</strong></dt><dd><p>Whether performs model testing/evaluation or not, by default True (it does)</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.ARIMA.test_iteration">
+<span class="sig-prename descclassname"><span class="pre">src.ARIMA.</span></span><span class="sig-name descname"><span class="pre">test_iteration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/ARIMA.html#test_iteration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.ARIMA.test_iteration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test a Pmdarima model and storing metrics in MLflow.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>y</strong><span class="classifier">pd.Series</span></dt><dd><p>Target values.</p>
+</dd>
+<dt><strong>config</strong><span class="classifier">Dict, optional</span></dt><dd><p>Configuration dict from config.yaml file, by default {}</p>
+</dd>
+<dt><strong>run_name</strong><span class="classifier">str, optional</span></dt><dd><p>Run name for MLflow, by default “” (empty)</p>
+</dd>
+<dt><strong>params</strong><span class="classifier">Dict, optional</span></dt><dd><p>Run/model parameters, by default {} (empty)</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.ARIMA.train_iteration">
+<span class="sig-prename descclassname"><span class="pre">src.ARIMA.</span></span><span class="sig-name descname"><span class="pre">train_iteration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/ARIMA.html#train_iteration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.ARIMA.train_iteration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Train a Pmdarima model and storing metrics in MLflow.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>y</strong><span class="classifier">pd.Series</span></dt><dd><p>Target values.</p>
+</dd>
+<dt><strong>config</strong><span class="classifier">Dict, optional</span></dt><dd><p>Configuration dict from config.yaml file, by default {}</p>
+</dd>
+<dt><strong>run_name</strong><span class="classifier">str, optional</span></dt><dd><p>Run name for MLflow, by default “” (empty)</p>
+</dd>
+<dt><strong>params</strong><span class="classifier">Dict, optional</span></dt><dd><p>Run/model parameters, by default {} (empty)</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-src.AUTOTS">
+<span id="src-autots-module"></span><h2>src.AUTOTS module<a class="headerlink" href="#module-src.AUTOTS" title="Permalink to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="src.AUTOTS.main">
+<span class="sig-prename descclassname"><span class="pre">src.AUTOTS.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_series</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/AUTOTS.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.AUTOTS.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read all Rolling Window iterarion training files from a given time-series and train a AutoTS model for each.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>time_series</strong><span class="classifier">str</span></dt><dd><p>Time-series name.</p>
+</dd>
+<dt><strong>config</strong><span class="classifier">dict, optional</span></dt><dd><p>Configuration dict from config.yaml file, by default {}</p>
+</dd>
+<dt><strong>train: bool, optional</strong></dt><dd><p>Whether performs model training or not, by default True (it does)</p>
+</dd>
+<dt><strong>test: bool, optional</strong></dt><dd><p>Whether performs model testing/evaluation or not, by default True (it does)</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.AUTOTS.test_iteration">
+<span class="sig-prename descclassname"><span class="pre">src.AUTOTS.</span></span><span class="sig-name descname"><span class="pre">test_iteration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/AUTOTS.html#test_iteration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.AUTOTS.test_iteration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test a AutoTS model and storing metrics in MLflow.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>X</strong><span class="classifier">pd.DataFrame</span></dt><dd><p>X data.</p>
+</dd>
+<dt><strong>y</strong><span class="classifier">pd.Series</span></dt><dd><p>Target values.</p>
+</dd>
+<dt><strong>config</strong><span class="classifier">Dict, optional</span></dt><dd><p>Configuration dict from config.yaml file, by default {}</p>
+</dd>
+<dt><strong>run_name</strong><span class="classifier">str, optional</span></dt><dd><p>Run name for MLflow, by default “” (empty)</p>
+</dd>
+<dt><strong>params</strong><span class="classifier">Dict, optional</span></dt><dd><p>Run/model parameters, by default {} (empty)</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.AUTOTS.train_iteration">
+<span class="sig-prename descclassname"><span class="pre">src.AUTOTS.</span></span><span class="sig-name descname"><span class="pre">train_iteration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/AUTOTS.html#train_iteration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.AUTOTS.train_iteration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Train a AutoTS model and storing metrics in MLflow.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>X</strong><span class="classifier">pd.DataFrame</span></dt><dd><p>X data.</p>
+</dd>
+<dt><strong>y</strong><span class="classifier">pd.Series</span></dt><dd><p>Target values.</p>
+</dd>
+<dt><strong>config</strong><span class="classifier">Dict, optional</span></dt><dd><p>Configuration dict from config.yaml file, by default {}</p>
+</dd>
+<dt><strong>run_name</strong><span class="classifier">str, optional</span></dt><dd><p>Run name for MLflow, by default “” (empty)</p>
+</dd>
+<dt><strong>params</strong><span class="classifier">Dict, optional</span></dt><dd><p>Run/model parameters, by default {} (empty)</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-src.DEEPAR">
+<span id="src-deepar-module"></span><h2>src.DEEPAR module<a class="headerlink" href="#module-src.DEEPAR" title="Permalink to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="src.DEEPAR.main">
+<span class="sig-prename descclassname"><span class="pre">src.DEEPAR.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_series</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/DEEPAR.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.DEEPAR.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read all Rolling Window iterarion training files from a given time-series and train a DeepAR model for each.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>time_series</strong><span class="classifier">str</span></dt><dd><p>Time-series name.</p>
+</dd>
+<dt><strong>config</strong><span class="classifier">dict, optional</span></dt><dd><p>Configuration dict from config.yaml file, by default {}</p>
+</dd>
+<dt><strong>train: bool, optional</strong></dt><dd><p>Whether performs model training or not, by default True (it does)</p>
+</dd>
+<dt><strong>test: bool, optional</strong></dt><dd><p>Whether performs model testing/evaluation or not, by default True (it does)</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.DEEPAR.test_iteration">
+<span class="sig-prename descclassname"><span class="pre">src.DEEPAR.</span></span><span class="sig-name descname"><span class="pre">test_iteration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/DEEPAR.html#test_iteration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.DEEPAR.test_iteration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test a DeepAR model and storing metrics in MLflow.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>X</strong><span class="classifier">pd.DataFrame</span></dt><dd><p>X data.</p>
+</dd>
+<dt><strong>y</strong><span class="classifier">pd.Series</span></dt><dd><p>Target values.</p>
+</dd>
+<dt><strong>config</strong><span class="classifier">Dict, optional</span></dt><dd><p>Configuration dict from config.yaml file, by default {}</p>
+</dd>
+<dt><strong>run_name</strong><span class="classifier">str, optional</span></dt><dd><p>Run name for MLflow, by default “” (empty)</p>
+</dd>
+<dt><strong>params</strong><span class="classifier">Dict, optional</span></dt><dd><p>Run/model parameters, by default {} (empty)</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.DEEPAR.train_iteration">
+<span class="sig-prename descclassname"><span class="pre">src.DEEPAR.</span></span><span class="sig-name descname"><span class="pre">train_iteration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/DEEPAR.html#train_iteration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.DEEPAR.train_iteration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Train a DeepAR model and storing metrics in MLflow.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>X</strong><span class="classifier">pd.DataFrame</span></dt><dd><p>X data.</p>
+</dd>
+<dt><strong>y</strong><span class="classifier">pd.Series</span></dt><dd><p>Target values.</p>
+</dd>
+<dt><strong>config</strong><span class="classifier">Dict, optional</span></dt><dd><p>Configuration dict from config.yaml file, by default {}</p>
+</dd>
+<dt><strong>run_name</strong><span class="classifier">str, optional</span></dt><dd><p>Run name for MLflow, by default “” (empty)</p>
+</dd>
+<dt><strong>params</strong><span class="classifier">Dict, optional</span></dt><dd><p>Run/model parameters, by default {} (empty)</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-src.FEDOT">
+<span id="src-fedot-module"></span><h2>src.FEDOT module<a class="headerlink" href="#module-src.FEDOT" title="Permalink to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="src.FEDOT.main">
+<span class="sig-prename descclassname"><span class="pre">src.FEDOT.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_series</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/FEDOT.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.FEDOT.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read all Rolling Window iterarion training files from a given time-series and train a FEDOT model for each.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>time_series</strong><span class="classifier">str</span></dt><dd><p>Time-series name.</p>
+</dd>
+<dt><strong>config</strong><span class="classifier">dict, optional</span></dt><dd><p>Configuration dict from config.yaml file, by default {}</p>
+</dd>
+<dt><strong>train: bool, optional</strong></dt><dd><p>Whether performs model training or not, by default True (it does)</p>
+</dd>
+<dt><strong>test: bool, optional</strong></dt><dd><p>Whether performs model testing/evaluation or not, by default True (it does)</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.FEDOT.test_iteration">
+<span class="sig-prename descclassname"><span class="pre">src.FEDOT.</span></span><span class="sig-name descname"><span class="pre">test_iteration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">history</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">InputData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">InputData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/FEDOT.html#test_iteration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.FEDOT.test_iteration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test a FEDOT model and storing metrics in MLflow.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>history</strong><span class="classifier">InputData</span></dt><dd><p>Historic values</p>
+</dd>
+<dt><strong>test_data</strong><span class="classifier">InputData</span></dt><dd><p>Target values</p>
+</dd>
+<dt><strong>config</strong><span class="classifier">Dict, optional</span></dt><dd><p>Configuration dict from config.yaml file, by default {}</p>
+</dd>
+<dt><strong>run_name</strong><span class="classifier">str, optional</span></dt><dd><p>Run name for MLflow, by default “” (empty)</p>
+</dd>
+<dt><strong>params</strong><span class="classifier">Dict, optional</span></dt><dd><p>Run/model parameters, by default {} (empty)</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.FEDOT.train_iteration">
+<span class="sig-prename descclassname"><span class="pre">src.FEDOT.</span></span><span class="sig-name descname"><span class="pre">train_iteration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">InputData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Task</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/FEDOT.html#train_iteration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.FEDOT.train_iteration" title="Permalink to this definition">¶</a></dt>
+<dd><p>AutoML using FEDOT and storing metrics in MLflow.
+Code based on: <a class="reference external" href="https://github.com/nccr-itmo/FEDOT/blob/master/examples/advanced/time_series_forecasting/multistep.py">https://github.com/nccr-itmo/FEDOT/blob/master/examples/advanced/time_series_forecasting/multistep.py</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>data</strong><span class="classifier">InputData</span></dt><dd><p>Time-series fedot InputData object.</p>
+</dd>
+<dt><strong>task</strong><span class="classifier">Task</span></dt><dd><p>Fedot task object.</p>
+</dd>
+<dt><strong>config</strong><span class="classifier">Dict, optional</span></dt><dd><p>Configuration dict from config.yaml file, by default {}</p>
+</dd>
+<dt><strong>run_name</strong><span class="classifier">str, optional</span></dt><dd><p>Run name for MLflow, by default “” (empty)</p>
+</dd>
+<dt><strong>params</strong><span class="classifier">Dict, optional</span></dt><dd><p>Run/model parameters, by default {} (empty)</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-src.HCRYSTALBALL">
+<span id="src-hcrystalball-module"></span><h2>src.HCRYSTALBALL module<a class="headerlink" href="#module-src.HCRYSTALBALL" title="Permalink to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="src.HCRYSTALBALL.main">
+<span class="sig-prename descclassname"><span class="pre">src.HCRYSTALBALL.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_series</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/HCRYSTALBALL.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.HCRYSTALBALL.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read all Rolling Window iterarion training files from a given time-series and train a HCrsytalBall model for each.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>time_series</strong><span class="classifier">str</span></dt><dd><p>Time-series name.</p>
+</dd>
+<dt><strong>config</strong><span class="classifier">dict, optional</span></dt><dd><p>Configuration dict from config.yaml file, by default {}</p>
+</dd>
+<dt><strong>train: bool, optional</strong></dt><dd><p>Whether performs model training or not, by default True (it does)</p>
+</dd>
+<dt><strong>test: bool, optional</strong></dt><dd><p>Whether performs model testing/evaluation or not, by default True (it does)</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.HCRYSTALBALL.test_iteration">
+<span class="sig-prename descclassname"><span class="pre">src.HCRYSTALBALL.</span></span><span class="sig-name descname"><span class="pre">test_iteration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/HCRYSTALBALL.html#test_iteration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.HCRYSTALBALL.test_iteration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test a HCrystalBall model and storing metrics in MLflow.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>X</strong><span class="classifier">pd.DataFrame</span></dt><dd><p>X data.</p>
+</dd>
+<dt><strong>y</strong><span class="classifier">pd.Series</span></dt><dd><p>Target values.</p>
+</dd>
+<dt><strong>config</strong><span class="classifier">Dict, optional</span></dt><dd><p>Configuration dict from config.yaml file, by default {}</p>
+</dd>
+<dt><strong>run_name</strong><span class="classifier">str, optional</span></dt><dd><p>Run name for MLflow, by default “” (empty)</p>
+</dd>
+<dt><strong>params</strong><span class="classifier">Dict, optional</span></dt><dd><p>Run/model parameters, by default {} (empty)</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.HCRYSTALBALL.train_iteration">
+<span class="sig-prename descclassname"><span class="pre">src.HCRYSTALBALL.</span></span><span class="sig-name descname"><span class="pre">train_iteration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/HCRYSTALBALL.html#train_iteration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.HCRYSTALBALL.train_iteration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Train a HCrystalBall model and storing metrics in MLflow.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>X</strong><span class="classifier">pd.DataFrame</span></dt><dd><p>X data.</p>
+</dd>
+<dt><strong>y</strong><span class="classifier">pd.Series</span></dt><dd><p>Target values.</p>
+</dd>
+<dt><strong>config</strong><span class="classifier">Dict, optional</span></dt><dd><p>Configuration dict from config.yaml file, by default {}</p>
+</dd>
+<dt><strong>run_name</strong><span class="classifier">str, optional</span></dt><dd><p>Run name for MLflow, by default “” (empty)</p>
+</dd>
+<dt><strong>params</strong><span class="classifier">Dict, optional</span></dt><dd><p>Execution settings for MLflow, by default {}</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-src.LR">
+<span id="src-lr-module"></span><h2>src.LR module<a class="headerlink" href="#module-src.LR" title="Permalink to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="src.LR.main">
+<span class="sig-prename descclassname"><span class="pre">src.LR.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_series</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/LR.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.LR.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read all Rolling Window iterarion training files from a given time-series and train a Linear Regression model for each.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>time_series</strong><span class="classifier">str</span></dt><dd><p>Time-series name.</p>
+</dd>
+<dt><strong>config</strong><span class="classifier">dict, optional</span></dt><dd><p>Configuration dict from config.yaml file, by default {}</p>
+</dd>
+<dt><strong>train: bool, optional</strong></dt><dd><p>Whether performs model training or not, by default True (it does)</p>
+</dd>
+<dt><strong>test: bool, optional</strong></dt><dd><p>Whether performs model testing/evaluation or not, by default True (it does)</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.LR.test_iteration">
+<span class="sig-prename descclassname"><span class="pre">src.LR.</span></span><span class="sig-name descname"><span class="pre">test_iteration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/LR.html#test_iteration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.LR.test_iteration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test a Linear Regression model and storing metrics in MLflow.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>X</strong><span class="classifier">pd.DataFrame</span></dt><dd><p>X data.</p>
+</dd>
+<dt><strong>y</strong><span class="classifier">pd.Series</span></dt><dd><p>Target values.</p>
+</dd>
+<dt><strong>config</strong><span class="classifier">Dict, optional</span></dt><dd><p>Configuration dict from config.yaml file, by default {}</p>
+</dd>
+<dt><strong>run_name</strong><span class="classifier">str, optional</span></dt><dd><p>Run name for MLflow, by default “” (empty)</p>
+</dd>
+<dt><strong>params</strong><span class="classifier">Dict, optional</span></dt><dd><p>Run/model parameters, by default {} (empty)</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.LR.train_iteration">
+<span class="sig-prename descclassname"><span class="pre">src.LR.</span></span><span class="sig-name descname"><span class="pre">train_iteration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/LR.html#train_iteration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.LR.train_iteration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Train a Linear Regression model and storing metrics in MLflow.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>X</strong><span class="classifier">pd.DataFrame</span></dt><dd><p>X data.</p>
+</dd>
+<dt><strong>y</strong><span class="classifier">pd.Series</span></dt><dd><p>Target values.</p>
+</dd>
+<dt><strong>config</strong><span class="classifier">Dict, optional</span></dt><dd><p>Configuration dict from config.yaml file, by default {}</p>
+</dd>
+<dt><strong>run_name</strong><span class="classifier">str, optional</span></dt><dd><p>Run name for MLflow, by default “” (empty)</p>
+</dd>
+<dt><strong>params</strong><span class="classifier">Dict, optional</span></dt><dd><p>Run/model parameters, by default {} (empty)</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-src.LSTM">
+<span id="src-lstm-module"></span><h2>src.LSTM module<a class="headerlink" href="#module-src.LSTM" title="Permalink to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="src.LSTM.main">
+<span class="sig-prename descclassname"><span class="pre">src.LSTM.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_series</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/LSTM.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.LSTM.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read all Rolling Window iterarion training files from a given time-series and train a LSTM model for each.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>time_series</strong><span class="classifier">str</span></dt><dd><p>Time-series name.</p>
+</dd>
+<dt><strong>config</strong><span class="classifier">dict, optional</span></dt><dd><p>Configuration dict from config.yaml file, by default {}</p>
+</dd>
+<dt><strong>train: bool, optional</strong></dt><dd><p>Whether performs model training or not, by default True (it does)</p>
+</dd>
+<dt><strong>test: bool, optional</strong></dt><dd><p>Whether performs model testing/evaluation or not, by default True (it does)</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.LSTM.test_iteration">
+<span class="sig-prename descclassname"><span class="pre">src.LSTM.</span></span><span class="sig-name descname"><span class="pre">test_iteration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/LSTM.html#test_iteration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.LSTM.test_iteration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test a LSTM model and storing metrics in MLflow.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>X</strong><span class="classifier">pd.DataFrame</span></dt><dd><p>X data.</p>
+</dd>
+<dt><strong>y</strong><span class="classifier">pd.Series</span></dt><dd><p>Target values.</p>
+</dd>
+<dt><strong>config</strong><span class="classifier">Dict, optional</span></dt><dd><p>Configuration dict from config.yaml file, by default {}</p>
+</dd>
+<dt><strong>run_name</strong><span class="classifier">str, optional</span></dt><dd><p>Run name for MLflow, by default “” (empty)</p>
+</dd>
+<dt><strong>params</strong><span class="classifier">Dict, optional</span></dt><dd><p>Run/model parameters, by default {} (empty)</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.LSTM.train_iteration">
+<span class="sig-prename descclassname"><span class="pre">src.LSTM.</span></span><span class="sig-name descname"><span class="pre">train_iteration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/LSTM.html#train_iteration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.LSTM.train_iteration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Train a LSTM model and storing metrics in MLflow.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>X</strong><span class="classifier">pd.DataFrame</span></dt><dd><p>X data.</p>
+</dd>
+<dt><strong>y</strong><span class="classifier">pd.Series</span></dt><dd><p>Target values.</p>
+</dd>
+<dt><strong>config</strong><span class="classifier">Dict, optional</span></dt><dd><p>Configuration dict from config.yaml file, by default {}</p>
+</dd>
+<dt><strong>run_name</strong><span class="classifier">str, optional</span></dt><dd><p>Run name for MLflow, by default “” (empty)</p>
+</dd>
+<dt><strong>params</strong><span class="classifier">Dict, optional</span></dt><dd><p>Run/model parameters, by default {} (empty)</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-src.LUDWIG">
+<span id="src-ludwig-module"></span><h2>src.LUDWIG module<a class="headerlink" href="#module-src.LUDWIG" title="Permalink to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="src.LUDWIG.main">
+<span class="sig-prename descclassname"><span class="pre">src.LUDWIG.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_series</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/LUDWIG.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.LUDWIG.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read all Rolling Window iterarion training files from a given time-series and train a LUDWIG model for each.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>time_series</strong><span class="classifier">str</span></dt><dd><p>Time-series name.</p>
+</dd>
+<dt><strong>config</strong><span class="classifier">dict, optional</span></dt><dd><p>Configuration dict from config.yaml file, by default {}</p>
+</dd>
+<dt><strong>train: bool, optional</strong></dt><dd><p>Whether performs model training or not, by default True (it does)</p>
+</dd>
+<dt><strong>test: bool, optional</strong></dt><dd><p>Whether performs model testing/evaluation or not, by default True (it does)</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.LUDWIG.test_iteration">
+<span class="sig-prename descclassname"><span class="pre">src.LUDWIG.</span></span><span class="sig-name descname"><span class="pre">test_iteration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/LUDWIG.html#test_iteration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.LUDWIG.test_iteration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test a LUDWIG model and storing metrics in MLflow.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>X</strong><span class="classifier">pd.DataFrame</span></dt><dd><p>X data.</p>
+</dd>
+<dt><strong>y</strong><span class="classifier">pd.Series</span></dt><dd><p>Target values.</p>
+</dd>
+<dt><strong>config</strong><span class="classifier">Dict, optional</span></dt><dd><p>Configuration dict from config.yaml file, by default {}</p>
+</dd>
+<dt><strong>run_name</strong><span class="classifier">str, optional</span></dt><dd><p>Run name for MLflow, by default “” (empty)</p>
+</dd>
+<dt><strong>params</strong><span class="classifier">Dict, optional</span></dt><dd><p>Run/model parameters, by default {} (empty)</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.LUDWIG.train_iteration">
+<span class="sig-prename descclassname"><span class="pre">src.LUDWIG.</span></span><span class="sig-name descname"><span class="pre">train_iteration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/LUDWIG.html#train_iteration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.LUDWIG.train_iteration" title="Permalink to this definition">¶</a></dt>
+<dd><p>AutoML using LUDWIG and storing metrics in MLflow.
+Code based on: <a class="reference external" href="https://ludwig-ai.github.io/ludwig-docs/0.4/examples/weather/">https://ludwig-ai.github.io/ludwig-docs/0.4/examples/weather/</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>X</strong><span class="classifier">pd.DataFrame</span></dt><dd><p>X data.</p>
+</dd>
+<dt><strong>y</strong><span class="classifier">pd.Series</span></dt><dd><p>Target values.</p>
+</dd>
+<dt><strong>config</strong><span class="classifier">Dict, optional</span></dt><dd><p>Configuration dict from config.yaml file, by default {}</p>
+</dd>
+<dt><strong>run_name</strong><span class="classifier">str, optional</span></dt><dd><p>Run name for MLflow, by default “” (empty)</p>
+</dd>
+<dt><strong>params</strong><span class="classifier">Dict, optional</span></dt><dd><p>Run/model parameters, by default {} (empty)</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-src.PROPHET">
+<span id="src-prophet-module"></span><h2>src.PROPHET module<a class="headerlink" href="#module-src.PROPHET" title="Permalink to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="src.PROPHET.main">
+<span class="sig-prename descclassname"><span class="pre">src.PROPHET.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_series</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/PROPHET.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.PROPHET.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read all Rolling Window iterarion training files from a given time-series and train a Prophet model for each.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>time_series</strong><span class="classifier">str</span></dt><dd><p>Time-series name.</p>
+</dd>
+<dt><strong>config</strong><span class="classifier">dict, optional</span></dt><dd><p>Configuration dict from config.yaml file, by default {}</p>
+</dd>
+<dt><strong>train: bool, optional</strong></dt><dd><p>Whether performs model training or not, by default True (it does)</p>
+</dd>
+<dt><strong>test: bool, optional</strong></dt><dd><p>Whether performs model testing/evaluation or not, by default True (it does)</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.PROPHET.test_iteration">
+<span class="sig-prename descclassname"><span class="pre">src.PROPHET.</span></span><span class="sig-name descname"><span class="pre">test_iteration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/PROPHET.html#test_iteration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.PROPHET.test_iteration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test a Prophet model and storing metrics in MLflow.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>X</strong><span class="classifier">pd.DataFrame</span></dt><dd><p>X data.</p>
+</dd>
+<dt><strong>y</strong><span class="classifier">pd.Series</span></dt><dd><p>Target values.</p>
+</dd>
+<dt><strong>config</strong><span class="classifier">Dict, optional</span></dt><dd><p>Configuration dict from config.yaml file, by default {}</p>
+</dd>
+<dt><strong>run_name</strong><span class="classifier">str, optional</span></dt><dd><p>Run name for MLflow, by default “” (empty)</p>
+</dd>
+<dt><strong>params</strong><span class="classifier">Dict, optional</span></dt><dd><p>Run/model parameters, by default {} (empty)</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.PROPHET.train_iteration">
+<span class="sig-prename descclassname"><span class="pre">src.PROPHET.</span></span><span class="sig-name descname"><span class="pre">train_iteration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/PROPHET.html#train_iteration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.PROPHET.train_iteration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Train a Prophet model and storing metrics in MLflow.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>X</strong><span class="classifier">pd.DataFrame</span></dt><dd><p>X data.</p>
+</dd>
+<dt><strong>y</strong><span class="classifier">pd.Series</span></dt><dd><p>Target values.</p>
+</dd>
+<dt><strong>config</strong><span class="classifier">Dict, optional</span></dt><dd><p>Configuration dict from config.yaml file, by default {}</p>
+</dd>
+<dt><strong>run_name</strong><span class="classifier">str, optional</span></dt><dd><p>Run name for MLflow, by default “” (empty)</p>
+</dd>
+<dt><strong>params</strong><span class="classifier">Dict, optional</span></dt><dd><p>Run/model parameters, by default {} (empty)</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-src.PYAF">
+<span id="src-pyaf-module"></span><h2>src.PYAF module<a class="headerlink" href="#module-src.PYAF" title="Permalink to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="src.PYAF.main">
+<span class="sig-prename descclassname"><span class="pre">src.PYAF.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_series</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/PYAF.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.PYAF.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read all Rolling Window iterarion training files from a given time-series and train a PyAF model for each.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>time_series</strong><span class="classifier">str</span></dt><dd><p>Time-series name.</p>
+</dd>
+<dt><strong>config</strong><span class="classifier">dict, optional</span></dt><dd><p>Configuration dict from config.yaml file, by default {}</p>
+</dd>
+<dt><strong>train: bool, optional</strong></dt><dd><p>Whether performs model training or not, by default True (it does)</p>
+</dd>
+<dt><strong>test: bool, optional</strong></dt><dd><p>Whether performs model testing/evaluation or not, by default True (it does)</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.PYAF.test_iteration">
+<span class="sig-prename descclassname"><span class="pre">src.PYAF.</span></span><span class="sig-name descname"><span class="pre">test_iteration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Xtrain</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ytrain</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Xtest</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ytest</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/PYAF.html#test_iteration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.PYAF.test_iteration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test a PyAF model and storing metrics in MLflow.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>Xtrain</strong><span class="classifier">pd.DataFrame</span></dt><dd><p>X data for comparison.</p>
+</dd>
+<dt><strong>ytrain</strong><span class="classifier">pd.Series</span></dt><dd><p>Target values.</p>
+</dd>
+<dt><strong>Xtest</strong><span class="classifier">pd.DataFrame</span></dt><dd><p>X data for comparison.</p>
+</dd>
+<dt><strong>ytest</strong><span class="classifier">pd.Series</span></dt><dd><p>Target values.</p>
+</dd>
+<dt><strong>config</strong><span class="classifier">Dict, optional</span></dt><dd><p>Configuration dict from config.yaml file, by default {}</p>
+</dd>
+<dt><strong>run_name</strong><span class="classifier">str, optional</span></dt><dd><p>Run name for MLflow, by default “” (empty)</p>
+</dd>
+<dt><strong>params</strong><span class="classifier">Dict, optional</span></dt><dd><p>Run/model parameters, by default {} (empty)</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.PYAF.train_iteration">
+<span class="sig-prename descclassname"><span class="pre">src.PYAF.</span></span><span class="sig-name descname"><span class="pre">train_iteration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/PYAF.html#train_iteration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.PYAF.train_iteration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Train a PyAF model and storing metrics in MLflow.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>X</strong><span class="classifier">pd.DataFrame</span></dt><dd><p>X data.</p>
+</dd>
+<dt><strong>y</strong><span class="classifier">pd.Series</span></dt><dd><p>Target values.</p>
+</dd>
+<dt><strong>config</strong><span class="classifier">Dict, optional</span></dt><dd><p>Configuration dict from config.yaml file, by default {}</p>
+</dd>
+<dt><strong>run_name</strong><span class="classifier">str, optional</span></dt><dd><p>Run name for MLflow, by default “” (empty)</p>
+</dd>
+<dt><strong>params</strong><span class="classifier">Dict, optional</span></dt><dd><p>Run/model parameters, by default {} (empty)</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-src.SKTIME">
+<span id="src-sktime-module"></span><h2>src.SKTIME module<a class="headerlink" href="#module-src.SKTIME" title="Permalink to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="src.SKTIME.main">
+<span class="sig-prename descclassname"><span class="pre">src.SKTIME.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_series</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/SKTIME.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.SKTIME.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read all Rolling Window iterarion training files from a given time-series and train a SKTIME model for each.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>time_series</strong><span class="classifier">str</span></dt><dd><p>Time-series name.</p>
+</dd>
+<dt><strong>config</strong><span class="classifier">dict, optional</span></dt><dd><p>Configuration dict from config.yaml file, by default {}</p>
+</dd>
+<dt><strong>train: bool, optional</strong></dt><dd><p>Whether performs model training or not, by default True (it does)</p>
+</dd>
+<dt><strong>test: bool, optional</strong></dt><dd><p>Whether performs model testing/evaluation or not, by default True (it does)</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.SKTIME.test_iteration">
+<span class="sig-prename descclassname"><span class="pre">src.SKTIME.</span></span><span class="sig-name descname"><span class="pre">test_iteration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/SKTIME.html#test_iteration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.SKTIME.test_iteration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test a SKTIME model and storing metrics in MLflow.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>y</strong><span class="classifier">pd.Series</span></dt><dd><p>Target values.</p>
+</dd>
+<dt><strong>config</strong><span class="classifier">Dict, optional</span></dt><dd><p>Configuration dict from config.yaml file, by default {}</p>
+</dd>
+<dt><strong>run_name</strong><span class="classifier">str, optional</span></dt><dd><p>Run name for MLflow, by default “” (empty)</p>
+</dd>
+<dt><strong>params</strong><span class="classifier">Dict, optional</span></dt><dd><p>Run/model parameters, by default {} (empty)</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.SKTIME.train_iteration">
+<span class="sig-prename descclassname"><span class="pre">src.SKTIME.</span></span><span class="sig-name descname"><span class="pre">train_iteration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/SKTIME.html#train_iteration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.SKTIME.train_iteration" title="Permalink to this definition">¶</a></dt>
+<dd><p>AutoML using SKTIME and storing metrics in MLflow.
+Code based on: <a class="reference external" href="https://towardsdatascience.com/why-start-using-sktime-for-forecasting-8d6881c0a518">https://towardsdatascience.com/why-start-using-sktime-for-forecasting-8d6881c0a518</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>y: pd.Series</strong></dt><dd><p>Time-series values.</p>
+</dd>
+<dt><strong>config</strong><span class="classifier">Dict, optional</span></dt><dd><p>Configuration dict from config.yaml file, by default {}</p>
+</dd>
+<dt><strong>run_name</strong><span class="classifier">str, optional</span></dt><dd><p>Run name for MLflow, by default “”</p>
+</dd>
+<dt><strong>params</strong><span class="classifier">Dict, optional</span></dt><dd><p>Run/model parameters, by default {} (empty)</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-src.generate_data">
+<span id="src-generate-data-module"></span><h2>src.generate_data module<a class="headerlink" href="#module-src.generate_data" title="Permalink to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="src.generate_data.cases_series">
+<span class="sig-prename descclassname"><span class="pre">src.generate_data.</span></span><span class="sig-name descname"><span class="pre">cases_series</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">W</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'y'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/src/generate_data.html#cases_series"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.generate_data.cases_series" title="Permalink to this definition">¶</a></dt>
+<dd><p>Python adaptation of CasesSeries R function from rminer library. Creates lag dataframe from time-series data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>t</strong><span class="classifier">pd.Series</span></dt><dd><p>Time-series.</p>
+</dd>
+<dt><strong>W</strong><span class="classifier">Tuple</span></dt><dd><p>Window.</p>
+</dd>
+<dt><strong>target</strong><span class="classifier">str, optional</span></dt><dd><p>Target column, by default “y”</p>
+</dd>
+<dt><strong>start</strong><span class="classifier">int, optional</span></dt><dd><p>Start of time-series (1 means 1st value), by default 1</p>
+</dd>
+<dt><strong>end</strong><span class="classifier">int, optional</span></dt><dd><p>End of time-series, by default 0</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>pd.DataFrame</dt><dd><p>Lag dataframe.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.generate_data.main">
+<span class="sig-prename descclassname"><span class="pre">src.generate_data.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_series</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">make_regression</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/generate_data.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.generate_data.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate cross-validation data files for a time-series dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>time_series</strong><span class="classifier">str</span></dt><dd><p>Time series name (same as the file).</p>
+</dd>
+<dt><strong>config</strong><span class="classifier">Dict, optional</span></dt><dd><p>Configuration file path, by default “config.yaml”</p>
+</dd>
+<dt><strong>make_regression</strong><span class="classifier">bool, optional</span></dt><dd><p>Convert time-series data in regression task, by default False</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.generate_data.rw">
+<span class="sig-prename descclassname"><span class="pre">src.generate_data.</span></span><span class="sig-name descname"><span class="pre">rw</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Series</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ratio</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">W</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">S</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iteration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'rolling'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val_ratio</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span></span></span><a class="reference internal" href="_modules/src/generate_data.html#rw"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.generate_data.rw" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate train, validation and test indexes for Rolling Window</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>y</strong><span class="classifier">Union[pd.Series, List]</span></dt><dd><p>_description_</p>
+</dd>
+<dt><strong>ratio</strong><span class="classifier">Union[float,int]</span></dt><dd><p>_description_</p>
+</dd>
+<dt><strong>W</strong><span class="classifier">int</span></dt><dd><p>Window - data size per iterarion</p>
+</dd>
+<dt><strong>S</strong><span class="classifier">int</span></dt><dd><p>Rolling window step</p>
+</dd>
+<dt><strong>iteration</strong><span class="classifier">int, optional</span></dt><dd><p>Number of iteration, by default 1</p>
+</dd>
+<dt><strong>mode</strong><span class="classifier">str, optional</span></dt><dd><p>_description_, by default “rolling”</p>
+</dd>
+<dt><strong>val_ratio</strong><span class="classifier">Union[float, str], optional</span></dt><dd><p>_description_, by default 0</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>Dict</dt><dd><p>Taining, validation and testing indexes</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-src.test">
+<span id="src-test-module"></span><h2>src.test module<a class="headerlink" href="#module-src.test" title="Permalink to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="src.test.main">
+<span class="sig-prename descclassname"><span class="pre">src.test.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_series</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'porto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'ARIMA'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'config.yaml'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/test.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.test.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read time series file and test according to the specified ML model</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>time_series</strong><span class="classifier">str, optional</span></dt><dd><p>Time-series name, by default “porto”</p>
+</dd>
+<dt><strong>model</strong><span class="classifier">str, optional</span></dt><dd><p>ML model, by default “ARIMA”</p>
+</dd>
+<dt><strong>config</strong><span class="classifier">Dict, optional</span></dt><dd><p>Configuration dict from config.yaml file, by default “config.yaml”</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-src.train">
+<span id="src-train-module"></span><h2>src.train module<a class="headerlink" href="#module-src.train" title="Permalink to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="src.train.main">
+<span class="sig-prename descclassname"><span class="pre">src.train.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_series</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'porto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'ARIMA'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'config.yaml'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/train.html#main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.train.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read time series file and train according to the specified ML model</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>time_series</strong><span class="classifier">str, optional</span></dt><dd><p>Time-series name, by default “porto”</p>
+</dd>
+<dt><strong>model</strong><span class="classifier">str, optional</span></dt><dd><p>ML model, by default “ARIMA”</p>
+</dd>
+<dt><strong>config</strong><span class="classifier">str, optional</span></dt><dd><p>Configuration dict from config.yaml file, by default “config.yaml”</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-src.utilities">
+<span id="src-utilities-module"></span><h2>src.utilities module<a class="headerlink" href="#module-src.utilities" title="Permalink to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="src.utilities.compute_metrics">
+<span class="sig-prename descclassname"><span class="pre">src.utilities.</span></span><span class="sig-name descname"><span class="pre">compute_metrics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y_true</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Series</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">array</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_pred</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Series</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">array</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metrics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'ALL'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span></span></span><a class="reference internal" href="_modules/src/utilities.html#compute_metrics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.utilities.compute_metrics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given target values and predictions, compute a set of metrics</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>y_true</strong><span class="classifier">Union[pd.Series, np.array]</span></dt><dd><p>Target values</p>
+</dd>
+<dt><strong>y_pred</strong><span class="classifier">Union[pd.Series, np.array]</span></dt><dd><p>Target predictions</p>
+</dd>
+<dt><strong>metrics</strong><span class="classifier">Union[str, List[str]], optional</span></dt><dd><p>If “ALL”, computes all metrics defined in the METRICS dict. 
+Otherwise, computes a specific given metric, by default “ALL”</p>
+</dd>
+<dt><strong>prefix</strong><span class="classifier">str, optional</span></dt><dd><p>Prefix of the value to store, by default “”</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>Dict</dt><dd><p>Metrics values</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.utilities.list_files">
+<span class="sig-prename descclassname"><span class="pre">src.utilities.</span></span><span class="sig-name descname"><span class="pre">list_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_series</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pattern</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'*_tr.csv'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/utilities.html#list_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.utilities.list_files" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read all files with a certain pattern of a specified time series</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>time_series</strong><span class="classifier">str</span></dt><dd><p>Time-series name</p>
+</dd>
+<dt><strong>config</strong><span class="classifier">Dict, optional</span></dt><dd><p>Configuration dict from config.yaml file, by default “config.yaml”</p>
+</dd>
+<dt><strong>pattern</strong><span class="classifier">str, optional</span></dt><dd><p>Pattern of the files to filter, by default “<a href="#id1"><span class="problematic" id="id2">*</span></a>_tr.csv”</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>_type_</dt><dd><p>List of files according to the specified configuration</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.utilities.load_data">
+<span class="sig-prename descclassname"><span class="pre">src.utilities.</span></span><span class="sig-name descname"><span class="pre">load_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fpath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'tempC'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_Xy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">DataFrame</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Series</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">DataFrame</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/src/utilities.html#load_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.utilities.load_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load data from a path separating the attributes according to the target</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>fpath</strong><span class="classifier">str</span></dt><dd><p>Path to folder where data is stored</p>
+</dd>
+<dt><strong>target</strong><span class="classifier">str, optional</span></dt><dd><p>Attribute to predict, by default “tempC”</p>
+</dd>
+<dt><strong>return_Xy</strong><span class="classifier">bool, optional</span></dt><dd><p>If True, returns <code class="docutils literal notranslate"><span class="pre">(data,</span> <span class="pre">target)</span></code> instead of a single pandas object., by default True</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>Union[Tuple[pd.DataFrame, pd.Series], pd.DataFrame]</dt><dd><p>Data on the specified format</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.utilities.nmae">
+<span class="sig-prename descclassname"><span class="pre">src.utilities.</span></span><span class="sig-name descname"><span class="pre">nmae</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y_true</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Series</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">array</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_pred</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Series</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">array</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_val</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_val</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/src/utilities.html#nmae"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.utilities.nmae" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute Normalized Mean Absolute Error</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>y_true</strong><span class="classifier">Union[pd.Series, np.array]</span></dt><dd><p>Target values</p>
+</dd>
+<dt><strong>y_pred</strong><span class="classifier">Union[pd.Series, np.array]</span></dt><dd><p>Target predictions</p>
+</dd>
+<dt><strong>min_val</strong><span class="classifier">float</span></dt><dd><p>Lowest target value</p>
+</dd>
+<dt><strong>max_val</strong><span class="classifier">float</span></dt><dd><p>Highest target value</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>nmae</strong><span class="classifier">float</span></dt><dd><p>NMAE value</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.utilities.rmse">
+<span class="sig-prename descclassname"><span class="pre">src.utilities.</span></span><span class="sig-name descname"><span class="pre">rmse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y_true</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Series</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">array</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_pred</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Series</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">array</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="_modules/src/utilities.html#rmse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#src.utilities.rmse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute Root Mean Square Error</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>y_true</strong><span class="classifier">Union[pd.Series, np.array]</span></dt><dd><p>Target values</p>
+</dd>
+<dt><strong>y_pred</strong><span class="classifier">Union[pd.Series, np.array]</span></dt><dd><p>Target predictions</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>rmse</strong><span class="classifier">float</span></dt><dd><p>RMSE value</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+          </div>
+          <div class="page-nav">
+            <div class="inner"><ul class="page-nav">
+  <li class="prev">
+    <a href="modules.html"
+       title="previous chapter">← src</a>
+  </li>
+</ul><div class="footer" role="contentinfo">
+      &#169; Copyright 2022, Pedro Pereira, Margarida Barros, Nuno Costa.
+    <br>
+    Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.0.0 with <a href="https://github.com/schettino72/sphinx_press_theme">Press Theme</a> 0.8.0.
+</div>
+            </div>
+          </div>
+      </page>
+    </div></div>
+    
+    
+  </body>
+</html>

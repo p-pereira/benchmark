@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html  lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+      <title>src.DEEPAR</title>
+    
+          <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+          <link rel="stylesheet" href="../../_static/theme.css " type="text/css" />
+          <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
+      
+      <!-- sphinx script_files -->
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../_static/doctools.js"></script>
+
+      
+      <!-- bundled in js (rollup iife) -->
+      <!-- <script src="../../_static/theme-vendors.js"></script> -->
+      <script src="../../_static/theme.js" defer></script>
+    
+  <link rel="index" title="Index" href="../../genindex.html" />
+  <link rel="search" title="Search" href="../../search.html" /> 
+  </head>
+
+  <body>
+    <div id="app">
+    <div class="theme-container" :class="pageClasses"><navbar @toggle-sidebar="toggleSidebar">
+  <router-link to="../../index.html" class="home-link">
+    
+      <span class="site-name">Benchmark</span>
+    
+  </router-link>
+
+  <div class="links">
+    <navlinks class="can-hide">
+
+
+
+    </navlinks>
+  </div>
+</navbar>
+
+      
+      <div class="sidebar-mask" @click="toggleSidebar(false)">
+      </div>
+        <sidebar @toggle-sidebar="toggleSidebar">
+          
+          <navlinks>
+            
+
+
+
+            
+          </navlinks><div id="searchbox" class="searchbox" role="search">
+  <div class="caption"><span class="caption-text">Quick search</span>
+    <div class="searchformwrapper">
+      <form class="search" action="../../search.html" method="get">
+        <input type="text" name="q" />
+        <input type="submit" value="Search" />
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div><div class="sidebar-links" role="navigation" aria-label="main navigation">
+  
+    <div class="sidebar-group">
+      <p class="caption">
+        <span class="caption-text"><a href="../../modules.html#src">src</a></span>
+      </p>
+      <ul class="">
+        
+          <li class="toctree-l1 ">
+            
+              <a href="../../src.html" class="reference internal ">src package</a>
+            
+
+            
+          </li>
+
+        
+      </ul>
+    </div>
+  
+</div>
+        </sidebar>
+
+      <page>
+          <div class="body-header" role="navigation" aria-label="navigation">
+  
+  <ul class="breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+    
+      <li><a href="../index.html">Module code</a> &raquo;</li>
+    
+    <li>src.DEEPAR</li>
+  </ul>
+  
+
+  <ul class="page-nav">
+</ul>
+  
+</div>
+<hr>
+          <div class="content" role="main" v-pre>
+            
+  <h1>Source code for src.DEEPAR</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">warnings</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">pickle</span> <span class="kn">import</span> <span class="n">dump</span><span class="p">,</span> <span class="n">load</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">makedirs</span><span class="p">,</span> <span class="n">path</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">.utilities</span> <span class="kn">import</span> <span class="n">load_data</span><span class="p">,</span> <span class="n">list_files</span><span class="p">,</span> <span class="n">compute_metrics</span>
+<span class="kn">import</span> <span class="nn">yaml</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+<span class="kn">import</span> <span class="nn">mlflow</span>
+<span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">time</span>
+<span class="kn">from</span> <span class="nn">gluonts.model.deepar</span> <span class="kn">import</span> <span class="n">DeepAREstimator</span> <span class="k">as</span> <span class="n">DeepAR</span>
+<span class="kn">from</span> <span class="nn">gluonts.dataset.common</span> <span class="kn">import</span> <span class="n">ListDataset</span>
+
+
+<div class="viewcode-block" id="train_iteration"><a class="viewcode-back" href="../../src.html#src.DEEPAR.train_iteration">[docs]</a><span class="k">def</span> <span class="nf">train_iteration</span><span class="p">(</span><span class="n">X</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span><span class="p">{},</span> <span class="n">run_name</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="p">{}):</span>
+    <span class="sd">&quot;&quot;&quot;Train a DeepAR model and storing metrics in MLflow.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    X : pd.DataFrame</span>
+<span class="sd">        X data.</span>
+<span class="sd">    y : pd.Series</span>
+<span class="sd">        Target values.</span>
+<span class="sd">    config : Dict, optional</span>
+<span class="sd">        Configuration dict from config.yaml file, by default {}</span>
+<span class="sd">    run_name : str, optional</span>
+<span class="sd">        Run name for MLflow, by default &quot;&quot; (empty)</span>
+<span class="sd">    params : Dict, optional</span>
+<span class="sd">        Run/model parameters, by default {} (empty)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># mlflow configs</span>
+    <span class="n">mlflow</span><span class="o">.</span><span class="n">set_tracking_uri</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;MLFLOW_URI&quot;</span><span class="p">])</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">mlflow</span><span class="o">.</span><span class="n">create_experiment</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;EXPERIMENT&quot;</span><span class="p">])</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="n">FDIR</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;DATA_PATH&quot;</span><span class="p">],</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;MODELS_PATH&quot;</span><span class="p">],</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;time_series&quot;</span><span class="p">],</span> <span class="nb">str</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;iter&quot;</span><span class="p">]),</span> <span class="s2">&quot;DEEPAR&quot;</span><span class="p">)</span>
+    <span class="n">makedirs</span><span class="p">(</span><span class="n">FDIR</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">FPATH</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">FDIR</span><span class="p">,</span> <span class="s2">&quot;MODEL.pkl&quot;</span><span class="p">)</span>
+    
+    <span class="n">date_col</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;TS&quot;</span><span class="p">][</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;time_series&quot;</span><span class="p">]][</span><span class="s2">&quot;date&quot;</span><span class="p">]</span>
+    <span class="n">freq</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;TS&quot;</span><span class="p">][</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;time_series&quot;</span><span class="p">]][</span><span class="s2">&quot;freq&quot;</span><span class="p">]</span>
+    <span class="n">H</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;TS&quot;</span><span class="p">][</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;time_series&quot;</span><span class="p">]][</span><span class="s2">&quot;H&quot;</span><span class="p">]</span>
+    <span class="n">X</span><span class="p">[</span><span class="n">date_col</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">date_col</span><span class="p">])</span>
+
+    <span class="n">mlflow</span><span class="o">.</span><span class="n">gluon</span><span class="o">.</span><span class="n">autolog</span><span class="p">()</span>
+    <span class="k">with</span> <span class="n">mlflow</span><span class="o">.</span><span class="n">start_run</span><span class="p">(</span><span class="n">run_name</span><span class="o">=</span><span class="n">run_name</span><span class="p">)</span> <span class="k">as</span> <span class="n">run</span><span class="p">:</span>
+        <span class="n">mlflow</span><span class="o">.</span><span class="n">log_params</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
+        <span class="n">training_data</span> <span class="o">=</span> <span class="n">ListDataset</span><span class="p">([{</span><span class="s2">&quot;start&quot;</span><span class="p">:</span><span class="n">X</span><span class="p">[</span><span class="n">date_col</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;target&quot;</span><span class="p">:</span> <span class="n">y</span><span class="p">}],</span> <span class="n">freq</span><span class="o">=</span><span class="n">freq</span><span class="p">)</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">DeepAR</span><span class="p">(</span><span class="n">freq</span><span class="o">=</span><span class="n">freq</span><span class="p">,</span> <span class="n">prediction_length</span><span class="o">=</span><span class="n">H</span><span class="p">)</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">training_data</span><span class="p">)</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
+
+        <span class="n">tr_time</span> <span class="o">=</span> <span class="n">end</span> <span class="o">-</span> <span class="n">start</span>
+        <span class="n">mlflow</span><span class="o">.</span><span class="n">log_metric</span><span class="p">(</span><span class="s2">&quot;training_time&quot;</span><span class="p">,</span> <span class="n">tr_time</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">FPATH</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">dump</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+        <span class="n">mlflow</span><span class="o">.</span><span class="n">log_artifact</span><span class="p">(</span><span class="n">FPATH</span><span class="p">)</span>
+        
+    <span class="n">mlflow</span><span class="o">.</span><span class="n">end_run</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="test_iteration"><a class="viewcode-back" href="../../src.html#src.DEEPAR.test_iteration">[docs]</a><span class="k">def</span> <span class="nf">test_iteration</span><span class="p">(</span><span class="n">X</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="p">{},</span> <span class="n">run_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="p">{}):</span>
+    <span class="sd">&quot;&quot;&quot;Test a DeepAR model and storing metrics in MLflow.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    X : pd.DataFrame</span>
+<span class="sd">        X data.</span>
+<span class="sd">    y : pd.Series</span>
+<span class="sd">        Target values.</span>
+<span class="sd">    config : Dict, optional</span>
+<span class="sd">        Configuration dict from config.yaml file, by default {}</span>
+<span class="sd">    run_name : str, optional</span>
+<span class="sd">        Run name for MLflow, by default &quot;&quot; (empty)</span>
+<span class="sd">    params : Dict, optional</span>
+<span class="sd">        Run/model parameters, by default {} (empty)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># mlflow configs</span>
+    <span class="n">mlflow</span><span class="o">.</span><span class="n">set_tracking_uri</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;MLFLOW_URI&quot;</span><span class="p">])</span>
+
+    <span class="n">experiment</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">mlflow</span><span class="o">.</span><span class="n">get_experiment_by_name</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;EXPERIMENT&quot;</span><span class="p">]))</span>
+    <span class="n">runs</span> <span class="o">=</span> <span class="n">mlflow</span><span class="o">.</span><span class="n">search_runs</span><span class="p">([</span><span class="n">experiment</span><span class="p">[</span><span class="s2">&quot;experiment_id&quot;</span><span class="p">]])</span>
+    <span class="n">run_id</span> <span class="o">=</span> <span class="n">runs</span><span class="p">[</span><span class="n">runs</span><span class="p">[</span><span class="s1">&#39;tags.mlflow.runName&#39;</span><span class="p">]</span><span class="o">==</span><span class="n">run_name</span><span class="p">][</span><span class="s2">&quot;run_id&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># Load model</span>
+    <span class="n">FDIR</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;DATA_PATH&quot;</span><span class="p">],</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;MODELS_PATH&quot;</span><span class="p">],</span>
+                     <span class="n">params</span><span class="p">[</span><span class="s2">&quot;time_series&quot;</span><span class="p">],</span> <span class="nb">str</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;iter&quot;</span><span class="p">]),</span> <span class="s2">&quot;DEEPAR&quot;</span><span class="p">)</span>
+    <span class="n">makedirs</span><span class="p">(</span><span class="n">FDIR</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">FPATH</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">FDIR</span><span class="p">,</span> <span class="s2">&quot;MODEL.pkl&quot;</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">FPATH</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    
+    <span class="n">date_col</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;TS&quot;</span><span class="p">][</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;time_series&quot;</span><span class="p">]][</span><span class="s2">&quot;date&quot;</span><span class="p">]</span>
+    <span class="n">freq</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;TS&quot;</span><span class="p">][</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;time_series&quot;</span><span class="p">]][</span><span class="s2">&quot;freq&quot;</span><span class="p">]</span>
+    <span class="n">X</span><span class="p">[</span><span class="n">date_col</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">date_col</span><span class="p">])</span>
+    <span class="c1"># Predic and compute metrics</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
+    <span class="n">test_data</span> <span class="o">=</span> <span class="n">ListDataset</span><span class="p">([{</span><span class="s2">&quot;start&quot;</span><span class="p">:</span> <span class="n">X</span><span class="p">[</span><span class="n">date_col</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;target&quot;</span><span class="p">:</span> <span class="n">y</span><span class="p">}],</span> <span class="n">freq</span><span class="o">=</span> <span class="n">freq</span><span class="p">)</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">test_data</span><span class="p">)</span>
+    <span class="n">pred</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">mean</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">res</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
+    <span class="n">inf_time</span> <span class="o">=</span> <span class="p">(</span><span class="n">end</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">pred</span><span class="p">)</span>
+    <span class="n">metrics</span> <span class="o">=</span> <span class="n">compute_metrics</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">pred</span><span class="p">,</span> <span class="s2">&quot;ALL&quot;</span><span class="p">,</span> <span class="s2">&quot;test_&quot;</span><span class="p">)</span>
+    <span class="c1"># Store predictions and target values</span>
+    <span class="n">info</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span><span class="n">y</span><span class="p">,</span> <span class="n">pred</span><span class="p">])</span><span class="o">.</span><span class="n">T</span>
+    <span class="n">info</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;y_true&quot;</span><span class="p">,</span> <span class="s2">&quot;y_pred&quot;</span><span class="p">]</span>
+    <span class="n">FDIR</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;DATA_PATH&quot;</span><span class="p">],</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;PRED_PATH&quot;</span><span class="p">],</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;time_series&#39;</span><span class="p">],</span> <span class="s2">&quot;DEEPAR&quot;</span><span class="p">)</span>
+    <span class="n">makedirs</span><span class="p">(</span><span class="n">FDIR</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">FPATH</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">FDIR</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;pred_</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;iter&#39;</span><span class="p">])</span><span class="si">}</span><span class="s2">.csv&quot;</span><span class="p">)</span>
+    <span class="n">info</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">FPATH</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="c1"># Load new info to mlflow run</span>
+    <span class="k">with</span> <span class="n">mlflow</span><span class="o">.</span><span class="n">start_run</span><span class="p">(</span><span class="n">run_id</span><span class="o">=</span><span class="n">run_id</span><span class="p">)</span> <span class="k">as</span> <span class="n">run</span><span class="p">:</span>
+        <span class="n">mlflow</span><span class="o">.</span><span class="n">log_artifact</span><span class="p">(</span><span class="n">FPATH</span><span class="p">)</span>
+        <span class="n">mlflow</span><span class="o">.</span><span class="n">log_metrics</span><span class="p">(</span><span class="n">metrics</span><span class="p">)</span>
+        <span class="n">mlflow</span><span class="o">.</span><span class="n">log_metric</span><span class="p">(</span><span class="s2">&quot;test_time&quot;</span><span class="p">,</span> <span class="n">inf_time</span><span class="p">)</span>
+    <span class="n">mlflow</span><span class="o">.</span><span class="n">end_run</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../src.html#src.DEEPAR.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">time_series</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{},</span> <span class="n">train</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">test</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Read all Rolling Window iterarion training files from a given time-series and train a DeepAR model for each.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    time_series : str</span>
+<span class="sd">        Time-series name.</span>
+<span class="sd">    config : dict, optional</span>
+<span class="sd">        Configuration dict from config.yaml file, by default {}</span>
+<span class="sd">    train: bool, optional</span>
+<span class="sd">        Whether performs model training or not, by default True (it does)</span>
+<span class="sd">    test: bool, optional</span>
+<span class="sd">        Whether performs model testing/evaluation or not, by default True (it does)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Get train files</span>
+    <span class="n">train_files</span> <span class="o">=</span> <span class="n">list_files</span><span class="p">(</span><span class="n">time_series</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="s2">&quot;*_tr.csv&quot;</span><span class="p">)</span>
+    <span class="n">test_files</span> <span class="o">=</span> <span class="n">list_files</span><span class="p">(</span><span class="n">time_series</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="s2">&quot;*_ts.csv&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">train_files</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error: no files found!&quot;</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+    <span class="c1"># Train Gluon models</span>
+    <span class="n">target</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;TS&quot;</span><span class="p">][</span><span class="n">time_series</span><span class="p">][</span><span class="s2">&quot;target&quot;</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">file</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tqdm</span><span class="p">(</span><span class="n">train_files</span><span class="p">)):</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;time_series&#39;</span><span class="p">:</span> <span class="n">time_series</span><span class="p">,</span>
+            <span class="s1">&#39;target&#39;</span><span class="p">:</span> <span class="n">target</span><span class="p">,</span>
+            <span class="s1">&#39;model&#39;</span><span class="p">:</span> <span class="s2">&quot;DEEPAR&quot;</span><span class="p">,</span>
+            <span class="s1">&#39;iter&#39;</span><span class="p">:</span> <span class="n">n</span><span class="o">+</span><span class="mi">1</span>
+        <span class="p">}</span>
+        <span class="n">FDIR</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;DATA_PATH&quot;</span><span class="p">],</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;PRED_PATH&quot;</span><span class="p">],</span> <span class="n">time_series</span><span class="p">,</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">])</span>
+        <span class="n">FPATH</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">FDIR</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;pred_</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2">.csv&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">FPATH</span><span class="p">):</span>
+            <span class="k">continue</span>
+        <span class="n">run_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">time_series</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">target</span><span class="si">}</span><span class="s2">_DEEPAR_</span><span class="si">{</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">load_data</span><span class="p">(</span><span class="n">file</span><span class="p">,</span><span class="n">target</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">train</span><span class="p">:</span>
+            <span class="n">train_iteration</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">run_name</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">test</span><span class="p">:</span>
+            <span class="n">X_ts</span><span class="p">,</span> <span class="n">y_ts</span> <span class="o">=</span> <span class="n">load_data</span><span class="p">(</span><span class="n">test_files</span><span class="p">[</span><span class="n">n</span><span class="p">],</span> <span class="n">target</span><span class="p">)</span>
+            <span class="n">test_iteration</span><span class="p">(</span><span class="n">X_ts</span><span class="p">,</span> <span class="n">y_ts</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">run_name</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="c1"># Read arguments</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;Generate CV data files for a time-series dataset, based on config.yaml params&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="n">help</span><span class="o">=</span><span class="s1">&#39;Time-series name.&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;time_series&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">time_series</span><span class="o">=</span><span class="s2">&quot;porto&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-c&#39;</span><span class="p">,</span> <span class="s1">&#39;--config&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;config&#39;</span><span class="p">,</span> 
+                        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Config yaml file.&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="s2">&quot;config.yaml&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-tr&#39;</span><span class="p">,</span> <span class="s1">&#39;--train&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;train&quot;</span><span class="p">,</span>
+                        <span class="n">action</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">BooleanOptionalAction</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Performs model training.&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">train</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-ts&#39;</span><span class="p">,</span> <span class="s1">&#39;--test&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;test&quot;</span><span class="p">,</span>
+                        <span class="n">action</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">BooleanOptionalAction</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Performs model testing (evaluation).&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">train</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+    <span class="c1"># Load configs</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">config</span> <span class="o">=</span>  <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">config</span><span class="p">))</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error loading config file: &quot;</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+    <span class="c1"># Train/Test DeepAR</span>
+    <span class="n">main</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">time_series</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">train</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">test</span><span class="p">)</span>
+</pre></div>
+
+          </div>
+          <div class="page-nav">
+            <div class="inner"><ul class="page-nav">
+</ul><div class="footer" role="contentinfo">
+      &#169; Copyright 2022, Pedro Pereira, Margarida Barros, Nuno Costa.
+    <br>
+    Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.0.0 with <a href="https://github.com/schettino72/sphinx_press_theme">Press Theme</a> 0.8.0.
+</div>
+            </div>
+          </div>
+      </page>
+    </div></div>
+    
+    
+  </body>
+</html>
