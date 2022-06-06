@@ -56,6 +56,7 @@ def rw(y: Union[pd.Series, List], ratio: Union[float,int], W: int, S: int, itera
 
 def cases_series(t: pd.Series, W: Tuple, target: str = "y", start: int=1, end: int=0) -> pd.DataFrame:
     """Python adaptation of CasesSeries R function from rminer library. Creates lag dataframe from time-series data.
+    
     Parameters
     ----------
     t : pd.Series
@@ -68,6 +69,7 @@ def cases_series(t: pd.Series, W: Tuple, target: str = "y", start: int=1, end: i
         Start of time-series (1 means 1st value), by default 1
     end : int, optional
         End of time-series, by default 0
+    
     Returns
     -------
     pd.DataFrame
